@@ -5,15 +5,17 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddLog4Net();
 // Add services to the container.
-
-
+//hi aneeq i am umair khan
+// i Mladjflajfda dlkf
+//sdfassdff
+//ehjdfbsfbaf sdjff adaf d
 builder.Services.AddControllers();
 builder.Services.AddSingleton<JwtTokenHandler>();
 builder.Services.AddCustomAuthentication();
 
 var dbhost = "127.0.0.1";
 var dbname = "userstestdb";
-var dbpassword = "umair_471";
+var dbpassword = "Mysql123$";
 string connectionstringinitial = $"server={dbhost}; port=3306; database={dbname}; user=root; password={dbpassword};";
     //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
     //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));
