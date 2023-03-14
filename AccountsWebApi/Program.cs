@@ -11,6 +11,7 @@ builder.Logging.AddLog4Net();
 //ehjdfbsfbaf sdjff adaf d
 
 //changes made
+//pro chamngesmsdhvz da bdvf fsehydf s dgfc
 builder.Services.AddControllers();
 builder.Services.AddSingleton<JwtTokenHandler>();
 builder.Services.AddCustomAuthentication();
