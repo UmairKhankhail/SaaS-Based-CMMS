@@ -13,7 +13,7 @@ namespace AccountsWebApi.Models
             
         }
         public DbSet<Department> departments { get; set; }
-        public DbSet<SubDepartment> sub_departments { get; set; }
+        public DbSet<SubDepartment> subdepartments { get; set; }
         public DbSet<Company> companies { get; set; }
         public DbSet<Employee> employees { get; set; }
         public DbSet<User> users { get; set; }

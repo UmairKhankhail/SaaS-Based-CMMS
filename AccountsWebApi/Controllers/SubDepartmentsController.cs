@@ -37,7 +37,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.sub_departments.Where(x => x.companyid == id).ToListAsync();
+                return await _context.subdepartments.Where(x => x.companyid == id).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -70,7 +70,7 @@ namespace AccountsWebApi.Controllers
             try
             {
 
-                var subDepartment = await _context.sub_departments.Where(x => x.companyid == cid && x.subdeptid == id).FirstOrDefaultAsync();
+                var subDepartment = await _context.subdepartments.Where(x => x.companyid == cid && x.subdeptid == id).FirstOrDefaultAsync();
 
                 if (subDepartment == null)
                 {
@@ -120,7 +120,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var subdept = _context.sub_departments.Where(d => d.companyid == subDepartment.companyid).Select(d => d.subdeptid).ToList();
+                var subdept = _context.subdepartments.Where(d => d.companyid == subDepartment.companyid).Select(d => d.subdeptid).ToList();
                 List<string> subdeptlist = new List<string>();
                 List<int> subdeptnolist = new List<int>();
                 foreach (var z in subdept)
@@ -157,7 +157,7 @@ namespace AccountsWebApi.Controllers
                     c.companyid = subDepartment.companyid;
                     c.status = "Active";
                     c.deptautoid = subDepartment.deptautoid;
-                    _context.sub_departments.Add(c);
+                    _context.subdepartments.Add(c);
                     await _context.SaveChangesAsync();
                 }
                 if (subdeptnolist.Count > 0)
@@ -170,7 +170,7 @@ namespace AccountsWebApi.Controllers
                     c.companyid = subDepartment.companyid;
                     c.status = "Active";
                     c.deptautoid = subDepartment.deptautoid;
-                    _context.sub_departments.Add(c);
+                    _context.subdepartments.Add(c);
                     await _context.SaveChangesAsync();
                 }
 
@@ -245,13 +245,13 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var subDepartment = _context.sub_departments.Where(x => x.companyid == id && x.subdeptid == sid).FirstOrDefault();
+                var subDepartment = _context.subdepartments.Where(x => x.companyid == id && x.subdeptid == sid).FirstOrDefault();
                 if (subDepartment == null)
                 {
                     return NotFound();
                 }
 
-                _context.sub_departments.Remove(subDepartment);
+                _context.subdepartments.Remove(subDepartment);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -265,7 +265,7 @@ namespace AccountsWebApi.Controllers
 
         private bool SubDepartmentExists(string id)
         {
-            return _context.sub_departments.Any(e => e.subdeptid == id);
+            return _context.subdepartments.Any(e => e.subdeptid == id);
         }
     }
 }

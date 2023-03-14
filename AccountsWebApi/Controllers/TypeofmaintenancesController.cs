@@ -73,12 +73,16 @@ namespace AccountsWebApi.Controllers
 
                 _context.Entry(typeofmaintenance).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+
+
+                return Ok();
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+
         }
 
         // POST: api/Typeofmaintenances
