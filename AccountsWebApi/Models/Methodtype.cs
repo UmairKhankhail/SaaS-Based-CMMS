@@ -6,17 +6,17 @@ namespace AccountsWebApi.Models
     public class Methodtype
     {
         [Key]
-        public int mtautoid { get; set; }
+        public int mtAutoId { get; set; }
 
-        public string mtid { get; set; }
+        public string mtId { get; set; }
 
         [Required]
-        public string mtname { get; set; }
+        public string mtName { get; set; }
         public string description { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

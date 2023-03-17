@@ -28,7 +28,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.typesofproblems.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.typesOfProblems.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -43,7 +43,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typesofproblem = await _context.typesofproblems.FindAsync(id);
+                var typesofproblem = await _context.typesOfProblems.FindAsync(id);
 
                 if (typesofproblem == null)
                 {
@@ -66,7 +66,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != typesofproblem.topautoid)
+                if (id != typesofproblem.topAutoId)
                 {
                     return BadRequest();
                 }
@@ -90,36 +90,36 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.typesofproblems.Where(d => d.companyid == typesofproblem.companyid).Select(d => d.topid).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.typesOfProblems.Where(d => d.companyId == typesofproblem.companyId).Select(d => d.topId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(2))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Typesofproblem m = new Typesofproblem();
                     string comid = "TP1";
-                    m.topid = comid;
-                    m.topname = typesofproblem.topname;
-                    m.companyid = typesofproblem.companyid;
+                    m.topId = comid;
+                    m.topName = typesofproblem.topName;
+                    m.companyId = typesofproblem.companyId;
                     m.status = typesofproblem.status;
-                    _context.typesofproblems.Add(m);
+                    _context.typesOfProblems.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Typesofproblem m = new Typesofproblem();
-                    string comid = "TP" + (int.Parse(autoid) + 1);
-                    m.topid = comid;
-                    m.topname = typesofproblem.topname;
-                    m.companyid = typesofproblem.companyid;
+                    string comid = "TP" + (int.Parse(autoId) + 1);
+                    m.topId = comid;
+                    m.topName = typesofproblem.topName;
+                    m.companyId = typesofproblem.companyId;
                     m.status = typesofproblem.status;
-                    _context.typesofproblems.Add(m);
+                    _context.typesOfProblems.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
@@ -139,13 +139,13 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typesofproblem = await _context.typesofproblems.FindAsync(id);
+                var typesofproblem = await _context.typesOfProblems.FindAsync(id);
                 if (typesofproblem == null)
                 {
                     return NotFound();
                 }
 
-                _context.typesofproblems.Remove(typesofproblem);
+                _context.typesOfProblems.Remove(typesofproblem);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -159,7 +159,7 @@ namespace AccountsWebApi.Controllers
 
         private bool TypesofproblemExists(int id)
         {
-            return _context.typesofproblems.Any(e => e.topautoid == id);
+            return _context.typesOfProblems.Any(e => e.topAutoId == id);
         }
     }
 }

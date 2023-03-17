@@ -24,14 +24,14 @@ namespace AccountsWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleandUser>>> Getuserandroles()
         {
-            return await _context.userandroles.ToListAsync();
+            return await _context.userAndRoles.ToListAsync();
         }
 
         // GET: api/RoleandUsers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RoleandUser>> GetRoleandUser(string id)
         {
-            var roleandUser = await _context.userandroles.FindAsync(id);
+            var roleandUser = await _context.userAndRoles.FindAsync(id);
 
             if (roleandUser == null)
             {
@@ -46,7 +46,7 @@ namespace AccountsWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoleandUser(int id, RoleandUser roleandUser)
         {
-            if (id != roleandUser.roleuserid)
+            if (id != roleandUser.roleUserId)
             {
                 return BadRequest();
             }
@@ -77,14 +77,14 @@ namespace AccountsWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<RoleandUser>> PostRoleandUser(RoleandUser roleandUser)
         {
-            _context.userandroles.Add(roleandUser);
+            _context.userAndRoles.Add(roleandUser);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (RoleandUserExists(roleandUser.roleuserid))
+                if (RoleandUserExists(roleandUser.roleUserId))
                 {
                     return Conflict();
                 }
@@ -94,20 +94,20 @@ namespace AccountsWebApi.Controllers
                 }
             }
 
-            return CreatedAtAction("GetRoleandUser", new { id = roleandUser.roleuserid }, roleandUser);
+            return CreatedAtAction("GetRoleandUser", new { id = roleandUser.roleUserId }, roleandUser);
         }
 
         // DELETE: api/RoleandUsers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoleandUser(string id)
         {
-            var roleandUser = await _context.userandroles.FindAsync(id);
-            if (roleandUser == null)
+            var roleAndUser = await _context.userAndRoles.FindAsync(id);
+            if (roleAndUser == null)
             {
                 return NotFound();
             }
 
-            _context.userandroles.Remove(roleandUser);
+            _context.userAndRoles.Remove(roleAndUser);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -115,7 +115,7 @@ namespace AccountsWebApi.Controllers
 
         private bool RoleandUserExists(int id)
         {
-            return _context.userandroles.Any(e => e.roleuserid == id);
+            return _context.userAndRoles.Any(e => e.roleUserId == id);
         }
     }
 }

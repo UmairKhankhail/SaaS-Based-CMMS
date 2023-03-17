@@ -6,18 +6,18 @@ namespace AccountsWebApi.Models
     public class RoleandUser
     {
         [Key]
-        public int roleuserid { get; set; }
+        public int roleUserId { get; set; }
 
-        public int roleautoid { get; set; }
-        [ForeignKey("roleautoid")]
+        public int roleAutoId { get; set; }
+        [ForeignKey("roleAutoId")]
         public virtual Role role { get; set; }
 
-        public int userautoid { get; set; }
-        [ForeignKey("userautoid")]
+        public int userAutoId { get; set; }
+        [ForeignKey("userAutoId")]
         public virtual User user { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
 
     }

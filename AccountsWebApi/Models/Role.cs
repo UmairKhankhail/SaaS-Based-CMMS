@@ -6,21 +6,21 @@ namespace AccountsWebApi.Models
     public class Role
     {
         [Key]
-        public int roleautoid { get; set; }
-        public string roleid { get; set; }
+        public int roleAutoId { get; set; }
+        public string roleId { get; set; }
 
         [Required]
-        public string rolename { get; set; }
+        public string roleName { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
 
         [NotMapped]
-        public List<string> list_Departments { get; set; }
+        public List<string> listDepartments { get; set; }
 
         [NotMapped]
-        public List<string> list_permissions { get; set; }
+        public List<string> listPermissions { get; set; }
     }
 }

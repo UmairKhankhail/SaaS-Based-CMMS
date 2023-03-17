@@ -28,7 +28,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.profiles.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.profiles.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -44,16 +44,16 @@ namespace AccountsWebApi.Controllers
             try
             {
                 var getroleid = await _context.profiles
-                   .Join(_context.userandprofiles, d => d.profileautoid, sd => sd.profileautoid, (d, sd) => new { d, sd })
-                   .Where(x => x.sd.companyid == id && x.d.companyid == id && x.d.profileautoid == pid)
+                   .Join(_context.userAndProfiles, d => d.profileAutoId, sd => sd.profileAutoId, (d, sd) => new { d, sd })
+                   .Where(x => x.sd.companyId == id && x.d.companyId == id && x.d.profileAutoId == pid)
                    .Select(result => new
                    {
-                       result.sd.userautoid,
-                       result.sd.profileautoid,
-                       result.d.profileid,
-                       result.d.profilename,
+                       result.sd.userAutoId,
+                       result.sd.profileAutoId,
+                       result.d.profileId,
+                       result.d.profileName,
                        result.d.status,
-                       result.d.companyid
+                       result.d.companyId
                    }).ToListAsync();
 
                 return Ok(getroleid);
@@ -73,9 +73,9 @@ namespace AccountsWebApi.Controllers
             try
             {
 
-                var list_username = profile.list_username;
+                var list_username = profile.listUsername ;
                 var list_db_username = new List<string>();
-                var getprofileuser = _context.userandprofiles.Where(x => x.profileautoid == profile.profileautoid && profile.companyid == profile.companyid).Select(x => x.userautoid);
+                var getprofileuser = _context.userAndProfiles.Where(x => x.profileAutoId == profile.profileAutoId && profile.companyId == profile.companyId).Select(x => x.userAutoId);
                 foreach (var x in getprofileuser)
                 {
                     list_db_username.Add(x.ToString());
@@ -109,13 +109,13 @@ namespace AccountsWebApi.Controllers
                 {
                     foreach (var item in rll)
                     {
-                        var deluser = _context.userandprofiles.Where(x => x.companyid == profile.companyid && x.profileautoid == profile.profileautoid && x.userautoid == int.Parse(item)).FirstOrDefault();
+                        var deluser = _context.userAndProfiles.Where(x => x.companyId == profile.companyId && x.profileAutoId == profile.profileAutoId && x.userAutoId == int.Parse(item)).FirstOrDefault();
                         if (deluser == null)
                         {
                             return NotFound();
                         }
 
-                        _context.userandprofiles.Remove(deluser);
+                        _context.userAndProfiles.Remove(deluser);
                     }
                 }
                 if (rlr != null)
@@ -123,10 +123,10 @@ namespace AccountsWebApi.Controllers
                     foreach (var item in rlr)
                     {
                         Userandprofile up = new Userandprofile();
-                        up.profileautoid = profile.profileautoid;
-                        up.userautoid = int.Parse(item);
-                        up.companyid = profile.companyid;
-                        _context.userandprofiles.Add(up);
+                        up.profileAutoId = profile.profileAutoId;
+                        up.userAutoId = int.Parse(item);
+                        up.companyId = profile.companyId;
+                        _context.userAndProfiles.Add(up);
                     }
 
                 }
@@ -148,12 +148,12 @@ namespace AccountsWebApi.Controllers
             try
             {
                 int getprofileautoid = 0;
-                var compid = _context.profiles.Where(d => d.companyid == profile.companyid).Select(d => d.profileid).ToList();
+                var compId = _context.profiles.Where(d => d.companyId == profile.companyId).Select(d => d.profileId).ToList();
 
                 var autoid = "";
-                if (compid.Count > 0)
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(2))).ToString();
+                    autoid = compId.Max(x => int.Parse(x.Substring(2))).ToString();
                 }
 
                 if (autoid == "")
@@ -161,37 +161,37 @@ namespace AccountsWebApi.Controllers
                     _context.ChangeTracker.Clear();
                     Profile p = new Profile();
                     string comid = "PF1";
-                    p.profileid = comid;
-                    p.profilename = profile.profilename;
+                    p.profileId = comid;
+                    p.profileName = profile.profileName;
                     p.status = profile.status;
-                    p.companyid = profile.companyid;
+                    p.companyId = profile.companyId;
                     _context.profiles.Add(p);
                     await _context.SaveChangesAsync();
-                    getprofileautoid = p.profileautoid;
+                    getprofileautoid = p.profileAutoId;
                 }
                 if (autoid != "")
                 {
                     _context.ChangeTracker.Clear();
                     Profile p = new Profile();
                     string comid = "PF" + (int.Parse(autoid) + 1);
-                    p.profileid = comid;
-                    p.profilename = profile.profilename;
+                    p.profileId = comid;
+                    p.profileName = profile.profileName;
                     p.status = profile.status;
-                    p.companyid = profile.companyid;
+                    p.companyId = profile.companyId;
                     _context.profiles.Add(p);
                     await _context.SaveChangesAsync();
-                    getprofileautoid = p.profileautoid;
+                    getprofileautoid = p.profileAutoId;
                 }
 
-                var new_list_profiles = profile.list_username;
+                var new_list_profiles = profile.listUsername;
 
                 foreach (var items in new_list_profiles)
                 {
                     Userandprofile up = new Userandprofile();
-                    up.userautoid = int.Parse(items);
-                    up.profileautoid = getprofileautoid;
-                    up.companyid = profile.companyid;
-                    _context.userandprofiles.Add(up);
+                    up.userAutoId = int.Parse(items);
+                    up.profileAutoId = getprofileautoid;
+                    up.companyId = profile.companyId;
+                    _context.userAndProfiles.Add(up);
                     await _context.SaveChangesAsync();
                 }
 
@@ -231,7 +231,7 @@ namespace AccountsWebApi.Controllers
 
         private bool ProfileExists(int id)
         {
-            return _context.profiles.Any(e => e.profileautoid == id);
+            return _context.profiles.Any(e => e.profileAutoId == id);
         }
     }
 }

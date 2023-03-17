@@ -6,16 +6,16 @@ namespace AccountsWebApi.Models
     public class Tool
     {
         [Key]
-        public int toolautoid { get; set; }
+        public int toolAutoId { get; set; }
 
-        public string toolid { get; set; }
+        public string toolId { get; set; }
 
         [Required]
-        public string toolname { get; set; }
+        public string toolName { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

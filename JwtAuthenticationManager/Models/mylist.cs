@@ -8,6 +8,6 @@ namespace JwtAuthenticationManager.Models
 {
     public class mylist
     {
-        public List<string> list_mylist { get; set; }
+        public List<string> listMyList { get; set; }
     }
 }

@@ -8,11 +8,11 @@ namespace JwtAuthenticationManager.Models
 {
     public class ClaimResponse
     {
-        public string uid { get; set; }
-        public int uautoid { get; set; }
+        public string uId { get; set; }
+        public int uAutoId { get; set; }
         public List<string> role { get; set; }
-        public string approle { get; set; }
-        public string companyid { get; set; }
-        public bool isauth { get; set; }
+        public string appRole { get; set; }
+        public string companyId { get; set; }
+        public bool isAuth { get; set; }
     }
 }

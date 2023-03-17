@@ -6,16 +6,16 @@ namespace AccountsWebApi.Models
     public class Facility
     {
         [Key]
-        public int facilityautoid { get; set; }
+        public int facilityAutoId { get; set; }
 
-        public string facilityid { get; set; }
+        public string facilityId { get; set; }
 
         [Required]
-        public string facilityname { get; set; }
+        public string facilityName { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

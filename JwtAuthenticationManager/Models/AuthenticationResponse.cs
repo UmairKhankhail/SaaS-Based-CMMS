@@ -8,8 +8,8 @@ namespace JwtAuthenticationManager.Models
 {
     public class AuthenticationResponse
     {
-        public int uid { get; set; }
-        public  string JWTToken { get; set; }
-        public int ExpiresIn { get; set; }
+        public int uId { get; set; }
+        public  string jwtToken { get; set; }
+        public int expiresIn { get; set; }
     }
 }

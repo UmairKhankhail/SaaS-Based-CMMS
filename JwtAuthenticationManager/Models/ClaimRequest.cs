@@ -9,6 +9,6 @@ namespace JwtAuthenticationManager.Models
     public class ClaimRequest
     {
         public string token { get; set; }
-        public string controller_action_name { get; set; }
+        public string controllerActionName { get; set; }
     }
 }

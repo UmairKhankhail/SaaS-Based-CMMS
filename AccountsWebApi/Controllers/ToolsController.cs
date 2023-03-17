@@ -28,7 +28,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.tools.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.tools.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -66,7 +66,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != tool.toolautoid)
+                if (id != tool.toolAutoId)
                 {
                     return BadRequest();
                 }
@@ -89,34 +89,34 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.tools.Where(d => d.companyid == tool.companyid).Select(d => d.toolid).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.tools.Where(d => d.companyId == tool.companyId).Select(d => d.toolId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Tool t = new Tool();
-                    string comid = "T1";
-                    t.toolid = comid;
-                    t.toolname = tool.toolname;
-                    t.companyid = tool.companyid;
+                    string comId = "T1";
+                    t.toolId = comId;
+                    t.toolName = tool.toolName;
+                    t.companyId = tool.companyId;
                     t.status = tool.status;
                     _context.tools.Add(t);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Tool t = new Tool();
-                    string comid = "T" + (int.Parse(autoid) + 1);
-                    t.toolid = comid;
-                    t.toolname = tool.toolname;
-                    t.companyid = tool.companyid;
+                    string comid = "T" + (int.Parse(autoId) + 1);
+                    t.toolId = comid;
+                    t.toolName = tool.toolName;
+                    t.companyId = tool.companyId;
                     t.status = tool.status;
                     _context.tools.Add(t);
                     await _context.SaveChangesAsync();
@@ -161,7 +161,7 @@ namespace AccountsWebApi.Controllers
 
         private bool ToolExists(int id)
         {
-            return _context.tools.Any(e => e.toolautoid == id);
+            return _context.tools.Any(e => e.toolAutoId == id);
         }
     }
 }

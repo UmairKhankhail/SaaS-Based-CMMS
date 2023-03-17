@@ -6,39 +6,39 @@ namespace AccountsWebApi.Models
     public class Functionallocation
     {
         [Key]
-        public int flautoid { get; set; }
+        public int flAutoId { get; set; }
 
-        public string flid { get; set; }
+        public string flId { get; set; }
 
         [Required]
-        public string flname { get; set; }
+        public string flName { get; set; }
 
         [NotMapped]
-        public string facilitysingleid { get; set; }
+        public string facilitySingleId { get; set; }
 
         [NotMapped]
-        public string floorsingleid { get; set; }
+        public string floorSingleId { get; set; }
 
         [NotMapped]
-        public string subdeptsingleid { get; set; }
+        public string subDeptSingleId { get; set; }
 
         public string status { get; set; }
         public string description { get; set; }
 
-        public int facilityautoid { get; set; }
-        [ForeignKey("facilityautoid")]
+        public int facilityAutoId { get; set; }
+        [ForeignKey("facilityAutoId")]
         public virtual Facility facilities { get; set; }
 
-        public int floorautoid { get; set; }
-        [ForeignKey("floorautoid")]
+        public int floorAutoId { get; set; }
+        [ForeignKey("floorAutoId")]
         public virtual Floor floors { get; set; }
 
-        public int subdeptautoid { get; set; }
-        [ForeignKey("subdeptautoid")]
+        public int subDeptAutoId { get; set; }
+        [ForeignKey("subDeptAutoId")]
         public virtual SubDepartment subDepartment { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

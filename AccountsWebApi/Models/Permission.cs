@@ -5,10 +5,10 @@ namespace AccountsWebApi.Models
     public class Permission
     {
         [Key]
-        public string permissionid { get; set; }
+        public string permissionId { get; set; }
 
         [Required]
-        public string permissionname { get; set; }
+        public string permissionName { get; set; }
         public string status { get; set; }
     }
 }

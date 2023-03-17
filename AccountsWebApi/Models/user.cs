@@ -4,32 +4,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AccountsWebApi.Models
 {
-        [Index(nameof(username), IsUnique = true)]
+        [Index(nameof(userName), IsUnique = true)]
         public class User
         {
             [Key]
-            public int userautoid { get; set; }
-            public string userid { get; set; }
+            public int userAutoId { get; set; }
+            public string userId { get; set; }
 
             [Required]
-            public string username { get; set; }
+            public string userName { get; set; }
             public string password { get; set; }
             public string role { get; set; }
             public string status { get; set; }
 
-            public int employeeautoid { get; set; }
-            [ForeignKey("employeeautoid")]
+            public int employeeAutoId { get; set; }
+            [ForeignKey("employeeAutoId")]
             public virtual Employee employee { get; set; }
 
-            public int deptautoid { get; set; }
-            [ForeignKey("deptautoid")]
+            public int deptAutoId { get; set; }
+            [ForeignKey("deptAutoId")]
             public virtual Department department { get; set; }
 
-            public string companyid { get; set; }
-            [ForeignKey("companyid")]
+            public string companyId { get; set; }
+            [ForeignKey("companyId")]
             public virtual Company companies { get; set; }
 
             [NotMapped]
-            public List<string> list_roles { get; set; }
+            public List<string> listRoles { get; set; }
     }
 }

@@ -32,7 +32,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.users.Where(x => x.companyid == id).ToListAsync();
+                return await _context.users.Where(x => x.companyId == id).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -48,17 +48,17 @@ namespace AccountsWebApi.Controllers
             try
             {
                 var getroleid = await _context.users
-                   .Join(_context.userandroles, d => d.userautoid, sd => sd.userautoid, (d, sd) => new { d, sd })
-                   .Where(x => x.sd.companyid == id && x.d.companyid == id && x.d.userautoid == uid)
+                   .Join(_context.userAndRoles, d => d.userAutoId, sd => sd.userAutoId, (d, sd) => new { d, sd })
+                   .Where(x => x.sd.companyId == id && x.d.companyId == id && x.d.userAutoId == uid)
                    .Select(result => new
                    {
-                       result.sd.userautoid,
-                       result.sd.roleautoid,
-                       result.d.employeeautoid,
-                       result.d.deptautoid,
+                       result.sd.userAutoId,
+                       result.sd.roleAutoId,
+                       result.d.employeeAutoId,
+                       result.d.deptAutoId,
                        result.d.password,
                        result.d.status,
-                       result.sd.companyid,
+                       result.sd.companyId,
                    }).ToListAsync();
 
                 return Ok(getroleid);
@@ -86,29 +86,29 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (UserExists(id, user.companyid) == true)
+                if (UserExists(id, user.companyId) == true)
                 {
-                    var list_roles = user.list_roles;
-                    var list_db_roles = new List<string>();
-                    var getuserroles = _context.userandroles.Where(x => x.userautoid == user.userautoid && user.companyid == user.companyid).Select(x => x.roleautoid);
+                    var listRoles = user.listRoles;
+                    var listDbRoles = new List<string>();
+                    var getuserroles = _context.userAndRoles.Where(x => x.userAutoId == user.userAutoId && user.companyId == user.companyId).Select(x => x.roleAutoId);
                     foreach (var x in getuserroles)
                     {
-                        list_db_roles.Add(x.ToString());
+                        listDbRoles.Add(x.ToString());
                         Console.WriteLine("DB Roles: " + x);
                     }
-                    foreach (var x in list_roles)
+                    foreach (var x in listRoles)
                     {
                         Console.WriteLine("New Roles: " + x);
 
                     }
 
-                    var resultlistleft = list_db_roles.Except(list_roles).ToList();
-                    var resultlistright = list_roles.Except(list_db_roles).ToList();
+                    var resultListLeft = listDbRoles.Except(listRoles).ToList();
+                    var resultlistright = listRoles.Except(listDbRoles).ToList();
                     var rll = new List<string>();
                     var rlr = new List<string>();
-                    if (resultlistleft != null)
+                    if (resultListLeft != null)
                     {
-                        foreach (var x in resultlistleft)
+                        foreach (var x in resultListLeft)
                         {
                             rll.Add(x);
                         }
@@ -124,13 +124,13 @@ namespace AccountsWebApi.Controllers
                     {
                         foreach (var item in rll)
                         {
-                            var deluser = _context.userandroles.Where(x => x.companyid == user.companyid && x.userautoid == user.userautoid && x.roleautoid == int.Parse(item)).FirstOrDefault();
+                            var deluser = _context.userAndRoles.Where(x => x.companyId == user.companyId && x.userAutoId == user.userAutoId && x.roleAutoId == int.Parse(item)).FirstOrDefault();
                             if (deluser == null)
                             {
                                 return NotFound();
                             }
 
-                            _context.userandroles.Remove(deluser);
+                            _context.userAndRoles.Remove(deluser);
                         }
                     }
                     if (rlr != null)
@@ -138,10 +138,10 @@ namespace AccountsWebApi.Controllers
                         foreach (var item in rlr)
                         {
                             RoleandUser roleuser = new RoleandUser();
-                            roleuser.userautoid = user.userautoid;
-                            roleuser.roleautoid = int.Parse(item);
-                            roleuser.companyid = user.companyid;
-                            _context.userandroles.Add(roleuser);
+                            roleuser.userAutoId = user.userAutoId;
+                            roleuser.roleAutoId = int.Parse(item);
+                            roleuser.companyId = user.companyId;
+                            _context.userAndRoles.Add(roleuser);
                         }
 
                     }
@@ -165,7 +165,7 @@ namespace AccountsWebApi.Controllers
             try
             {
                 int getuserautoid = 0;
-                var compid = _context.users.Where(d => d.companyid == user.companyid).Select(d => d.userid).ToList();
+                var compid = _context.users.Where(d => d.companyId == user.companyId).Select(d => d.userId).ToList();
 
                 var autoid = "";
                 if (compid.Count > 0)
@@ -178,45 +178,45 @@ namespace AccountsWebApi.Controllers
                     _context.ChangeTracker.Clear();
                     User c = new User();
                     string comid = "U1";
-                    c.userid = comid;
-                    c.username = user.username;
+                    c.userId = comid;
+                    c.userAutoId = user.userAutoId;
                     c.password = user.password;
                     c.status = user.status;
-                    c.companyid = user.companyid;
+                    c.companyId = user.companyId;
                     c.role = user.role;
-                    c.employeeautoid = user.employeeautoid;
-                    c.deptautoid = user.deptautoid;
+                    c.employeeAutoId = user.employeeAutoId;
+                    c.deptAutoId = user.deptAutoId;
                     _context.users.Add(c);
                     await _context.SaveChangesAsync();
-                    getuserautoid = c.userautoid;
+                    getuserautoid = c.userAutoId;
                 }
                 if (autoid != "")
                 {
                     _context.ChangeTracker.Clear();
                     User c = new User();
                     string comid = "U" + (int.Parse(autoid) + 1);
-                    c.userid = comid;
-                    c.username = user.username;
+                    c.userId = comid;
+                    c.userName = user.userName;
                     c.password = user.password;
                     c.status = user.status;
-                    c.companyid = user.companyid;
+                    c.companyId = user.companyId;
                     c.role = user.role;
-                    c.employeeautoid = user.employeeautoid;
-                    c.deptautoid = user.deptautoid;
+                    c.employeeAutoId = user.employeeAutoId;
+                    c.deptAutoId = user.deptAutoId;
                     _context.users.Add(c);
                     await _context.SaveChangesAsync();
-                    getuserautoid = c.userautoid;
+                    getuserautoid = c.userAutoId;
                 }
 
-                var new_list_roles = user.list_roles;
+                var newListRoles = user.listRoles;
 
-                foreach (var items in new_list_roles)
+                foreach (var items in newListRoles)
                 {
                     RoleandUser roledept = new RoleandUser();
-                    roledept.roleautoid = int.Parse(items);
-                    roledept.userautoid = getuserautoid;
-                    roledept.companyid = user.companyid;
-                    _context.userandroles.Add(roledept);
+                    roledept.roleAutoId = int.Parse(items);
+                    roledept.userAutoId = getuserautoid;
+                    roledept.companyId = user.companyId;
+                    _context.userAndRoles.Add(roledept);
                     await _context.SaveChangesAsync();
                 }
 
@@ -237,7 +237,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var user = _context.users.Where(x => x.companyid == cid && x.userid == uid).FirstOrDefault();
+                var user = _context.users.Where(x => x.companyId == cid && x.userId == uid).FirstOrDefault();
                 if (user == null)
                 {
                     return NotFound();
@@ -257,7 +257,7 @@ namespace AccountsWebApi.Controllers
 
         private bool UserExists(string id, string cid)
         {
-            return _context.users.Any(x => x.userid == id && x.companyid==cid);
+            return _context.users.Any(x => x.userId == id && x.companyId ==cid);
         }
     }
 }

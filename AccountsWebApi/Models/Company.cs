@@ -4,27 +4,27 @@ using System.Net.Mail;
 
 namespace AccountsWebApi.Models
 {
-    [Index(nameof(companyemail), IsUnique = true)]
-    [Index(nameof(companyname), IsUnique = true)]
+    [Index(nameof(companyEmail), IsUnique = true)]
+    [Index(nameof(companyName), IsUnique = true)]
     public class Company
     {
         [Key]
-        public string companyid { get; set; }
+        public string companyId { get; set; }
 
         [Required]
-        public string companyname { get; set; }
+        public string companyName { get; set; }
 
         [Required]
-        public string companyemail { get; set; }
+        public string companyEmail { get; set; }
 
         [Required]
-        public string companyphone { get; set; }
+        public string companyPhone { get; set; }
 
         [Required]
-        public string userfirstname { get; set; }
+        public string userFirstName { get; set; }
 
         [Required]
-        public string userlastname { get; set; }
+        public string userLastName { get; set; }
 
         [Required]
         public string password { get; set; }

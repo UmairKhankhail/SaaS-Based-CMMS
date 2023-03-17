@@ -6,19 +6,19 @@ namespace AccountsWebApi.Models
     public class Profile
     {
         [Key]
-        public int profileautoid { get; set; }
+        public int profileAutoId { get; set; }
 
-        public string profileid { get; set; }
+        public string profileId { get; set; }
 
         [Required]
-        public string profilename { get; set; }
+        public string profileName { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
 
         [NotMapped]
-        public List<string> list_username { get; set; }
+        public List<string> listUsername { get; set; }
     }
 }

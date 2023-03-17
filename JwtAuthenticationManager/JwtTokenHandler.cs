@@ -23,7 +23,7 @@ namespace JwtAuthenticationManager
         public const string JWT_SECRET_KEY = "KDSJFVHAFGASFVASJFVSADFHBAKBJSDJBFXD";
         private const int JWT_TOKEN_VALIDITY_MINS = 5;
 
-        private readonly List<UserAccounts> useraccountlist;
+        private readonly List<UserAccounts> userAccountList;
         
         public JwtTokenHandler()
         {
@@ -56,15 +56,15 @@ namespace JwtAuthenticationManager
 
             var claims = new List<Claim>
             {
-                    new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Name, authenticationRequest.uautoid.ToString()),
+                    new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Name, authenticationRequest.uAutoId.ToString()),
                     //new Claim(ClaimTypes.Role, authenticationRequest.role),
                     new Claim(ClaimTypes.UserData, authenticationRequest.cid),
-                    new Claim(ClaimTypes.Anonymous, authenticationRequest.uid),
+                    new Claim(ClaimTypes.Anonymous, authenticationRequest.uId),
                     new Claim(ClaimTypes.Locality, authenticationRequest.role)
             };
             if (authenticationRequest.role == "user")
             {
-                claims.AddRange(authenticationRequest.list_permissions.Select(role => new Claim(ClaimTypes.Role, role)));
+                claims.AddRange(authenticationRequest.listPermissions.Select(role => new Claim(ClaimTypes.Role, role)));
             }
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature);
@@ -82,9 +82,9 @@ namespace JwtAuthenticationManager
 
             return new AuthenticationResponse
             {
-                uid = authenticationRequest.uautoid,
-                ExpiresIn = (int)tokenExpiryTimestamp.Subtract(DateTime.UtcNow).TotalSeconds,
-                JWTToken = token
+                uId = authenticationRequest.uAutoId,
+                expiresIn = (int)tokenExpiryTimestamp.Subtract(DateTime.UtcNow).TotalSeconds,
+                jwtToken = token
             };
 
             //return new
@@ -96,7 +96,7 @@ namespace JwtAuthenticationManager
 
         public ClaimResponse GetCustomClaims(ClaimRequest claimRequest)
         {
-            bool isauth = false;
+            bool isAuth = false;
             int count= 0;
             string secret = "KDSJFVHAFGASFVAS" + "JFVSADFHBAKBJSDJBFXD";
             //KDSJFVHAFGASFVASJFVSADFHBAKBJSDJBFXD
@@ -126,7 +126,7 @@ namespace JwtAuthenticationManager
 
                 foreach (var item in claim2)
                 {
-                    if (item == claimRequest.controller_action_name)
+                    if (item == claimRequest.controllerActionName)
                     {
                         count += 1;
 
@@ -136,20 +136,20 @@ namespace JwtAuthenticationManager
             
             if(count>0)
             {
-                isauth = true;
+                isAuth = true;
             }
             else
             {
-                isauth = false;
+                isAuth = false;
             }
             return new ClaimResponse
             {
-                uautoid = int.Parse(claim1),
+                uAutoId = int.Parse(claim1),
                 role = claim2,
-                companyid = claim3,
-                uid = claim4,
-                approle = claim5,
-                isauth=isauth
+                companyId = claim3,
+                uId = claim4,
+                appRole = claim5,
+                isAuth=isAuth
             };
 
         }

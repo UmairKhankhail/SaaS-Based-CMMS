@@ -6,18 +6,18 @@ namespace AccountsWebApi.Models
     public class RoleandDepartment
     {
         [Key]
-        public int roledeptid { get; set; }
+        public int roleDeptId { get; set; }
 
-        public int roleautoid { get; set; }
-        [ForeignKey("roleautoid")]
+        public int roleAutoId { get; set; }
+        [ForeignKey("roleAutoId")]
         public virtual Role role { get; set; }
 
-        public int deptautoid { get; set; }
-        [ForeignKey("deptautoid")]
+        public int deptAutoId { get; set; }
+        [ForeignKey("deptAutoId")]
         public virtual Department department { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
 
     }

@@ -28,7 +28,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.positions.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.positions.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -66,7 +66,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != position.positionautoid)
+                if (id != position.positionAutoId)
                 {
                     return BadRequest();
                 }
@@ -105,34 +105,34 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.positions.Where(d => d.companyid == position.companyid).Select(d => d.positionid).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.positions.Where(d => d.companyId == position.companyId).Select(d => d.positionId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Position p = new Position();
                     string comid = "P1";
-                    p.positionid = comid;
-                    p.positionname = position.positionname;
-                    p.companyid = position.companyid;
+                    p.positionId = comid;
+                    p.positionName = position.positionName;
+                    p.companyId = position.companyId;
                     p.status = position.status;
                     _context.positions.Add(p);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Position p = new Position();
-                    string comid = "P" + (int.Parse(autoid) + 1);
-                    p.positionid = comid;
-                    p.positionname = position.positionname;
-                    p.companyid = position.companyid;
+                    string comid = "P" + (int.Parse(autoId) + 1);
+                    p.positionId = comid;
+                    p.positionName = position.positionName;
+                    p.companyId = position.companyId;
                     p.status = position.status;
                     _context.positions.Add(p);
                     await _context.SaveChangesAsync();
@@ -174,7 +174,7 @@ namespace AccountsWebApi.Controllers
 
         private bool PositionExists(int id)
         {
-            return _context.positions.Any(e => e.positionautoid == id);
+            return _context.positions.Any(e => e.positionAutoId == id);
         }
     }
 }

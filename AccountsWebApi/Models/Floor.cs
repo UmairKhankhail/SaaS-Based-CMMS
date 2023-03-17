@@ -6,23 +6,23 @@ namespace AccountsWebApi.Models
     public class Floor
     {
         [Key]
-        public int floorautoid { get; set; }
+        public int floorAutoId { get; set; }
 
-        public string floorid { get; set; }
+        public string floorId { get; set; }
 
         [Required]
-        public string floorname { get; set; }
+        public string floorName { get; set; }
 
         [NotMapped]
-        public string facilitysingleid { get; set; }
+        public string facilitySingleId { get; set; }
         public string status { get; set; }
 
-        public int facilityautoid { get; set; }
-        [ForeignKey("facilityautoid")]
+        public int facilityAutoId { get; set; }
+        [ForeignKey("facilityAutoId")]
         public virtual Facility facilities { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

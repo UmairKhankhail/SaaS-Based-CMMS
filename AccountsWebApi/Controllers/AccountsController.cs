@@ -10,10 +10,10 @@ namespace AccountsWebApi.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly JwtTokenHandler _jwtTokenHandler;
         public AccountsController(JwtTokenHandler jwtTokenHandler)
         {
-            _JwtTokenHandler = jwtTokenHandler;
+            _jwtTokenHandler = jwtTokenHandler;
         }
 
         //ActionResult<AuthenticationResponse?>
@@ -28,10 +28,10 @@ namespace AccountsWebApi.Controllers
             //}
 
             //return Ok(user);
-            var mylist = _JwtTokenHandler.GenerateJWTToken(authenticationRequest);
-            if (mylist is null)
+            var myList = _jwtTokenHandler.GenerateJWTToken(authenticationRequest);
+            if (myList is null)
                 return Unauthorized();
-            return Ok(mylist);
+            return Ok(myList);
         }
     }
 }

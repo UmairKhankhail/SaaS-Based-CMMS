@@ -29,7 +29,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.methodtypes.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.methodTypes.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -44,7 +44,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var methodtype = await _context.methodtypes.FindAsync(id);
+                var methodtype = await _context.methodTypes.FindAsync(id);
 
                 if (methodtype == null)
                 {
@@ -67,7 +67,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != methodtype.mtautoid)
+                if (id != methodtype.mtAutoId)
                 {
                     return BadRequest();
                 }
@@ -94,36 +94,36 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.methodtypes.Where(d => d.companyid == methodtype.companyid).Select(d => d.mtid).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.methodTypes.Where(d => d.companyId == methodtype.companyId).Select(d => d.mtId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Methodtype m = new Methodtype();
                     string comid = "M1";
-                    m.mtid = comid;
-                    m.mtname = methodtype.mtname;
-                    m.companyid = methodtype.companyid;
+                    m.mtId = comid;
+                    m.mtName = methodtype.mtName;
+                    m.companyId = methodtype.companyId;
                     m.status = methodtype.status;
-                    _context.methodtypes.Add(m);
+                    _context.methodTypes.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Methodtype m = new Methodtype();
-                    string comid = "M" + (int.Parse(autoid) + 1);
-                    m.mtid = comid;
-                    m.mtname = methodtype.mtname;
-                    m.companyid = methodtype.companyid;
+                    string comid = "M" + (int.Parse(autoId) + 1);
+                    m.mtId = comid;
+                    m.mtName = methodtype.mtName;
+                    m.companyId = methodtype.companyId;
                     m.status = methodtype.status;
-                    _context.methodtypes.Add(m);
+                    _context.methodTypes.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
@@ -143,13 +143,13 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var methodtype = await _context.methodtypes.FindAsync(id);
+                var methodtype = await _context.methodTypes.FindAsync(id);
                 if (methodtype == null)
                 {
                     return NotFound();
                 }
 
-                _context.methodtypes.Remove(methodtype);
+                _context.methodTypes.Remove(methodtype);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -163,7 +163,7 @@ namespace AccountsWebApi.Controllers
 
         private bool MethodtypeExists(int id)
         {
-            return _context.methodtypes.Any(e => e.mtautoid == id);
+            return _context.methodTypes.Any(e => e.mtAutoId == id);
         }
     }
 }
