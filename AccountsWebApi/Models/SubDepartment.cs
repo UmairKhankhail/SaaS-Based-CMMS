@@ -6,21 +6,21 @@ namespace AccountsWebApi.Models
     public class SubDepartment
     {
         [Key]
-        public int subdeptautoid { get; set; }
-        public string subdeptid { get; set; }
+        public int subDeptAutoId { get; set; }
+        public string subDeptId { get; set; }
 
         [Required]
-        public string subdeptname { get; set; }
+        public string subDeptName { get; set; }
         public string status { get; set; }
 
         [NotMapped]
-        public string deptsingleid { get; set; }
-        public int deptautoid { get; set; }
-        [ForeignKey("deptautoid")]
+        public string deptSingleId { get; set; }
+        public int deptAutoId { get; set; }
+        [ForeignKey("deptAutoId")]
         public virtual Department department { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

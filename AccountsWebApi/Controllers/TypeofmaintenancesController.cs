@@ -28,7 +28,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.typeofmaintenances.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.typeOfMaintenances.Where(x => x.companyId == cid).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -43,7 +43,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typeofmaintenance = await _context.typeofmaintenances.FindAsync(id);
+                var typeofmaintenance = await _context.typeOfMaintenances.FindAsync(id);
 
                 if (typeofmaintenance == null)
                 {
@@ -62,16 +62,16 @@ namespace AccountsWebApi.Controllers
         // PUT: api/Typeofmaintenances/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTypeofmaintenance(int id, Typeofmaintenance typeofmaintenance)
+        public async Task<IActionResult> PutTypeofmaintenance(int id, Typeofmaintenance typeOfMaintenance)
         {
             try
             {
-                if (id != typeofmaintenance.tomautoid)
+                if (id != typeOfMaintenance.tomAutoId)
                 {
                     return BadRequest();
                 }
 
-                _context.Entry(typeofmaintenance).State = EntityState.Modified;
+                _context.Entry(typeOfMaintenance).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
 
 
@@ -92,36 +92,36 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.typeofmaintenances.Where(d => d.companyid == typeofmaintenance.companyid).Select(d => d.tomid).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.typeOfMaintenances.Where(d => d.companyId == typeofmaintenance.companyId).Select(d => d.tomId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(2))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Typeofmaintenance m = new Typeofmaintenance();
                     string comid = "TM1";
-                    m.tomid = comid;
-                    m.tomname = typeofmaintenance.tomname;
-                    m.companyid = typeofmaintenance.companyid;
+                    m.tomId = comid;
+                    m.tomName = typeofmaintenance.tomName;
+                    m.companyId = typeofmaintenance.companyId;
                     m.status = typeofmaintenance.status;
-                    _context.typeofmaintenances.Add(m);
+                    _context.typeOfMaintenances.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Typeofmaintenance m = new Typeofmaintenance();
-                    string comid = "TM" + (int.Parse(autoid) + 1);
-                    m.tomid = comid;
-                    m.tomname = typeofmaintenance.tomname;
-                    m.companyid = typeofmaintenance.companyid;
+                    string comid = "TM" + (int.Parse(autoId) + 1);
+                    m.tomId = comid;
+                    m.tomName = typeofmaintenance.tomName;
+                    m.companyId = typeofmaintenance.companyId;
                     m.status = typeofmaintenance.status;
-                    _context.typeofmaintenances.Add(m);
+                    _context.typeOfMaintenances.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
@@ -141,13 +141,13 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typeofmaintenance = await _context.typeofmaintenances.FindAsync(id);
+                var typeofmaintenance = await _context.typeOfMaintenances.FindAsync(id);
                 if (typeofmaintenance == null)
                 {
                     return NotFound();
                 }
 
-                _context.typeofmaintenances.Remove(typeofmaintenance);
+                _context.typeOfMaintenances.Remove(typeofmaintenance);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -161,7 +161,7 @@ namespace AccountsWebApi.Controllers
 
         private bool TypeofmaintenanceExists(int id)
         {
-            return _context.typeofmaintenances.Any(e => e.tomautoid == id);
+            return _context.typeOfMaintenances.Any(e => e.tomAutoId == id);
         }
     }
 }

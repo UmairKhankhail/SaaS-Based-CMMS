@@ -6,16 +6,16 @@ namespace AccountsWebApi.Models
     public class Department
     {
         [Key]
-        public int deptautoid { get; set; }
+        public int deptAutoId { get; set; }
 
-        public string deptid { get; set; }
+        public string deptId { get; set; }
 
         [Required]
-        public string deptname { get; set; }
+        public string deptName { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

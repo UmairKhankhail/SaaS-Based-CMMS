@@ -30,7 +30,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.functionallocations.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.functionalLocations.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -45,7 +45,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var functionallocation = await _context.functionallocations.FindAsync(id);
+                var functionallocation = await _context.functionalLocations.FindAsync(id);
 
                 if (functionallocation == null)
                 {
@@ -68,7 +68,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != functionallocation.flautoid)
+                if (id != functionallocation.flAutoId)
                 {
                     return BadRequest();
                 }
@@ -92,12 +92,12 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var faflfunctionalloc = _context.functionallocations.Where(d => d.companyid == functionallocation.companyid).Select(f => f.flid).ToList();
+                var faflfunctionalloc = _context.functionalLocations.Where(d => d.companyId == functionallocation.companyId).Select(f => f.flId).ToList();
                 List<string> fllist = new List<string>();
                 List<int> flnolist = new List<int>();
                 foreach (var z in faflfunctionalloc)
                 {
-                    if (z.Contains(functionallocation.floorsingleid + "L"))
+                    if (z.Contains(functionallocation.floorSingleId + "L"))
                     {
                         fllist.Add(z);
                     }
@@ -117,29 +117,29 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Functionallocation f = new Functionallocation();
-                    f.flid = functionallocation.floorsingleid + "L1" + functionallocation.subdeptsingleid;
-                    f.flname = functionallocation.flname;
-                    f.companyid = functionallocation.companyid;
+                    f.flId = functionallocation.floorSingleId + "L1" + functionallocation.subDeptSingleId;
+                    f.flName = functionallocation.flName;
+                    f.companyId = functionallocation.companyId;
                     f.status = "Active";
-                    f.facilityautoid = functionallocation.facilityautoid;
-                    f.floorautoid = functionallocation.floorautoid;
-                    f.subdeptautoid = functionallocation.subdeptautoid;
-                    _context.functionallocations.Add(f);
+                    f.facilityAutoId = functionallocation.facilityAutoId;
+                    f.floorAutoId = functionallocation.floorAutoId;
+                    f.subDeptAutoId = functionallocation.subDeptAutoId;
+                    _context.functionalLocations.Add(f);
                     await _context.SaveChangesAsync();
                 }
                 if (flnolist.Count > 0)
                 {
                     _context.ChangeTracker.Clear();
                     Functionallocation f = new Functionallocation();
-                    string comid = functionallocation.floorsingleid + "L" + (flnolist.Max() + 1) + functionallocation.subdeptsingleid;
-                    f.flid = comid;
-                    f.flname = functionallocation.flname;
-                    f.companyid = functionallocation.companyid;
+                    string comid = functionallocation.floorSingleId + "L" + (flnolist.Max() + 1) + functionallocation.subDeptSingleId;
+                    f.flId = comid;
+                    f.flName = functionallocation.flName;
+                    f.companyId = functionallocation.companyId;
                     f.status = "Active";
-                    f.facilityautoid = functionallocation.facilityautoid;
-                    f.floorautoid = functionallocation.floorautoid;
-                    f.subdeptautoid = functionallocation.subdeptautoid;
-                    _context.functionallocations.Add(f);
+                    f.facilityAutoId = functionallocation.facilityAutoId;
+                    f.floorAutoId = functionallocation.floorAutoId;
+                    f.subDeptAutoId = functionallocation.subDeptAutoId;
+                    _context.functionalLocations.Add(f);
                     await _context.SaveChangesAsync();
                 }
                 return Ok();
@@ -158,13 +158,13 @@ namespace AccountsWebApi.Controllers
             try
             {
 
-                var functionallocation = await _context.functionallocations.FindAsync(id);
+                var functionallocation = await _context.functionalLocations.FindAsync(id);
                 if (functionallocation == null)
                 {
                     return NotFound();
                 }
 
-                _context.functionallocations.Remove(functionallocation);
+                _context.functionalLocations.Remove(functionallocation);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -178,7 +178,7 @@ namespace AccountsWebApi.Controllers
 
         private bool FunctionallocationExists(int id)
         {
-            return _context.functionallocations.Any(e => e.flautoid == id);
+            return _context.functionalLocations.Any(e => e.flAutoId == id);
         }
     }
 }

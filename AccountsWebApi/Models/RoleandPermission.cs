@@ -6,19 +6,19 @@ namespace AccountsWebApi.Models
     public class RoleandPermission
     {
         [Key]
-        public int rolepermissionid { get; set; }
+        public int rolePermissionId { get; set; }
 
-        public int roleautoid { get; set; }
-        [ForeignKey("roleautoid")]
+        public int roleAutoId { get; set; }
+        [ForeignKey("roleAutoId")]
         public virtual Role role { get; set; }
 
-        public string permissionid { get; set; }
-        [ForeignKey("permissionid")]
+        public string permissionId { get; set; }
+        [ForeignKey("permissionId")]
         public virtual Permission permission { get; set; }
 
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
 
     }

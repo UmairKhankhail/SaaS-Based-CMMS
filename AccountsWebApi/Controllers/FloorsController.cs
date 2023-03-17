@@ -29,7 +29,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.floors.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.floors.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -68,7 +68,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != floor.floorautoid)
+                if (id != floor.floorAutoId)
                 {
                     return BadRequest();
                 }
@@ -93,12 +93,12 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var facilityfloors = _context.floors.Where(d => d.companyid == floor.companyid).Select(f => f.floorid).ToList();
+                var facilityfloors = _context.floors.Where(d => d.companyId == floor.companyId).Select(f => f.floorId).ToList();
                 List<string> floorlist = new List<string>();
                 List<int> floornolist = new List<int>();
                 foreach (var z in facilityfloors)
                 {
-                    if (z.Contains(floor.facilitysingleid + "F"))
+                    if (z.Contains(floor.facilitySingleId + "F"))
                     {
                         floorlist.Add(z);
                     }
@@ -115,11 +115,11 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Floor f = new Floor();
-                    f.floorid = floor.facilitysingleid + "F1";
-                    f.floorname = floor.floorname;
-                    f.companyid = floor.companyid;
+                    f.floorId = floor.facilitySingleId + "F1";
+                    f.floorName = floor.floorName;
+                    f.companyId = floor.companyId;
                     f.status = "Active";
-                    f.facilityautoid = floor.facilityautoid;
+                    f.facilityAutoId = floor.facilityAutoId;
                     _context.floors.Add(f);
                     await _context.SaveChangesAsync();
                 }
@@ -127,12 +127,12 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Floor f = new Floor();
-                    string comid = floor.facilitysingleid + "F" + (floornolist.Max() + 1);
-                    f.floorid = comid;
-                    f.floorname = floor.floorname;
-                    f.companyid = floor.companyid;
+                    string comid = floor.facilitySingleId + "F" + (floornolist.Max() + 1);
+                    f.floorId = comid;
+                    f.floorName = floor.floorName;
+                    f.companyId = floor.companyId;
                     f.status = "Active";
-                    f.facilityautoid = floor.facilityautoid;
+                    f.facilityAutoId = floor.facilityAutoId;
                     _context.floors.Add(f);
                     await _context.SaveChangesAsync();
                 }
@@ -171,7 +171,7 @@ namespace AccountsWebApi.Controllers
 
         private bool FloorExists(int id)
         {
-            return _context.floors.Any(e => e.floorautoid == id);
+            return _context.floors.Any(e => e.floorAutoId == id);
         }
     }
 }

@@ -6,16 +6,16 @@ namespace AccountsWebApi.Models
     public class Position
     {
         [Key]
-        public int positionautoid { get; set; }
+        public int positionAutoId { get; set; }
 
-        public string positionid { get; set; }
+        public string positionId { get; set; }
 
         [Required]
-        public string positionname { get; set; }
+        public string positionName { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

@@ -6,17 +6,17 @@ namespace AccountsWebApi.Models
     public class Typesofproblem
     {
         [Key]
-        public int topautoid { get; set; }
+        public int topAutoId { get; set; }
 
-        public string topid { get; set; }
+        public string topId { get; set; }
 
         [Required]
-        public string topname { get; set; }
+        public string topName { get; set; }
         public string description { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.facilities.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.facilities.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -67,7 +67,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != facility.facilityautoid)
+                if (id != facility.facilityAutoId)
                 {
                     return BadRequest();
                 }
@@ -107,34 +107,34 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.facilities.Where(d => d.companyid == facility.companyid).Select(d => d.facilityid).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.facilities.Where(d => d.companyId == facility.companyId).Select(d => d.facilityId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Facility f = new Facility();
                     string comid = "B1";
-                    f.facilityid = comid;
-                    f.facilityname = facility.facilityname;
-                    f.companyid = facility.companyid;
+                    f.facilityId = comid;
+                    f.facilityName = facility.facilityName;
+                    f.companyId = facility.companyId;
                     f.status = facility.status;
                     _context.facilities.Add(f);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Facility f = new Facility();
-                    string comid = "B" + (int.Parse(autoid) + 1);
-                    f.facilityid = comid;
-                    f.facilityname = facility.facilityname;
-                    f.companyid = facility.companyid;
+                    string comid = "B" + (int.Parse(autoId) + 1);
+                    f.facilityId = comid;
+                    f.facilityName = facility.facilityName;
+                    f.companyId = facility.companyId;
                     f.status = facility.status;
                     _context.facilities.Add(f);
                     await _context.SaveChangesAsync();
@@ -176,7 +176,7 @@ namespace AccountsWebApi.Controllers
 
         private bool FacilityExists(int id)
         {
-            return _context.facilities.Any(e => e.facilityautoid == id);
+            return _context.facilities.Any(e => e.facilityAutoId == id);
         }
     }
 }

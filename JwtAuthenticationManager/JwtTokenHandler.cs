@@ -140,10 +140,10 @@ namespace JwtAuthenticationManager
 
                 var claims = new List<Claim>
             {
-                    new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Name, authenticationRequest.uautoid.ToString()),
+                    new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Name, authenticationRequest.uAutoId.ToString()),
                     //new Claim(ClaimTypes.Role, authenticationRequest.role),
                     new Claim(ClaimTypes.UserData, authenticationRequest.cid),
-                    new Claim(ClaimTypes.Anonymous, authenticationRequest.uid),
+                    new Claim(ClaimTypes.Anonymous, authenticationRequest.uId),
                     new Claim(ClaimTypes.Locality, authenticationRequest.role)
             };
                 
@@ -195,7 +195,7 @@ namespace JwtAuthenticationManager
 
         public ClaimResponse GetCustomClaims(ClaimRequest claimRequest)
         {
-            bool isauth = false;
+            bool isAuth = false;
             int count= 0;
             string secret = "KDSJFVHAFGASFVAS" + "JFVSADFHBAKBJSDJBFXD";
             //KDSJFVHAFGASFVASJFVSADFHBAKBJSDJBFXD
@@ -239,11 +239,11 @@ namespace JwtAuthenticationManager
             
             if(count>0)
             {
-                isauth = true;
+                isAuth = true;
             }
             else
             {
-                isauth = false;
+                isAuth = false;
             }
             return new ClaimResponse
             {

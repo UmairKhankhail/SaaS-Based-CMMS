@@ -6,23 +6,23 @@ namespace AccountsWebApi.Models
     public class Employee
     {
         [Key]
-        public int employeeautoid { get; set; }
-        public string employeeid { get; set; }
+        public int employeeAutoId { get; set; }
+        public string employeeId { get; set; }
 
         [Required]
-        public string employeename { get; set; }
-        public string employeefathername { get; set; }
-        public string employeedesignation { get; set; }
-        public string employeecontactno { get; set; }
-        public string employeeemail { get; set; }
+        public string employeeName { get; set; }
+        public string employeeFatherName { get; set; }
+        public string employeeDesignation { get; set; }
+        public string employeeContactNo { get; set; }
+        public string employeeeMail { get; set; }
         public string status { get; set; }
 
-        public int deptautoid { get; set; }
-        [ForeignKey("deptautoid")]
+        public int deptAutoId { get; set; }
+        [ForeignKey("deptAutoId")]
         public virtual Department department { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

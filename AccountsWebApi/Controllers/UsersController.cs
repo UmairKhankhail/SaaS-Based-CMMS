@@ -171,7 +171,7 @@ namespace AccountsWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(string id, User user)
         {
-            if (id != user.userid)
+            if (id != user.userId)
             {
                 return BadRequest();
             }
@@ -260,20 +260,20 @@ namespace AccountsWebApi.Controllers
         //}
 
         [HttpPost]
-        public async Task<ActionResult> Authenticate(string username, string password)
+        public async Task<ActionResult> Authenticate(string userName, string password)
         {
             try
             {
-                var user = _context.companies.FirstOrDefaultAsync(u => u.companyemail == username && password == u.password).Result;
+                var user = _context.companies.FirstOrDefaultAsync(u => u.companyEmail == userName && password == u.password).Result;
 
                 if (user != null)
                 {
                     AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-                    authenticationRequest.uautoid = 0;
-                    authenticationRequest.uid = "uadmin";
+                    authenticationRequest.uAutoId = 0;
+                    authenticationRequest.uId = "uadmin";
                     authenticationRequest.password = user.password;
                     authenticationRequest.role = "admin";
-                    authenticationRequest.cid = user.companyid;
+                    authenticationRequest.cid = user.companyId;
 
                     var authenticationresponse = _JwtTokenHandler.GenerateJWTTokenAdmin(authenticationRequest);
                     if (authenticationresponse is null)
@@ -282,22 +282,22 @@ namespace AccountsWebApi.Controllers
                 }
                 else if (user == null)
                 {
-                    var appuser = _context.users.FirstOrDefaultAsync(u => u.username == username && password == u.password).Result;
-                    if (appuser != null)
+                    var appUser = _context.users.FirstOrDefaultAsync(u => u.userName == userName && password == u.password).Result;
+                    if (appUser != null)
                     {
                         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-                        authenticationRequest.uautoid = appuser.userautoid;
-                        authenticationRequest.uid = appuser.userid;
-                        authenticationRequest.password = appuser.password;
+                        authenticationRequest.uAutoId = appUser.userAutoId;
+                        authenticationRequest.uId = appUser.userId;
+                        authenticationRequest.password = appUser.password;
                         authenticationRequest.role = "user";
-                        authenticationRequest.cid = appuser.companyid;
+                        authenticationRequest.cid = appUser.companyId;
 
-                        var url = $"http://localhost:5088/api/Permissions/GetPermission?uid={appuser.userid}&uautoid={appuser.userautoid}&cid={appuser.companyid}";
+                        var url = $"http://localhost:5088/api/Permissions/GetPermission?uid={appUser.userId}&uautoid={appUser.userAutoId}&cid={appUser.companyId}";
                         var response = await _httpClient.GetAsync(url);
                         var responseContent = await response.Content.ReadAsStringAsync();
                         List<string> responseList = new List<string>();
-                        var mynewlist = JsonConvert.DeserializeObject<List<string>>(responseContent);
-                        foreach (var item in mynewlist)
+                        var myNewList = JsonConvert.DeserializeObject<List<string>>(responseContent);
+                        foreach (var item in myNewList)
                         {
                             responseList.Add(item);
                         }
@@ -305,7 +305,7 @@ namespace AccountsWebApi.Controllers
                         var authenticationresponse = _JwtTokenHandler.GenerateJWTTokenUser(authenticationRequest);
                         if (authenticationresponse is null)
                             return Unauthorized();
-                        return Ok(authenticationresponse);
+                        return Ok(authenticationResponse);
                     }
                     else
                     {
@@ -328,7 +328,7 @@ namespace AccountsWebApi.Controllers
 
         private bool UserExists(string id)
         {
-            return _context.users.Any(e => e.userid == id);
+            return _context.users.Any(e => e.userId == id);
         }
     }
 }

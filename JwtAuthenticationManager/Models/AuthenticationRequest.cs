@@ -8,11 +8,11 @@ namespace JwtAuthenticationManager.Models
 {
     public class AuthenticationRequest
     {
-        public string uid { get; set; }
-        public int uautoid { get; set; }
+        public string uId { get; set; }
+        public int uAutoId { get; set; }
         public string password { get; set; }
         public string role { get; set; }
         public string cid { get; set; }
-        public List<string> list_permissions { get; set; }
+        public List<string> listPermissions { get; set; }
     }
 }

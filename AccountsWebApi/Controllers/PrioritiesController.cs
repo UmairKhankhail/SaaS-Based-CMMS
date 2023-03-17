@@ -28,7 +28,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.priorities.Where(x => x.companyid == cid).ToListAsync();
+                return await _context.priorities.Where(x => x.companyId == cid).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -66,7 +66,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != priority.priorityautoid)
+                if (id != priority.priorityAutoId)
                 {
                     return BadRequest();
                 }
@@ -91,34 +91,34 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.priorities.Where(d => d.companyid == priority.companyid).Select(d => d.priorityid).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.priorities.Where(d => d.companyId == priority.companyId).Select(d => d.priorityId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(2))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Priority p = new Priority();
                     string comid = "PR1";
-                    p.priorityid = comid;
-                    p.priorityname = priority.priorityname;
-                    p.companyid = priority.companyid;
+                    p.priorityId = comid;
+                    p.priorityName = priority.priorityName;
+                    p.companyId = priority.companyId;
                     p.status = priority.status;
                     _context.priorities.Add(p);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Priority p = new Priority();
-                    string comid = "PR" + (int.Parse(autoid) + 1);
-                    p.priorityid = comid;
-                    p.priorityname = priority.priorityname;
-                    p.companyid = priority.companyid;
+                    string comid = "PR" + (int.Parse(autoId) + 1);
+                    p.priorityId = comid;
+                    p.priorityName = priority.priorityName;
+                    p.companyId = priority.companyId;
                     p.status = priority.status;
                     _context.priorities.Add(p);
                     await _context.SaveChangesAsync();
@@ -161,7 +161,7 @@ namespace AccountsWebApi.Controllers
 
         private bool PriorityExists(int id)
         {
-            return _context.priorities.Any(e => e.priorityautoid == id);
+            return _context.priorities.Any(e => e.priorityAutoId == id);
         }
     }
 }

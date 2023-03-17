@@ -101,8 +101,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                
-                if (id != company.companyid)
+                if (id != company.companyId)
                 {
                     return BadRequest();
                 }
@@ -129,7 +128,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.companies.Select(x => x.companyid).ToList();
+                var compid = _context.companies.Select(x => x.companyId).ToList();
                 var autoid = "";
                 if (compid.Count > 0)
                 {
@@ -144,13 +143,13 @@ namespace AccountsWebApi.Controllers
                     _context.ChangeTracker.Clear();
                     Company c = new Company();
                     string comid = "C1";
-                    c.companyid = comid;
+                    c.companyId = comid;
                     companyidglobal = comid;
-                    c.companyname = company.companyname;
-                    c.companyemail = company.companyemail;
-                    c.companyphone = company.companyphone;
-                    c.userfirstname = company.userfirstname;
-                    c.userlastname = company.userlastname;
+                    c.companyName = company.companyName;
+                    c.companyEmail = company.companyEmail;
+                    c.companyPhone = company.companyPhone;
+                    c.userFirstName = company.userFirstName;
+                    c.userLastName = company.userLastName;
                     c.password = company.password;
                     c.status = company.status;
                     _context.companies.Add(c);
@@ -162,13 +161,13 @@ namespace AccountsWebApi.Controllers
                     _context.ChangeTracker.Clear();
                     Company c = new Company();
                     string comid = "C" + (int.Parse(autoid) + 1);
-                    c.companyid = comid;
+                    c.companyId = comid;
                     companyidglobal = comid;
-                    c.companyname = company.companyname;
-                    c.companyemail = company.companyemail;
-                    c.companyphone = company.companyphone;
-                    c.userfirstname = company.userfirstname;
-                    c.userlastname = company.userlastname;
+                    c.companyName = company.companyName;
+                    c.companyEmail = company.companyEmail;
+                    c.companyPhone = company.companyPhone;
+                    c.userFirstName = company.userFirstName;
+                    c.userLastName = company.userLastName;
                     c.password = company.password;
                     c.status = company.status;
                     _context.companies.Add(c);
@@ -211,7 +210,7 @@ namespace AccountsWebApi.Controllers
 
         private bool CompanyExists(string id)
         {
-            return _context.companies.Any(e => e.companyid == id);
+            return _context.companies.Any(e => e.companyId == id);
         }
     }
 }

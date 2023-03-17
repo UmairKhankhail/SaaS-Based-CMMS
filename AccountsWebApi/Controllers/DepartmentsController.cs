@@ -50,10 +50,10 @@ namespace AccountsWebApi.Controllers
             try
             {
                 var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
-                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controller_action_name = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
-                if (claimresponse.isauth == true)
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return await _context.departments.Where(x => x.companyid == claimresponse.companyid).ToListAsync();
+                    return await _context.departments.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
                 }
                 return Unauthorized();
             }
@@ -104,7 +104,7 @@ namespace AccountsWebApi.Controllers
         {
             try 
             {
-                var department = _context.departments.Where(x => x.deptid == id && x.companyid == cid).FirstOrDefault();
+                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cid).FirstOrDefault();
 
                 if (department == null)
                 {
@@ -177,17 +177,17 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != department.deptid)
+                if (id != department.deptId)
                 {
                     return BadRequest();
                 }
 
                 Department d = new Department();
-                d.deptautoid = department.deptautoid;
-                d.deptid = department.deptid;
-                d.deptname = department.deptname;
+                d.deptAutoId = department.deptAutoId;
+                d.deptId = department.deptId;
+                d.deptName = department.deptName;
                 d.status = department.status;
-                d.companyid = department.companyid;
+                d.companyId = department.companyId;
                 _context.Entry(d).State = EntityState.Modified;
 
                 
@@ -270,41 +270,41 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.departments.Where(d => d.companyid == department.companyid).Select(d => d.deptid).ToList();
+                var compId = _context.departments.Where(d => d.companyId == department.companyId).Select(d => d.deptId).ToList();
 
-                var autoid = "";
-                if (compid.Count > 0)
+                var autoId = "";
+                if (compId.Count > 0)
                 {
 
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Department c = new Department();
                     string comid = "D1";
-                    c.deptid = comid;
-                    c.deptname = department.deptname;
-                    c.companyid = department.companyid;
+                    c.deptId = comid;
+                    c.deptName = department.deptName;
+                    c.companyId = department.companyId;
                     c.status = department.status;
                     _context.departments.Add(c);
                     await _context.SaveChangesAsync();
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Department c = new Department();
-                    string comid = "D" + (int.Parse(autoid) + 1);
-                    c.deptid = comid;
-                    c.deptname = department.deptname;
-                    c.companyid = department.companyid;
+                    string comid = "D" + (int.Parse(autoId) + 1);
+                    c.deptId = comid;
+                    c.deptName = department.deptName;
+                    c.companyId = department.companyId;
                     c.status = department.status;
                     _context.departments.Add(c);
                     await _context.SaveChangesAsync();
                 }
 
-                return await _context.departments.Where(x => x.companyid == department.companyid).ToListAsync();
+                return await _context.departments.Where(x => x.companyId == department.companyId).ToListAsync();
 
             }
             catch(Exception ex)
@@ -414,7 +414,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var department = _context.departments.Where(x => x.deptid == id && x.companyid == cid).FirstOrDefault();
+                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cid).FirstOrDefault();
                 if (department == null)
                 {
                     return NotFound();
@@ -484,7 +484,7 @@ namespace AccountsWebApi.Controllers
 
         private bool DepartmentExists(string id, string cid)
         {
-            return _context.departments.Any(x => x.deptid == id && x.companyid == cid);
+            return _context.departments.Any(x => x.deptId == id && x.companyId == cid);
         }
     }
 }

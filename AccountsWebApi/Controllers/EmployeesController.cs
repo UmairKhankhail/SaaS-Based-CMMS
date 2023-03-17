@@ -30,7 +30,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                return await _context.employees.Where(x => x.companyid == id).ToListAsync();
+                return await _context.employees.Where(x => x.companyId == id).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -55,7 +55,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var employee = await _context.employees.Where(x => x.companyid == id && x.employeeid == eid).FirstOrDefaultAsync();
+                var employee = await _context.employees.Where(x => x.companyId == id && x.employeeId == eid).FirstOrDefaultAsync();
 
                 if (employee == null)
                 {
@@ -78,9 +78,9 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (EmployeeExists(employee.employeeautoid) == true)
+                if (EmployeeExists(employee.employeeAutoId) == true)
                 {
-                    if (id != employee.employeeid)
+                    if (id != employee.employeeId)
                     {
                         return BadRequest();
                     }
@@ -108,43 +108,43 @@ namespace AccountsWebApi.Controllers
             try
             {
 
-                var compid = _context.employees.Where(e => e.companyid == employee.companyid).Select(e => e.employeeid.ToString()).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.employees.Where(e => e.companyId == employee.companyId).Select(e => e.employeeId.ToString()).ToList();
+                var autoId = "";
+                if (compId.Count> 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Employee c = new Employee();
                     string comid = "E1";
-                    c.employeeid = comid;
-                    c.employeename = employee.employeename;
-                    c.employeeemail = employee.employeeemail;
-                    c.employeecontactno = employee.employeecontactno;
-                    c.employeedesignation = employee.employeedesignation;
-                    c.employeefathername = employee.employeefathername;
-                    c.deptautoid = employee.deptautoid;
-                    c.companyid = employee.companyid;
+                    c.employeeId = comid;
+                    c.employeeName = employee.employeeName;
+                    c.employeeeMail = employee.employeeeMail;
+                    c.employeeContactNo = employee.employeeContactNo;
+                    c.employeeDesignation = employee.employeeDesignation;
+                    c.employeeFatherName = employee.employeeFatherName;
+                    c.deptAutoId = employee.deptAutoId;
+                    c.companyId = employee.companyId;
                     c.status = employee.status;
                     _context.employees.Add(c);
                     await _context.SaveChangesAsync();
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Employee c = new Employee();
-                    string comid = "E" + (int.Parse(autoid) + 1);
-                    c.employeeid = comid;
-                    c.employeename = employee.employeename;
-                    c.employeeemail = employee.employeeemail;
-                    c.employeecontactno = employee.employeecontactno;
-                    c.employeedesignation = employee.employeedesignation;
-                    c.employeefathername = employee.employeefathername;
-                    c.deptautoid = employee.deptautoid;
-                    c.companyid = employee.companyid;
+                    string comid = "E" + (int.Parse(autoId) + 1);
+                    c.employeeId = comid;
+                    c.employeeName = employee.employeeName;
+                    c.employeeeMail = employee.employeeeMail;
+                    c.employeeContactNo = employee.employeeContactNo;
+                    c.employeeDesignation = employee.employeeDesignation;
+                    c.employeeFatherName = employee.employeeFatherName;
+                    c.deptAutoId = employee.deptAutoId;
+                    c.companyId = employee.companyId;
                     c.status = employee.status;
                     _context.employees.Add(c);
                     await _context.SaveChangesAsync();
@@ -185,7 +185,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var employee = _context.employees.Where(x => x.companyid == id && x.employeeid == eid).FirstOrDefault();
+                var employee = _context.employees.Where(x => x.companyId == id && x.employeeId == eid).FirstOrDefault();
                 if (employee == null)
                 {
                     return NotFound();
@@ -205,7 +205,7 @@ namespace AccountsWebApi.Controllers
 
         private bool EmployeeExists(int id)
         {
-            return _context.employees.Any(e => e.employeeautoid == id);
+            return _context.employees.Any(e => e.employeeAutoId == id);
         }
     }
 }

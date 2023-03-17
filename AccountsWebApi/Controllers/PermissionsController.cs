@@ -40,7 +40,7 @@ namespace AccountsWebApi.Controllers
 
             foreach (var outputcontroller in outputcontrollers)
             {
-                var perid = _context.permissions.Select(x => x.permissionid).ToList();
+                var perid = _context.permissions.Select(x => x.permissionId).ToList();
                 var autoid = "";
                 if (perid.Count > 0)
                 {
@@ -52,8 +52,8 @@ namespace AccountsWebApi.Controllers
                     _context.ChangeTracker.Clear();
                     Permission per = new Permission();
                     string comid = "P1";
-                    per.permissionid = comid;
-                    per.permissionname = outputcontroller;
+                    per.permissionId = comid;
+                    per.permissionName = outputcontroller;
                     per.status = "Active";
 
                     _context.permissions.Add(per);
@@ -67,8 +67,8 @@ namespace AccountsWebApi.Controllers
                     {
                         Permission per1 = new Permission();
                         string comid = "P" + (Convert.ToInt32(autoid) + 1);
-                        per1.permissionid = comid;
-                        per1.permissionname = outputcontroller;
+                        per1.permissionId = comid;
+                        per1.permissionName = outputcontroller;
                         per1.status = "Active";
 
                         _context.permissions.Add(per1);
@@ -116,15 +116,15 @@ namespace AccountsWebApi.Controllers
             List<string> permissionslist = new List<string>();
             var resultouput = "";
             var getroleid = await _context.users
-                .Join(_context.userandroles, d => d.userautoid, sd => sd.userautoid, (d, sd) => new { d, sd })
-                .Where(x => x.sd.companyid == cid && x.d.companyid == cid && x.d.userid == uid)
+                .Join(_context.userAndRoles, d => d.userAutoId, sd => sd.userAutoId, (d, sd) => new { d, sd })
+                .Where(x => x.sd.companyId == cid && x.d.companyId == cid && x.d.userId == uid)
                 .Select(result => new
                 {
-                    result.sd.roleautoid
+                    result.sd.roleAutoId
                 }).ToListAsync();
             foreach (var x in getroleid)
             {
-                var rid = x.roleautoid;
+                var rid = x.roleAutoId;
                 //   var getrole = await _context.roles
                 //.Join(_context.roleandpermissions, d => d.roleautoid, sd => sd.roleautoid, (d, sd) => new { d, sd })
                 //.Where(x => x.sd.companyid == cid && x.d.companyid == cid && x.d.roleautoid == rid)
@@ -136,20 +136,20 @@ namespace AccountsWebApi.Controllers
                 //}).ToListAsync();
 
                 var dept = await _context.roles
-                    .Join(_context.roleandpermissions, d => d.roleautoid, sd => sd.roleautoid, (d, sd) => new { d, sd })
-                    .Where(x => x.sd.companyid == cid && x.d.companyid == cid && x.d.roleautoid == rid)
+                    .Join(_context.roleAndPermissions, d => d.roleAutoId, sd => sd.roleAutoId, (d, sd) => new { d, sd })
+                    .Where(x => x.sd.companyId == cid && x.d.companyId == cid && x.d.roleAutoId == rid)
                     .Select(result => new
                     {
                         //result.d.roleautoid,
                         //result.d.rolename,
-                        result.sd.permissionid
+                        result.sd.permissionId
                     }).ToListAsync();
                 //int count = 0;
 
                 foreach (var y in dept)
                 {
                     //var perid = y.permissionid;
-                    var pername = _context.permissions.Where(p => p.permissionid == y.permissionid).Select(p => p.permissionname).FirstOrDefault();
+                    var pername = _context.permissions.Where(p => p.permissionId == y.permissionId).Select(p => p.permissionName).FirstOrDefault();
                     //Console.WriteLine(pername);
                     permissionslist.Add(pername);
                 }
@@ -200,7 +200,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                if (id != permission.permissionid)
+                if (id != permission.permissionId)
                 {
                     return BadRequest();
                 }
@@ -232,7 +232,7 @@ namespace AccountsWebApi.Controllers
                 }
                 catch (DbUpdateException)
                 {
-                    if (PermissionExists(permission.permissionid))
+                    if (PermissionExists(permission.permissionId))
                     {
                         return Conflict();
                     }
@@ -242,7 +242,7 @@ namespace AccountsWebApi.Controllers
                     }
                 }
 
-                return CreatedAtAction("GetPermission", new { id = permission.permissionid }, permission);
+                return CreatedAtAction("GetPermission", new { id = permission.permissionId }, permission);
             }
             catch(Exception ex)
             {
@@ -277,11 +277,11 @@ namespace AccountsWebApi.Controllers
 
         private bool PermissionExists(string id)
         {
-            return _context.permissions.Any(e => e.permissionid == id);
+            return _context.permissions.Any(e => e.permissionId == id);
         }
         private bool PermissionNameExists(string name)
         {
-            return _context.permissions.Any(e => e.permissionname == name);
+            return _context.permissions.Any(e => e.permissionName == name);
         }
     }
 }

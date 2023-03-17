@@ -6,17 +6,17 @@ namespace AccountsWebApi.Models
     public class Priority
     {
         [Key]
-        public int priorityautoid { get; set; }
+        public int priorityAutoId { get; set; }
 
-        public string priorityid { get; set; }
+        public string priorityId { get; set; }
 
         [Required]
-        public string priorityname { get; set; }
+        public string priorityName { get; set; }
         public string description { get; set; }
         public string status { get; set; }
 
-        public string companyid { get; set; }
-        [ForeignKey("companyid")]
+        public string companyId { get; set; }
+        [ForeignKey("companyId")]
         public virtual Company companies { get; set; }
     }
 }

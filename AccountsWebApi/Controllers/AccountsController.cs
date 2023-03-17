@@ -10,10 +10,10 @@ namespace AccountsWebApi.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly JwtTokenHandler _jwtTokenHandler;
         public AccountsController(JwtTokenHandler jwtTokenHandler)
         {
-            _JwtTokenHandler = jwtTokenHandler;
+            _jwtTokenHandler = jwtTokenHandler;
         }
 
         //ActionResult<AuthenticationResponse?>
