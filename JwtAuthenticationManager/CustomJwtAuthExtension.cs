@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using RedisCachingService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,10 @@ using System.Threading.Tasks;
 
 namespace JwtAuthenticationManager
 {
+    
     public static class CustomJwtAuthExtension
     {
+        
         public static void AddCustomAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(o =>

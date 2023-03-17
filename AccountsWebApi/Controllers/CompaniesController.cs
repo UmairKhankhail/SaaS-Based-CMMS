@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
+using RedisCachingService;
 
 namespace AccountsWebApi.Controllers
 {
@@ -20,19 +21,23 @@ namespace AccountsWebApi.Controllers
     {
         private readonly ILogger<CompaniesController> _logger;
         private readonly UserDbContext _context;
+        private readonly ICacheService _cacheService;
         public string companyidglobal { get; set; }
-        public CompaniesController(UserDbContext context, ILogger<CompaniesController> logger)
+        public CompaniesController(UserDbContext context, ILogger<CompaniesController> logger, ICacheService cacheService)
         {
             _context = context;
             _logger = logger;
+            _cacheService = cacheService;
         }
 
         // GET: api/Companies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Company>>> Getcompanies()
+        public async Task<ActionResult<IEnumerable<Company>>> GetCompanies()
         {
+            
             try
             {
+
                 //object m = null;
                 //string s = m.ToString();
                 return await _context.companies.ToListAsync();
@@ -40,12 +45,35 @@ namespace AccountsWebApi.Controllers
             }
             catch (Exception ex)
             {
+
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        // GET: api/Companies/5
-        [HttpGet("{id}")]
+
+
+        [HttpGet("com")]
+        public async Task<ActionResult<IEnumerable<Company>>> GetCaheData()
+        {
+            var newcache = _cacheService.GetData<IEnumerable<string>>("2");
+            
+            //var cacheData = _cacheService.GetData<IEnumerable<Company>>("com");
+            //if (cacheData != null && cacheData.Count()>0)
+            //    return Ok(cacheData);
+            //cacheData= await _context.companies.ToListAsync();
+
+            //var expiryTime = DateTimeOffset.Now.AddSeconds(30);
+            //_cacheService.SetData<IEnumerable<Company>>("com", cacheData, expiryTime);
+            return Ok(newcache);
+        }
+
+        //[HttpPost("adddrivers")]
+        //public async Task<ActionResult> PostCache()
+        //{
+        //    var addedObject=
+        //}
+            // GET: api/Companies/5
+            [HttpGet("{id}")]
         public async Task<ActionResult<Company>> GetCompany(string id)
         {
             try
@@ -73,6 +101,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
+                
                 if (id != company.companyid)
                 {
                     return BadRequest();

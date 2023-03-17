@@ -275,7 +275,7 @@ namespace AccountsWebApi.Controllers
                     authenticationRequest.role = "admin";
                     authenticationRequest.cid = user.companyid;
 
-                    var authenticationresponse = _JwtTokenHandler.GenerateJWTToken(authenticationRequest);
+                    var authenticationresponse = _JwtTokenHandler.GenerateJWTTokenAdmin(authenticationRequest);
                     if (authenticationresponse is null)
                         return Unauthorized();
                     return Ok(authenticationresponse);
@@ -302,7 +302,7 @@ namespace AccountsWebApi.Controllers
                             responseList.Add(item);
                         }
                         authenticationRequest.list_permissions = responseList;
-                        var authenticationresponse = _JwtTokenHandler.GenerateJWTToken(authenticationRequest);
+                        var authenticationresponse = _JwtTokenHandler.GenerateJWTTokenUser(authenticationRequest);
                         if (authenticationresponse is null)
                             return Unauthorized();
                         return Ok(authenticationresponse);

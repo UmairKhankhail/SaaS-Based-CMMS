@@ -10,25 +10,29 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Collections;
 using Microsoft.AspNetCore.Mvc.Filters;
+using JwtAuthenticationManager;
+using System.Security.Cryptography.Xml;
+using JwtAuthenticationManager.Models;
 
 namespace AccountsWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class addusersController : ControllerBase
+    public class AddusersController : ControllerBase
     {
         private readonly UserDbContext _context;
-        private readonly ILogger<addusersController> _logger;
-
-        public addusersController(UserDbContext context, ILogger<addusersController> logger)
+        private readonly ILogger<AddusersController> _logger;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public AddusersController(UserDbContext context, ILogger<AddusersController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/addusers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> Getusers(string id)
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string id)
         {
             try
             {
@@ -146,6 +150,11 @@ namespace AccountsWebApi.Controllers
 
                     }
                     await _context.SaveChangesAsync();
+
+                    var cacheresponse=await _JwtTokenHandler.RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId=user.userautoid, cId=user.companyid, uId=user.userid });
+                    if (cacheresponse == true)
+                        return Ok();
+                    return BadRequest();
 
                 }
                 return NoContent();

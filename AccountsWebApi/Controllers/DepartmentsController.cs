@@ -17,6 +17,7 @@ using System.Net.Http;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace AccountsWebApi.Controllers
 {

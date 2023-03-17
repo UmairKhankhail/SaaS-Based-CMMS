@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JwtAuthenticationManager\JwtAuthenticationManager.csproj" />
+    <ProjectReference Include="..\RedisCachingService\RedisCachingService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,19 +1,12 @@
 using AccountsWebApi.Models;
+using RedisCachingService;
 using JwtAuthenticationManager;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddLog4Net();
 // Add services to the container.
-//hi aneeq i am umair khan
-// i Mladjflajfda dlkf
-//sdfassdff
-//ehjdfbsfbaf sdjff adaf d
-// my change
-//changes made
-//pro chamngesmsdhvz da bdvf fsehydf s dgfc
-//another change made asldlf fdgfdgf
-//qwkjdbhajvsajdashbdj hello
+
 builder.Services.AddControllers();
 builder.Services.AddSingleton<JwtTokenHandler>();
 builder.Services.AddCustomAuthentication();
@@ -26,6 +19,9 @@ string connectionstringinitial = $"server={dbhost}; port=3306; database={dbname}
     //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));
 string? connectionString = connectionstringinitial.ToString();
 builder.Services.AddDbContext<UserDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+//builder.Services.AddSingleton<RedisCachingService>();
+builder.Services.AddSingleton<ICacheService,CacheService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddHttpClient();
