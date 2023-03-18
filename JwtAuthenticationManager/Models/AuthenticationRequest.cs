@@ -12,7 +12,7 @@ namespace JwtAuthenticationManager.Models
         public int uAutoId { get; set; }
         public string password { get; set; }
         public string role { get; set; }
-        public string cid { get; set; }
+        public string cId { get; set; }
         public List<string> listPermissions { get; set; }
     }
 }

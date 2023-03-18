@@ -258,6 +258,27 @@ namespace AccountsWebApi.Controllers
 
         //    return Ok(user);
         //}
+        [HttpGet("logout")]
+        public bool Logout()
+        {
+            var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+            var claimresponse = _JwtTokenHandler.GetCustomClaimsForLogout(new ClaimRequest { token = accessToken });
+            if (claimresponse.isAuth == true)
+            {
+                LogoutRequest logoutRequest = new LogoutRequest();
+                logoutRequest.role = claimresponse.appRole;
+                logoutRequest.userAutoId = claimresponse.uAutoId;
+                logoutRequest.cId = claimresponse.companyId;
+                var resultLogout = _JwtTokenHandler.LogoutService(logoutRequest);
+                if (resultLogout == true)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+
+        }
 
         [HttpPost]
         public async Task<ActionResult> Authenticate(string userName, string password)
@@ -273,7 +294,7 @@ namespace AccountsWebApi.Controllers
                     authenticationRequest.uId = "uadmin";
                     authenticationRequest.password = user.password;
                     authenticationRequest.role = "admin";
-                    authenticationRequest.cid = user.companyId;
+                    authenticationRequest.cId = user.companyId;
 
                     var authenticationresponse = _JwtTokenHandler.GenerateJWTTokenAdmin(authenticationRequest);
                     if (authenticationresponse is null)
@@ -290,7 +311,7 @@ namespace AccountsWebApi.Controllers
                         authenticationRequest.uId = appUser.userId;
                         authenticationRequest.password = appUser.password;
                         authenticationRequest.role = "user";
-                        authenticationRequest.cid = appUser.companyId;
+                        authenticationRequest.cId = appUser.companyId;
 
                         var url = $"http://localhost:5088/api/Permissions/GetPermission?uid={appUser.userId}&uautoid={appUser.userAutoId}&cid={appUser.companyId}";
                         var response = await _httpClient.GetAsync(url);
@@ -301,9 +322,9 @@ namespace AccountsWebApi.Controllers
                         {
                             responseList.Add(item);
                         }
-                        authenticationRequest.list_permissions = responseList;
-                        var authenticationresponse = _JwtTokenHandler.GenerateJWTTokenUser(authenticationRequest);
-                        if (authenticationresponse is null)
+                        authenticationRequest.listPermissions = responseList;
+                        var authenticationResponse = _JwtTokenHandler.GenerateJWTTokenUser(authenticationRequest);
+                        if (authenticationResponse is null)
                             return Unauthorized();
                         return Ok(authenticationResponse);
                     }

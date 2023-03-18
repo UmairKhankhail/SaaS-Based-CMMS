@@ -20,18 +20,18 @@ namespace AccountsWebApi.Migrations
 
             modelBuilder.Entity("AccountsWebApi.Models.Company", b =>
                 {
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("companyemail")
+                    b.Property<string>("companyEmail")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("companyname")
+                    b.Property<string>("companyName")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("companyphone")
+                    b.Property<string>("companyPhone")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -42,20 +42,20 @@ namespace AccountsWebApi.Migrations
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("userfirstname")
+                    b.Property<string>("userFirstName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("userlastname")
+                    b.Property<string>("userLastName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("companyid");
+                    b.HasKey("companyId");
 
-                    b.HasIndex("companyemail")
+                    b.HasIndex("companyEmail")
                         .IsUnique();
 
-                    b.HasIndex("companyname")
+                    b.HasIndex("companyName")
                         .IsUnique();
 
                     b.ToTable("companies");
@@ -63,469 +63,469 @@ namespace AccountsWebApi.Migrations
 
             modelBuilder.Entity("AccountsWebApi.Models.Department", b =>
                 {
-                    b.Property<int>("deptautoid")
+                    b.Property<int>("deptAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("deptid")
+                    b.Property<string>("deptId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("deptname")
+                    b.Property<string>("deptName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("deptautoid");
+                    b.HasKey("deptAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
                     b.ToTable("departments");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Employee", b =>
                 {
-                    b.Property<int>("employeeautoid")
+                    b.Property<int>("employeeAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("deptautoid")
+                    b.Property<int>("deptAutoId")
                         .HasColumnType("int");
 
-                    b.Property<string>("employeecontactno")
+                    b.Property<string>("employeeContactNo")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("employeedesignation")
+                    b.Property<string>("employeeDesignation")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("employeeemail")
+                    b.Property<string>("employeeFatherName")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("employeefathername")
+                    b.Property<string>("employeeId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("employeeid")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("employeename")
+                    b.Property<string>("employeeName")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("employeeeMail")
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("employeeautoid");
+                    b.HasKey("employeeAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("deptautoid");
+                    b.HasIndex("deptAutoId");
 
                     b.ToTable("employees");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Facility", b =>
                 {
-                    b.Property<int>("facilityautoid")
+                    b.Property<int>("facilityAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("facilityid")
+                    b.Property<string>("facilityId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("facilityname")
+                    b.Property<string>("facilityName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("facilityautoid");
+                    b.HasKey("facilityAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
                     b.ToTable("facilities");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Floor", b =>
                 {
-                    b.Property<int>("floorautoid")
+                    b.Property<int>("floorAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("facilityautoid")
+                    b.Property<int>("facilityAutoId")
                         .HasColumnType("int");
 
-                    b.Property<string>("floorid")
+                    b.Property<string>("floorId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("floorname")
+                    b.Property<string>("floorName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("floorautoid");
+                    b.HasKey("floorAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("facilityautoid");
+                    b.HasIndex("facilityAutoId");
 
                     b.ToTable("floors");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Functionallocation", b =>
                 {
-                    b.Property<int>("flautoid")
+                    b.Property<int>("flAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("description")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("facilityautoid")
+                    b.Property<int>("facilityAutoId")
                         .HasColumnType("int");
 
-                    b.Property<string>("flid")
+                    b.Property<string>("flId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("flname")
+                    b.Property<string>("flName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("floorautoid")
+                    b.Property<int>("floorAutoId")
                         .HasColumnType("int");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("subdeptautoid")
+                    b.Property<int>("subDeptAutoId")
                         .HasColumnType("int");
 
-                    b.HasKey("flautoid");
+                    b.HasKey("flAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("facilityautoid");
+                    b.HasIndex("facilityAutoId");
 
-                    b.HasIndex("floorautoid");
+                    b.HasIndex("floorAutoId");
 
-                    b.HasIndex("subdeptautoid");
+                    b.HasIndex("subDeptAutoId");
 
-                    b.ToTable("functionallocations");
+                    b.ToTable("functionalLocations");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Methodtype", b =>
                 {
-                    b.Property<int>("mtautoid")
+                    b.Property<int>("mtAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("description")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("mtid")
+                    b.Property<string>("mtId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("mtname")
+                    b.Property<string>("mtName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("mtautoid");
+                    b.HasKey("mtAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.ToTable("methodtypes");
+                    b.ToTable("methodTypes");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Permission", b =>
                 {
-                    b.Property<string>("permissionid")
+                    b.Property<string>("permissionId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("permissionname")
+                    b.Property<string>("permissionName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("permissionid");
+                    b.HasKey("permissionId");
 
                     b.ToTable("permissions");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Position", b =>
                 {
-                    b.Property<int>("positionautoid")
+                    b.Property<int>("positionAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("positionid")
+                    b.Property<string>("positionId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("positionname")
+                    b.Property<string>("positionName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("positionautoid");
+                    b.HasKey("positionAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
                     b.ToTable("positions");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Priority", b =>
                 {
-                    b.Property<int>("priorityautoid")
+                    b.Property<int>("priorityAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("description")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("priorityid")
+                    b.Property<string>("priorityId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("priorityname")
+                    b.Property<string>("priorityName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("priorityautoid");
+                    b.HasKey("priorityAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
                     b.ToTable("priorities");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Profile", b =>
                 {
-                    b.Property<int>("profileautoid")
+                    b.Property<int>("profileAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("profileid")
+                    b.Property<string>("profileId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("profilename")
+                    b.Property<string>("profileName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("profileautoid");
+                    b.HasKey("profileAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
                     b.ToTable("profiles");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Role", b =>
                 {
-                    b.Property<int>("roleautoid")
+                    b.Property<int>("roleAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("roleid")
+                    b.Property<string>("roleId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("rolename")
+                    b.Property<string>("roleName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.HasKey("roleautoid");
+                    b.HasKey("roleAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
                     b.ToTable("roles");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.RoleandDepartment", b =>
                 {
-                    b.Property<int>("roledeptid")
+                    b.Property<int>("roleDeptId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("deptautoid")
+                    b.Property<int>("deptAutoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("roleautoid")
+                    b.Property<int>("roleAutoId")
                         .HasColumnType("int");
 
-                    b.HasKey("roledeptid");
+                    b.HasKey("roleDeptId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("deptautoid");
+                    b.HasIndex("deptAutoId");
 
-                    b.HasIndex("roleautoid");
+                    b.HasIndex("roleAutoId");
 
-                    b.ToTable("roleanddepartments");
+                    b.ToTable("roleAndDepartments");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.RoleandPermission", b =>
                 {
-                    b.Property<int>("rolepermissionid")
+                    b.Property<int>("rolePermissionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("permissionid")
+                    b.Property<string>("permissionId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("roleautoid")
+                    b.Property<int>("roleAutoId")
                         .HasColumnType("int");
 
-                    b.HasKey("rolepermissionid");
+                    b.HasKey("rolePermissionId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("permissionid");
+                    b.HasIndex("permissionId");
 
-                    b.HasIndex("roleautoid");
+                    b.HasIndex("roleAutoId");
 
-                    b.ToTable("roleandpermissions");
+                    b.ToTable("roleAndPermissions");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.RoleandUser", b =>
                 {
-                    b.Property<int>("roleuserid")
+                    b.Property<int>("roleUserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("roleautoid")
+                    b.Property<int>("roleAutoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("userautoid")
+                    b.Property<int>("userAutoId")
                         .HasColumnType("int");
 
-                    b.HasKey("roleuserid");
+                    b.HasKey("roleUserId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("roleautoid");
+                    b.HasIndex("roleAutoId");
 
-                    b.HasIndex("userautoid");
+                    b.HasIndex("userAutoId");
 
-                    b.ToTable("userandroles");
+                    b.ToTable("userAndRoles");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.SubDepartment", b =>
                 {
-                    b.Property<int>("subdeptautoid")
+                    b.Property<int>("subDeptAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("deptautoid")
+                    b.Property<int>("deptAutoId")
                         .HasColumnType("int");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("subdeptid")
+                    b.Property<string>("subDeptId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("subdeptname")
+                    b.Property<string>("subDeptName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("subdeptautoid");
+                    b.HasKey("subDeptAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("deptautoid");
+                    b.HasIndex("deptAutoId");
 
-                    b.ToTable("sub_departments");
+                    b.ToTable("subDepartments");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Tool", b =>
                 {
-                    b.Property<int>("toolautoid")
+                    b.Property<int>("toolAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("toolid")
+                    b.Property<string>("toolId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("toolname")
+                    b.Property<string>("toolName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("toolautoid");
+                    b.HasKey("toolAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
                     b.ToTable("tools");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Typeofmaintenance", b =>
                 {
-                    b.Property<int>("tomautoid")
+                    b.Property<int>("tomAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("description")
@@ -534,27 +534,27 @@ namespace AccountsWebApi.Migrations
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("tomid")
+                    b.Property<string>("tomId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("tomname")
+                    b.Property<string>("tomName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("tomautoid");
+                    b.HasKey("tomAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.ToTable("typeofmaintenances");
+                    b.ToTable("typeOfMaintenances");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Typesofproblem", b =>
                 {
-                    b.Property<int>("topautoid")
+                    b.Property<int>("topAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("description")
@@ -563,33 +563,33 @@ namespace AccountsWebApi.Migrations
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("topid")
+                    b.Property<string>("topId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("topname")
+                    b.Property<string>("topName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("topautoid");
+                    b.HasKey("topAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.ToTable("typesofproblems");
+                    b.ToTable("typesOfProblems");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.User", b =>
                 {
-                    b.Property<int>("userautoid")
+                    b.Property<int>("userAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("deptautoid")
+                    b.Property<int>("deptAutoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("employeeautoid")
+                    b.Property<int>("employeeAutoId")
                         .HasColumnType("int");
 
                     b.Property<string>("password")
@@ -601,22 +601,22 @@ namespace AccountsWebApi.Migrations
                     b.Property<string>("status")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("userid")
+                    b.Property<string>("userId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("username")
+                    b.Property<string>("userName")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.HasKey("userautoid");
+                    b.HasKey("userAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("deptautoid");
+                    b.HasIndex("deptAutoId");
 
-                    b.HasIndex("employeeautoid");
+                    b.HasIndex("employeeAutoId");
 
-                    b.HasIndex("username")
+                    b.HasIndex("userName")
                         .IsUnique();
 
                     b.ToTable("users");
@@ -624,35 +624,35 @@ namespace AccountsWebApi.Migrations
 
             modelBuilder.Entity("AccountsWebApi.Models.Userandprofile", b =>
                 {
-                    b.Property<int>("userandprofileautoid")
+                    b.Property<int>("userAndProfileAutoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("companyid")
+                    b.Property<string>("companyId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("profileautoid")
+                    b.Property<int>("profileAutoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("userautoid")
+                    b.Property<int>("userAutoId")
                         .HasColumnType("int");
 
-                    b.HasKey("userandprofileautoid");
+                    b.HasKey("userAndProfileAutoId");
 
-                    b.HasIndex("companyid");
+                    b.HasIndex("companyId");
 
-                    b.HasIndex("profileautoid");
+                    b.HasIndex("profileAutoId");
 
-                    b.HasIndex("userautoid");
+                    b.HasIndex("userAutoId");
 
-                    b.ToTable("userandprofiles");
+                    b.ToTable("userAndProfiles");
                 });
 
             modelBuilder.Entity("AccountsWebApi.Models.Department", b =>
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -661,11 +661,11 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Department", "department")
                         .WithMany()
-                        .HasForeignKey("deptautoid")
+                        .HasForeignKey("deptAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -678,7 +678,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -687,11 +687,11 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Facility", "facilities")
                         .WithMany()
-                        .HasForeignKey("facilityautoid")
+                        .HasForeignKey("facilityAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -704,23 +704,23 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Facility", "facilities")
                         .WithMany()
-                        .HasForeignKey("facilityautoid")
+                        .HasForeignKey("facilityAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccountsWebApi.Models.Floor", "floors")
                         .WithMany()
-                        .HasForeignKey("floorautoid")
+                        .HasForeignKey("floorAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccountsWebApi.Models.SubDepartment", "subDepartment")
                         .WithMany()
-                        .HasForeignKey("subdeptautoid")
+                        .HasForeignKey("subDeptAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -737,7 +737,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -746,7 +746,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -755,7 +755,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -764,7 +764,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -773,7 +773,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -782,17 +782,17 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Department", "department")
                         .WithMany()
-                        .HasForeignKey("deptautoid")
+                        .HasForeignKey("deptAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccountsWebApi.Models.Role", "role")
                         .WithMany()
-                        .HasForeignKey("roleautoid")
+                        .HasForeignKey("roleAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -807,15 +807,15 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Permission", "permission")
                         .WithMany()
-                        .HasForeignKey("permissionid");
+                        .HasForeignKey("permissionId");
 
                     b.HasOne("AccountsWebApi.Models.Role", "role")
                         .WithMany()
-                        .HasForeignKey("roleautoid")
+                        .HasForeignKey("roleAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -830,17 +830,17 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Role", "role")
                         .WithMany()
-                        .HasForeignKey("roleautoid")
+                        .HasForeignKey("roleAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccountsWebApi.Models.User", "user")
                         .WithMany()
-                        .HasForeignKey("userautoid")
+                        .HasForeignKey("userAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -855,11 +855,11 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Department", "department")
                         .WithMany()
-                        .HasForeignKey("deptautoid")
+                        .HasForeignKey("deptAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -872,7 +872,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -881,7 +881,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -890,7 +890,7 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.Navigation("companies");
                 });
@@ -899,17 +899,17 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Department", "department")
                         .WithMany()
-                        .HasForeignKey("deptautoid")
+                        .HasForeignKey("deptAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccountsWebApi.Models.Employee", "employee")
                         .WithMany()
-                        .HasForeignKey("employeeautoid")
+                        .HasForeignKey("employeeAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -924,17 +924,17 @@ namespace AccountsWebApi.Migrations
                 {
                     b.HasOne("AccountsWebApi.Models.Company", "companies")
                         .WithMany()
-                        .HasForeignKey("companyid");
+                        .HasForeignKey("companyId");
 
                     b.HasOne("AccountsWebApi.Models.Profile", "profiles")
                         .WithMany()
-                        .HasForeignKey("profileautoid")
+                        .HasForeignKey("profileAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("AccountsWebApi.Models.User", "users")
                         .WithMany()
-                        .HasForeignKey("userautoid")
+                        .HasForeignKey("userAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

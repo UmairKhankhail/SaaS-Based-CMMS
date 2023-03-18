@@ -151,7 +151,7 @@ namespace AccountsWebApi.Controllers
                     }
                     await _context.SaveChangesAsync();
 
-                    var cacheresponse=await _JwtTokenHandler.RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId=user.userautoid, cId=user.companyid, uId=user.userid });
+                    var cacheresponse=await _JwtTokenHandler.RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId=user.userAutoId, cId=user.companyId, uId=user.userId });
                     if (cacheresponse == true)
                         return Ok();
                     return BadRequest();
@@ -188,7 +188,7 @@ namespace AccountsWebApi.Controllers
                     User c = new User();
                     string comid = "U1";
                     c.userId = comid;
-                    c.userAutoId = user.userAutoId;
+                    c.userName= user.userName;
                     c.password = user.password;
                     c.status = user.status;
                     c.companyId = user.companyId;

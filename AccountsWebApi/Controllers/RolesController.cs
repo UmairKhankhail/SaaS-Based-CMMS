@@ -290,7 +290,7 @@ namespace AccountsWebApi.Controllers
                 {
                     RoleandDepartment roleDept = new RoleandDepartment();
                     roleDept.deptAutoId = Convert.ToInt32(items);
-                    roleDept.deptAutoId = getRoleAutoId;
+                    roleDept.roleAutoId = getRoleAutoId;
                     roleDept.companyId = role.companyId;
                     _context.roleAndDepartments.Add(roleDept);
                     await _context.SaveChangesAsync();
