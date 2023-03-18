@@ -43,14 +43,14 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typeofmaintenance = await _context.typeOfMaintenances.FindAsync(id);
+                var typeOfMaintenance = await _context.typeOfMaintenances.FindAsync(id);
 
-                if (typeofmaintenance == null)
+                if (typeOfMaintenance == null)
                 {
                     return NotFound();
                 }
 
-                return typeofmaintenance;
+                return typeOfMaintenance;
             }
             catch(Exception ex)
             {
@@ -88,11 +88,11 @@ namespace AccountsWebApi.Controllers
         // POST: api/Typeofmaintenances
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Typeofmaintenance>> PostTypeofmaintenance(Typeofmaintenance typeofmaintenance)
+        public async Task<ActionResult<Typeofmaintenance>> PostTypeofmaintenance(Typeofmaintenance typeOfMaintenance)
         {
             try
             {
-                var compId = _context.typeOfMaintenances.Where(d => d.companyId == typeofmaintenance.companyId).Select(d => d.tomId).ToList();
+                var compId = _context.typeOfMaintenances.Where(d => d.companyId == typeOfMaintenance.companyId).Select(d => d.tomId).ToList();
                 var autoId = "";
                 if (compId.Count > 0)
                 {
@@ -103,11 +103,11 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Typeofmaintenance m = new Typeofmaintenance();
-                    string comid = "TM1";
-                    m.tomId = comid;
-                    m.tomName = typeofmaintenance.tomName;
-                    m.companyId = typeofmaintenance.companyId;
-                    m.status = typeofmaintenance.status;
+                    string comId = "TM1";
+                    m.tomId = comId;
+                    m.tomName = typeOfMaintenance.tomName;
+                    m.companyId = typeOfMaintenance.companyId;
+                    m.status = typeOfMaintenance.status;
                     _context.typeOfMaintenances.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
@@ -116,11 +116,11 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Typeofmaintenance m = new Typeofmaintenance();
-                    string comid = "TM" + (int.Parse(autoId) + 1);
-                    m.tomId = comid;
-                    m.tomName = typeofmaintenance.tomName;
-                    m.companyId = typeofmaintenance.companyId;
-                    m.status = typeofmaintenance.status;
+                    string comId = "TM" + (int.Parse(autoId) + 1);
+                    m.tomId = comId;
+                    m.tomName = typeOfMaintenance.tomName;
+                    m.companyId = typeOfMaintenance.companyId;
+                    m.status = typeOfMaintenance.status;
                     _context.typeOfMaintenances.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
@@ -141,13 +141,13 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typeofmaintenance = await _context.typeOfMaintenances.FindAsync(id);
-                if (typeofmaintenance == null)
+                var typeOfMaintenance = await _context.typeOfMaintenances.FindAsync(id);
+                if (typeOfMaintenance == null)
                 {
                     return NotFound();
                 }
 
-                _context.typeOfMaintenances.Remove(typeofmaintenance);
+                _context.typeOfMaintenances.Remove(typeOfMaintenance);
                 await _context.SaveChangesAsync();
 
                 return NoContent();

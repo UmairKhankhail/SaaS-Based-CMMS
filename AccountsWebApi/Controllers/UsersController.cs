@@ -76,8 +76,8 @@ namespace AccountsWebApi.Controllers
                 return Unauthorized();
             }
 
-            var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken });
-            return Ok(claimresponse);
+            var claimResponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken });
+            return Ok(claimResponse);
             //if (claimresponse is null || claimresponse.role != "user")
             //{
             //    return Unauthorized();
@@ -262,13 +262,13 @@ namespace AccountsWebApi.Controllers
         public bool Logout()
         {
             var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
-            var claimresponse = _JwtTokenHandler.GetCustomClaimsForLogout(new ClaimRequest { token = accessToken });
-            if (claimresponse.isAuth == true)
+            var claimResponse = _JwtTokenHandler.GetCustomClaimsForLogout(new ClaimRequest { token = accessToken });
+            if (claimResponse.isAuth == true)
             {
                 LogoutRequest logoutRequest = new LogoutRequest();
-                logoutRequest.role = claimresponse.appRole;
-                logoutRequest.userAutoId = claimresponse.uAutoId;
-                logoutRequest.cId = claimresponse.companyId;
+                logoutRequest.role = claimResponse.appRole;
+                logoutRequest.userAutoId = claimResponse.uAutoId;
+                logoutRequest.cId = claimResponse.companyId;
                 var resultLogout = _JwtTokenHandler.LogoutService(logoutRequest);
                 if (resultLogout == true)
                 {
@@ -296,10 +296,10 @@ namespace AccountsWebApi.Controllers
                     authenticationRequest.role = "admin";
                     authenticationRequest.cId = user.companyId;
 
-                    var authenticationresponse = _JwtTokenHandler.GenerateJWTTokenAdmin(authenticationRequest);
-                    if (authenticationresponse is null)
+                    var authenticationResponse = _JwtTokenHandler.GenerateJWTTokenAdmin(authenticationRequest);
+                    if (authenticationResponse is null)
                         return Unauthorized();
-                    return Ok(authenticationresponse);
+                    return Ok(authenticationResponse);
                 }
                 else if (user == null)
                 {

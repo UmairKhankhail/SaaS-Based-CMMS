@@ -24,11 +24,11 @@ namespace AccountsWebApi.Controllers
 
         // GET: api/Positions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Position>>> Getpositions(string cid)
+        public async Task<ActionResult<IEnumerable<Position>>> Getpositions(string cId)
         {
             try
             {
-                return await _context.positions.Where(x => x.companyId == cid).ToListAsync();
+                return await _context.positions.Where(x => x.companyId == cId).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -116,8 +116,8 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Position p = new Position();
-                    string comid = "P1";
-                    p.positionId = comid;
+                    string comId = "P1";
+                    p.positionId = comId;
                     p.positionName = position.positionName;
                     p.companyId = position.companyId;
                     p.status = position.status;

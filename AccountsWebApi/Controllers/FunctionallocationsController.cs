@@ -26,11 +26,11 @@ namespace AccountsWebApi.Controllers
 
         // GET: api/Functionallocations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Functionallocation>>> Getfunctionallocations(string cid)
+        public async Task<ActionResult<IEnumerable<Functionallocation>>> Getfunctionallocations(string cId)
         {
             try
             {
-                return await _context.functionalLocations.Where(x => x.companyId == cid).ToListAsync();
+                return await _context.functionalLocations.Where(x => x.companyId == cId).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -45,14 +45,14 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var functionallocation = await _context.functionalLocations.FindAsync(id);
+                var functionalLocation = await _context.functionalLocations.FindAsync(id);
 
-                if (functionallocation == null)
+                if (functionalLocation == null)
                 {
                     return NotFound();
                 }
 
-                return functionallocation;
+                return functionalLocation;
             }
             catch(Exception ex)
             {
@@ -64,16 +64,16 @@ namespace AccountsWebApi.Controllers
         // PUT: api/Functionallocations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFunctionallocation(int id, Functionallocation functionallocation)
+        public async Task<IActionResult> PutFunctionallocation(int id, Functionallocation functionalLocation)
         {
             try
             {
-                if (id != functionallocation.flAutoId)
+                if (id != functionalLocation.flAutoId)
                 {
                     return BadRequest();
                 }
 
-                _context.Entry(functionallocation).State = EntityState.Modified;
+                _context.Entry(functionalLocation).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 
                 return NoContent();
@@ -92,28 +92,28 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var faflfunctionalloc = _context.functionalLocations.Where(d => d.companyId == functionallocation.companyId).Select(f => f.flId).ToList();
-                List<string> fllist = new List<string>();
-                List<int> flnolist = new List<int>();
-                foreach (var z in faflfunctionalloc)
+                var faFlFunctionalLoc = _context.functionalLocations.Where(d => d.companyId == functionallocation.companyId).Select(f => f.flId).ToList();
+                List<string> flList = new List<string>();
+                List<int> flNoList = new List<int>();
+                foreach (var z in faFlFunctionalLoc)
                 {
                     if (z.Contains(functionallocation.floorSingleId + "L"))
                     {
-                        fllist.Add(z);
+                        flList.Add(z);
                     }
                 }
-                if (fllist.Count > 0)
+                if (flList.Count > 0)
                 {
-                    foreach (var x in fllist)
+                    foreach (var x in flList)
                     {
                         int startIndex = x.IndexOf('L') + 1;
                         int endIndex = x.IndexOf('D');
                         string result = x.Substring(startIndex, endIndex - startIndex);
-                        flnolist.Add(int.Parse(result));
+                        flNoList.Add(int.Parse(result));
                     }
                 }
 
-                if (flnolist.Count == 0)
+                if (flNoList.Count == 0)
                 {
                     _context.ChangeTracker.Clear();
                     Functionallocation f = new Functionallocation();
@@ -127,12 +127,12 @@ namespace AccountsWebApi.Controllers
                     _context.functionalLocations.Add(f);
                     await _context.SaveChangesAsync();
                 }
-                if (flnolist.Count > 0)
+                if (flNoList.Count > 0)
                 {
                     _context.ChangeTracker.Clear();
                     Functionallocation f = new Functionallocation();
-                    string comid = functionallocation.floorSingleId + "L" + (flnolist.Max() + 1) + functionallocation.subDeptSingleId;
-                    f.flId = comid;
+                    string comId = functionallocation.floorSingleId + "L" + (flNoList.Max() + 1) + functionallocation.subDeptSingleId;
+                    f.flId = comId;
                     f.flName = functionallocation.flName;
                     f.companyId = functionallocation.companyId;
                     f.status = "Active";
@@ -158,13 +158,13 @@ namespace AccountsWebApi.Controllers
             try
             {
 
-                var functionallocation = await _context.functionalLocations.FindAsync(id);
-                if (functionallocation == null)
+                var functionalLocation = await _context.functionalLocations.FindAsync(id);
+                if (functionalLocation == null)
                 {
                     return NotFound();
                 }
 
-                _context.functionalLocations.Remove(functionallocation);
+                _context.functionalLocations.Remove(functionalLocation);
                 await _context.SaveChangesAsync();
 
                 return NoContent();

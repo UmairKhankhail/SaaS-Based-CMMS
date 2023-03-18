@@ -47,13 +47,13 @@ namespace AccountsWebApi.Controllers
 
         // GET: api/addusers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id, int uid)
+        public async Task<ActionResult<User>> GetUser(string id, int uId)
         {
             try
             {
-                var getroleid = await _context.users
+                var getRoleId = await _context.users
                    .Join(_context.userAndRoles, d => d.userAutoId, sd => sd.userAutoId, (d, sd) => new { d, sd })
-                   .Where(x => x.sd.companyId == id && x.d.companyId == id && x.d.userAutoId == uid)
+                   .Where(x => x.sd.companyId == id && x.d.companyId == id && x.d.userAutoId == uId)
                    .Select(result => new
                    {
                        result.sd.userAutoId,
@@ -65,7 +65,7 @@ namespace AccountsWebApi.Controllers
                        result.sd.companyId,
                    }).ToListAsync();
 
-                return Ok(getroleid);
+                return Ok(getRoleId);
             }
             catch(Exception ex)
             {
@@ -94,8 +94,8 @@ namespace AccountsWebApi.Controllers
                 {
                     var listRoles = user.listRoles;
                     var listDbRoles = new List<string>();
-                    var getuserroles = _context.userAndRoles.Where(x => x.userAutoId == user.userAutoId && user.companyId == user.companyId).Select(x => x.roleAutoId);
-                    foreach (var x in getuserroles)
+                    var getUserRoles = _context.userAndRoles.Where(x => x.userAutoId == user.userAutoId && user.companyId == user.companyId).Select(x => x.roleAutoId);
+                    foreach (var x in getUserRoles)
                     {
                         listDbRoles.Add(x.ToString());
                         Console.WriteLine("DB Roles: " + x);
@@ -107,7 +107,7 @@ namespace AccountsWebApi.Controllers
                     }
 
                     var resultListLeft = listDbRoles.Except(listRoles).ToList();
-                    var resultlistright = listRoles.Except(listDbRoles).ToList();
+                    var resultListRight = listRoles.Except(listDbRoles).ToList();
                     var rll = new List<string>();
                     var rlr = new List<string>();
                     if (resultListLeft != null)
@@ -117,9 +117,9 @@ namespace AccountsWebApi.Controllers
                             rll.Add(x);
                         }
                     }
-                    if (resultlistright != null)
+                    if (resultListRight != null)
                     {
-                        foreach (var x in resultlistright)
+                        foreach (var x in resultListRight)
                         {
                             rlr.Add(x);
                         }
@@ -128,31 +128,31 @@ namespace AccountsWebApi.Controllers
                     {
                         foreach (var item in rll)
                         {
-                            var deluser = _context.userAndRoles.Where(x => x.companyId == user.companyId && x.userAutoId == user.userAutoId && x.roleAutoId == int.Parse(item)).FirstOrDefault();
-                            if (deluser == null)
+                            var delUser = _context.userAndRoles.Where(x => x.companyId == user.companyId && x.userAutoId == user.userAutoId && x.roleAutoId == int.Parse(item)).FirstOrDefault();
+                            if (delUser == null)
                             {
                                 return NotFound();
                             }
 
-                            _context.userAndRoles.Remove(deluser);
+                            _context.userAndRoles.Remove(delUser);
                         }
                     }
                     if (rlr != null)
                     {
                         foreach (var item in rlr)
                         {
-                            RoleandUser roleuser = new RoleandUser();
-                            roleuser.userAutoId = user.userAutoId;
-                            roleuser.roleAutoId = int.Parse(item);
-                            roleuser.companyId = user.companyId;
-                            _context.userAndRoles.Add(roleuser);
+                            RoleandUser roleUser = new RoleandUser();
+                            roleUser.userAutoId = user.userAutoId;
+                            roleUser.roleAutoId = int.Parse(item);
+                            roleUser.companyId = user.companyId;
+                            _context.userAndRoles.Add(roleUser);
                         }
 
                     }
                     await _context.SaveChangesAsync();
 
-                    var cacheresponse=await _JwtTokenHandler.RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId=user.userAutoId, cId=user.companyId, uId=user.userId });
-                    if (cacheresponse == true)
+                    var cacheResponse=await _JwtTokenHandler.RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId=user.userAutoId, cId=user.companyId, uId=user.userId });
+                    if (cacheResponse == true)
                         return Ok();
                     return BadRequest();
 
@@ -173,21 +173,21 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                int getuserautoid = 0;
-                var compid = _context.users.Where(d => d.companyId == user.companyId).Select(d => d.userId).ToList();
+                int getUserAutoId = 0;
+                var compId = _context.users.Where(d => d.companyId == user.companyId).Select(d => d.userId).ToList();
 
-                var autoid = "";
-                if (compid.Count > 0)
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     User c = new User();
-                    string comid = "U1";
-                    c.userId = comid;
+                    string comId = "U1";
+                    c.userId = comId;
                     c.userName= user.userName;
                     c.password = user.password;
                     c.status = user.status;
@@ -197,14 +197,14 @@ namespace AccountsWebApi.Controllers
                     c.deptAutoId = user.deptAutoId;
                     _context.users.Add(c);
                     await _context.SaveChangesAsync();
-                    getuserautoid = c.userAutoId;
+                    getUserAutoId = c.userAutoId;
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     User c = new User();
-                    string comid = "U" + (int.Parse(autoid) + 1);
-                    c.userId = comid;
+                    string comId = "U" + (int.Parse(autoId) + 1);
+                    c.userId = comId;
                     c.userName = user.userName;
                     c.password = user.password;
                     c.status = user.status;
@@ -214,7 +214,7 @@ namespace AccountsWebApi.Controllers
                     c.deptAutoId = user.deptAutoId;
                     _context.users.Add(c);
                     await _context.SaveChangesAsync();
-                    getuserautoid = c.userAutoId;
+                    getUserAutoId = c.userAutoId;
                 }
 
                 var newListRoles = user.listRoles;
@@ -223,7 +223,7 @@ namespace AccountsWebApi.Controllers
                 {
                     RoleandUser roledept = new RoleandUser();
                     roledept.roleAutoId = int.Parse(items);
-                    roledept.userAutoId = getuserautoid;
+                    roledept.userAutoId = getUserAutoId;
                     roledept.companyId = user.companyId;
                     _context.userAndRoles.Add(roledept);
                     await _context.SaveChangesAsync();
@@ -242,11 +242,11 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/addusers/5
         [HttpDelete]
-        public async Task<IActionResult> DeleteUser(string cid, string uid)
+        public async Task<IActionResult> DeleteUser(string cid, string uId)
         {
             try
             {
-                var user = _context.users.Where(x => x.companyId == cid && x.userId == uid).FirstOrDefault();
+                var user = _context.users.Where(x => x.companyId == cid && x.userId == uId).FirstOrDefault();
                 if (user == null)
                 {
                     return NotFound();
@@ -264,9 +264,9 @@ namespace AccountsWebApi.Controllers
             }
         }
 
-        private bool UserExists(string id, string cid)
+        private bool UserExists(string id, string cId)
         {
-            return _context.users.Any(x => x.userId == id && x.companyId ==cid);
+            return _context.users.Any(x => x.userId == id && x.companyId ==cId);
         }
     }
 }

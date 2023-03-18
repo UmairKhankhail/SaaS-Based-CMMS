@@ -31,44 +31,44 @@ namespace AccountsWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Permission>>> Getpermissions()
         {
-            var outputcontrollers=GetAllControllerMethods();
+            var outputControllers=GetAllControllerMethods();
             
             //if (perid.Count > 0)
             //{
             //    autoid = perid.Max(x => int.Parse(x.Substring(1))).ToString();
             //}
 
-            foreach (var outputcontroller in outputcontrollers)
+            foreach (var outputController in outputControllers)
             {
-                var perid = _context.permissions.Select(x => x.permissionId).ToList();
-                var autoid = "";
-                if (perid.Count > 0)
+                var perId = _context.permissions.Select(x => x.permissionId).ToList();
+                var autoId = "";
+                if (perId.Count > 0)
                 {
-                    autoid = perid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = perId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
-                if (autoid=="")
+                if (autoId=="")
                 {
                     _context.ChangeTracker.Clear();
                     Permission per = new Permission();
                     string comid = "P1";
                     per.permissionId = comid;
-                    per.permissionName = outputcontroller;
+                    per.permissionName = outputController;
                     per.status = "Active";
 
                     _context.permissions.Add(per);
                     var record = await _context.SaveChangesAsync();
                     //return Ok(per);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
-                    if (!PermissionNameExists(outputcontroller))
+                    if (!PermissionNameExists(outputController))
                     {
                         Permission per1 = new Permission();
-                        string comid = "P" + (Convert.ToInt32(autoid) + 1);
-                        per1.permissionId = comid;
-                        per1.permissionName = outputcontroller;
+                        string comId = "P" + (Convert.ToInt32(autoId) + 1);
+                        per1.permissionId = comId;
+                        per1.permissionName = outputController;
                         per1.status = "Active";
 
                         _context.permissions.Add(per1);
@@ -102,8 +102,8 @@ namespace AccountsWebApi.Controllers
     
 
     // GET: api/Permissions/5
-        [HttpGet("{uid, uautoid, cid}")]
-        public async Task<IActionResult> GetPermission(string uid, string uautoid, string cid)
+        [HttpGet("{uId, uAutoId, cId}")]
+        public async Task<IActionResult> GetPermission(string uId, string uAutoId, string cId)
         {
 
             //var permissionslist = await _context.roles
@@ -113,16 +113,16 @@ namespace AccountsWebApi.Controllers
             //.ToListAsync();
 
             //return Ok(permissionslist);
-            List<string> permissionslist = new List<string>();
-            var resultouput = "";
-            var getroleid = await _context.users
+            List<string> permissionsList = new List<string>();
+            var resultOuput = "";
+            var getRoleId = await _context.users
                 .Join(_context.userAndRoles, d => d.userAutoId, sd => sd.userAutoId, (d, sd) => new { d, sd })
-                .Where(x => x.sd.companyId == cid && x.d.companyId == cid && x.d.userId == uid)
+                .Where(x => x.sd.companyId == cId && x.d.companyId == cId && x.d.userId == uId)
                 .Select(result => new
                 {
                     result.sd.roleAutoId
                 }).ToListAsync();
-            foreach (var x in getroleid)
+            foreach (var x in getRoleId)
             {
                 var rid = x.roleAutoId;
                 //   var getrole = await _context.roles
@@ -137,7 +137,7 @@ namespace AccountsWebApi.Controllers
 
                 var dept = await _context.roles
                     .Join(_context.roleAndPermissions, d => d.roleAutoId, sd => sd.roleAutoId, (d, sd) => new { d, sd })
-                    .Where(x => x.sd.companyId == cid && x.d.companyId == cid && x.d.roleAutoId == rid)
+                    .Where(x => x.sd.companyId == cId && x.d.companyId == cId && x.d.roleAutoId == rid)
                     .Select(result => new
                     {
                         //result.d.roleautoid,
@@ -151,14 +151,14 @@ namespace AccountsWebApi.Controllers
                     //var perid = y.permissionid;
                     var pername = _context.permissions.Where(p => p.permissionId == y.permissionId).Select(p => p.permissionName).FirstOrDefault();
                     //Console.WriteLine(pername);
-                    permissionslist.Add(pername);
+                    permissionsList.Add(pername);
                 }
                 //if (count > 0) { resultouput = "A"; }
                 //else { resultouput = "N"; }
 
 
             }
-            return Ok(permissionslist.ToList());
+            return Ok(permissionsList.ToList());
             //var actionname = base.ControllerContext.ActionDescriptor.ActionName;
             //var controller = RouteData.Values["controller"].ToString();
             //var result = controller + "Controller" + "." + actionname;

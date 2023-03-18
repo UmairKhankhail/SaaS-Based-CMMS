@@ -100,11 +100,11 @@ namespace AccountsWebApi.Controllers
         // GET: api/Departments/5
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Department>> GetDepartment(string id, string cid)
+        public async Task<ActionResult<Department>> GetDepartment(string id, string cId)
         {
             try 
             {
-                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cid).FirstOrDefault();
+                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cId).FirstOrDefault();
 
                 if (department == null)
                 {
@@ -410,11 +410,11 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/Departments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDepartment(string id, string cid)
+        public async Task<IActionResult> DeleteDepartment(string id, string cId)
         {
             try
             {
-                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cid).FirstOrDefault();
+                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cId).FirstOrDefault();
                 if (department == null)
                 {
                     return NotFound();
@@ -482,9 +482,9 @@ namespace AccountsWebApi.Controllers
             
         }
 
-        private bool DepartmentExists(string id, string cid)
+        private bool DepartmentExists(string id, string cId)
         {
-            return _context.departments.Any(x => x.deptId == id && x.companyId == cid);
+            return _context.departments.Any(x => x.deptId == id && x.companyId == cId);
         }
     }
 }

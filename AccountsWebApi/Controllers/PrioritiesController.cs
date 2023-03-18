@@ -115,8 +115,8 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Priority p = new Priority();
-                    string comid = "PR" + (int.Parse(autoId) + 1);
-                    p.priorityId = comid;
+                    string comId = "PR" + (int.Parse(autoId) + 1);
+                    p.priorityId = comId;
                     p.priorityName = priority.priorityName;
                     p.companyId = priority.companyId;
                     p.status = priority.status;
