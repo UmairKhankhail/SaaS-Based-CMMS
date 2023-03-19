@@ -43,7 +43,7 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var getroleid = await _context.profiles
+                var getRoleId = await _context.profiles
                    .Join(_context.userAndProfiles, d => d.profileAutoId, sd => sd.profileAutoId, (d, sd) => new { d, sd })
                    .Where(x => x.sd.companyId == id && x.d.companyId == id && x.d.profileAutoId == pid)
                    .Select(result => new
@@ -56,7 +56,7 @@ namespace AccountsWebApi.Controllers
                        result.d.companyId
                    }).ToListAsync();
 
-                return Ok(getroleid);
+                return Ok(getRoleId);
             }
             catch(Exception ex)
             {
@@ -73,34 +73,34 @@ namespace AccountsWebApi.Controllers
             try
             {
 
-                var list_username = profile.listUsername ;
-                var list_db_username = new List<string>();
-                var getprofileuser = _context.userAndProfiles.Where(x => x.profileAutoId == profile.profileAutoId && profile.companyId == profile.companyId).Select(x => x.userAutoId);
-                foreach (var x in getprofileuser)
+                var listUserName = profile.listUserName ;
+                var listDbUsername = new List<string>();
+                var getProfileUser = _context.userAndProfiles.Where(x => x.profileAutoId == profile.profileAutoId && profile.companyId == profile.companyId).Select(x => x.userAutoId);
+                foreach (var x in getProfileUser)
                 {
-                    list_db_username.Add(x.ToString());
+                    listDbUsername.Add(x.ToString());
                     Console.WriteLine("DB Usernames: " + x);
                 }
-                foreach (var x in list_username)
+                foreach (var x in listUserName)
                 {
                     Console.WriteLine("New Usernames: " + x);
 
                 }
 
-                var resultlistleft = list_db_username.Except(list_username).ToList();
-                var resultlistright = list_username.Except(list_db_username).ToList();
+                var resultListLeft = listDbUsername.Except(listUserName).ToList();
+                var resultListRight = listUserName.Except(listDbUsername).ToList();
                 var rll = new List<string>();
                 var rlr = new List<string>();
-                if (resultlistleft != null)
+                if (resultListLeft != null)
                 {
-                    foreach (var x in resultlistleft)
+                    foreach (var x in resultListLeft)
                     {
                         rll.Add(x);
                     }
                 }
-                if (resultlistright != null)
+                if (resultListRight != null)
                 {
-                    foreach (var x in resultlistright)
+                    foreach (var x in resultListRight)
                     {
                         rlr.Add(x);
                     }
@@ -109,13 +109,13 @@ namespace AccountsWebApi.Controllers
                 {
                     foreach (var item in rll)
                     {
-                        var deluser = _context.userAndProfiles.Where(x => x.companyId == profile.companyId && x.profileAutoId == profile.profileAutoId && x.userAutoId == int.Parse(item)).FirstOrDefault();
-                        if (deluser == null)
+                        var delUser = _context.userAndProfiles.Where(x => x.companyId == profile.companyId && x.profileAutoId == profile.profileAutoId && x.userAutoId == int.Parse(item)).FirstOrDefault();
+                        if (delUser == null)
                         {
                             return NotFound();
                         }
 
-                        _context.userAndProfiles.Remove(deluser);
+                        _context.userAndProfiles.Remove(delUser);
                     }
                 }
                 if (rlr != null)
@@ -183,9 +183,9 @@ namespace AccountsWebApi.Controllers
                     getprofileautoid = p.profileAutoId;
                 }
 
-                var new_list_profiles = profile.listUsername;
+                var newListProfiles = profile.listUserName;
 
-                foreach (var items in new_list_profiles)
+                foreach (var items in newListProfiles)
                 {
                     Userandprofile up = new Userandprofile();
                     up.userAutoId = int.Parse(items);

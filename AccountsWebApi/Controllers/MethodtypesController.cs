@@ -25,11 +25,11 @@ namespace AccountsWebApi.Controllers
 
         // GET: api/Methodtypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Methodtype>>> Getmethodtypes(string cid)
+        public async Task<ActionResult<IEnumerable<Methodtype>>> Getmethodtypes(string cId)
         {
             try
             {
-                return await _context.methodTypes.Where(x => x.companyId == cid).ToListAsync();
+                return await _context.methodTypes.Where(x => x.companyId == cId).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -44,14 +44,14 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var methodtype = await _context.methodTypes.FindAsync(id);
+                var methodType = await _context.methodTypes.FindAsync(id);
 
-                if (methodtype == null)
+                if (methodType == null)
                 {
                     return NotFound();
                 }
 
-                return methodtype;
+                return methodType;
             }
             catch(Exception ex)
             {
@@ -90,11 +90,11 @@ namespace AccountsWebApi.Controllers
         // POST: api/Methodtypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Methodtype>> PostMethodtype(Methodtype methodtype)
+        public async Task<ActionResult<Methodtype>> PostMethodtype(Methodtype methodType)
         {
             try
             {
-                var compId = _context.methodTypes.Where(d => d.companyId == methodtype.companyId).Select(d => d.mtId).ToList();
+                var compId = _context.methodTypes.Where(d => d.companyId == methodType.companyId).Select(d => d.mtId).ToList();
                 var autoId = "";
                 if (compId.Count > 0)
                 {
@@ -105,11 +105,11 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Methodtype m = new Methodtype();
-                    string comid = "M1";
-                    m.mtId = comid;
-                    m.mtName = methodtype.mtName;
-                    m.companyId = methodtype.companyId;
-                    m.status = methodtype.status;
+                    string comId = "M1";
+                    m.mtId = comId;
+                    m.mtName = methodType.mtName;
+                    m.companyId = methodType.companyId;
+                    m.status = methodType.status;
                     _context.methodTypes.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
@@ -118,11 +118,11 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Methodtype m = new Methodtype();
-                    string comid = "M" + (int.Parse(autoId) + 1);
-                    m.mtId = comid;
-                    m.mtName = methodtype.mtName;
-                    m.companyId = methodtype.companyId;
-                    m.status = methodtype.status;
+                    string comId = "M" + (int.Parse(autoId) + 1);
+                    m.mtId = comId;
+                    m.mtName = methodType.mtName;
+                    m.companyId = methodType.companyId;
+                    m.status = methodType.status;
                     _context.methodTypes.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
@@ -143,13 +143,13 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var methodtype = await _context.methodTypes.FindAsync(id);
-                if (methodtype == null)
+                var methodType = await _context.methodTypes.FindAsync(id);
+                if (methodType == null)
                 {
                     return NotFound();
                 }
 
-                _context.methodTypes.Remove(methodtype);
+                _context.methodTypes.Remove(methodType);
                 await _context.SaveChangesAsync();
 
                 return NoContent();

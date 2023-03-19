@@ -93,25 +93,25 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var facilityfloors = _context.floors.Where(d => d.companyId == floor.companyId).Select(f => f.floorId).ToList();
-                List<string> floorlist = new List<string>();
-                List<int> floornolist = new List<int>();
-                foreach (var z in facilityfloors)
+                var facilityFloors = _context.floors.Where(d => d.companyId == floor.companyId).Select(f => f.floorId).ToList();
+                List<string> floorList = new List<string>();
+                List<int> floorNoList = new List<int>();
+                foreach (var z in facilityFloors)
                 {
                     if (z.Contains(floor.facilitySingleId + "F"))
                     {
-                        floorlist.Add(z);
+                        floorList.Add(z);
                     }
                 }
-                if (floorlist.Count > 0)
+                if (floorList.Count > 0)
                 {
-                    foreach (var x in floorlist)
+                    foreach (var x in floorList)
                     {
-                        floornolist.Add(int.Parse(x.Split("F").Last().ToString()));
+                        floorNoList.Add(int.Parse(x.Split("F").Last().ToString()));
                     }
                 }
 
-                if (floornolist.Count == 0)
+                if (floorNoList.Count == 0)
                 {
                     _context.ChangeTracker.Clear();
                     Floor f = new Floor();
@@ -123,12 +123,12 @@ namespace AccountsWebApi.Controllers
                     _context.floors.Add(f);
                     await _context.SaveChangesAsync();
                 }
-                if (floornolist.Count > 0)
+                if (floorNoList.Count > 0)
                 {
                     _context.ChangeTracker.Clear();
                     Floor f = new Floor();
-                    string comid = floor.facilitySingleId + "F" + (floornolist.Max() + 1);
-                    f.floorId = comid;
+                    string comId = floor.facilitySingleId + "F" + (floorNoList.Max() + 1);
+                    f.floorId = comId;
                     f.floorName = floor.floorName;
                     f.companyId = floor.companyId;
                     f.status = "Active";

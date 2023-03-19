@@ -31,27 +31,27 @@ namespace AccountsWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<RoleandUser>> GetRoleandUser(string id)
         {
-            var roleandUser = await _context.userAndRoles.FindAsync(id);
+            var roleAndUser = await _context.userAndRoles.FindAsync(id);
 
-            if (roleandUser == null)
+            if (roleAndUser == null)
             {
                 return NotFound();
             }
 
-            return roleandUser;
+            return roleAndUser;
         }
 
         // PUT: api/RoleandUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoleandUser(int id, RoleandUser roleandUser)
+        public async Task<IActionResult> PutRoleandUser(int id, RoleandUser roleAndUser)
         {
-            if (id != roleandUser.roleUserId)
+            if (id != roleAndUser.roleUserId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(roleandUser).State = EntityState.Modified;
+            _context.Entry(roleAndUser).State = EntityState.Modified;
 
             try
             {
@@ -75,16 +75,16 @@ namespace AccountsWebApi.Controllers
         // POST: api/RoleandUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<RoleandUser>> PostRoleandUser(RoleandUser roleandUser)
+        public async Task<ActionResult<RoleandUser>> PostRoleandUser(RoleandUser roleAndUser)
         {
-            _context.userAndRoles.Add(roleandUser);
+            _context.userAndRoles.Add(roleAndUser);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (RoleandUserExists(roleandUser.roleUserId))
+                if (RoleandUserExists(roleAndUser.roleUserId))
                 {
                     return Conflict();
                 }
@@ -94,7 +94,7 @@ namespace AccountsWebApi.Controllers
                 }
             }
 
-            return CreatedAtAction("GetRoleandUser", new { id = roleandUser.roleUserId }, roleandUser);
+            return CreatedAtAction("GetRoleandUser", new { id = roleAndUser.roleUserId }, roleAndUser);
         }
 
         // DELETE: api/RoleandUsers/5

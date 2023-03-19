@@ -19,6 +19,6 @@ namespace AccountsWebApi.Models
         public virtual Company companies { get; set; }
 
         [NotMapped]
-        public List<string> listUsername { get; set; }
+        public List<string> listUserName { get; set; }
     }
 }

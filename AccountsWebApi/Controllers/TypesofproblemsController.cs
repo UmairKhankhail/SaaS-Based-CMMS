@@ -43,14 +43,14 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typesofproblem = await _context.typesOfProblems.FindAsync(id);
+                var typesOfProblem = await _context.typesOfProblems.FindAsync(id);
 
-                if (typesofproblem == null)
+                if (typesOfProblem == null)
                 {
                     return NotFound();
                 }
 
-                return typesofproblem;
+                return typesOfProblem;
             }
             catch(Exception ex)
             {
@@ -86,11 +86,11 @@ namespace AccountsWebApi.Controllers
         // POST: api/Typesofproblems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Typesofproblem>> PostTypesofproblem(Typesofproblem typesofproblem)
+        public async Task<ActionResult<Typesofproblem>> PostTypesofproblem(Typesofproblem typesOfProblem)
         {
             try
             {
-                var compId = _context.typesOfProblems.Where(d => d.companyId == typesofproblem.companyId).Select(d => d.topId).ToList();
+                var compId = _context.typesOfProblems.Where(d => d.companyId == typesOfProblem.companyId).Select(d => d.topId).ToList();
                 var autoId = "";
                 if (compId.Count > 0)
                 {
@@ -103,9 +103,9 @@ namespace AccountsWebApi.Controllers
                     Typesofproblem m = new Typesofproblem();
                     string comid = "TP1";
                     m.topId = comid;
-                    m.topName = typesofproblem.topName;
-                    m.companyId = typesofproblem.companyId;
-                    m.status = typesofproblem.status;
+                    m.topName = typesOfProblem.topName;
+                    m.companyId = typesOfProblem.companyId;
+                    m.status = typesOfProblem.status;
                     _context.typesOfProblems.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
@@ -116,9 +116,9 @@ namespace AccountsWebApi.Controllers
                     Typesofproblem m = new Typesofproblem();
                     string comid = "TP" + (int.Parse(autoId) + 1);
                     m.topId = comid;
-                    m.topName = typesofproblem.topName;
-                    m.companyId = typesofproblem.companyId;
-                    m.status = typesofproblem.status;
+                    m.topName = typesOfProblem.topName;
+                    m.companyId = typesOfProblem.companyId;
+                    m.status = typesOfProblem.status;
                     _context.typesOfProblems.Add(m);
                     await _context.SaveChangesAsync();
                     //return Ok(c);
@@ -139,13 +139,13 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var typesofproblem = await _context.typesOfProblems.FindAsync(id);
-                if (typesofproblem == null)
+                var typesOfProblem = await _context.typesOfProblems.FindAsync(id);
+                if (typesOfProblem == null)
                 {
                     return NotFound();
                 }
 
-                _context.typesOfProblems.Remove(typesofproblem);
+                _context.typesOfProblems.Remove(typesOfProblem);
                 await _context.SaveChangesAsync();
 
                 return NoContent();

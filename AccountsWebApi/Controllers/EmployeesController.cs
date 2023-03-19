@@ -51,11 +51,11 @@ namespace AccountsWebApi.Controllers
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(string id, string eid)
+        public async Task<ActionResult<Employee>> GetEmployee(string id, string eId)
         {
             try
             {
-                var employee = await _context.employees.Where(x => x.companyId == id && x.employeeId == eid).FirstOrDefaultAsync();
+                var employee = await _context.employees.Where(x => x.companyId == id && x.employeeId == eId).FirstOrDefaultAsync();
 
                 if (employee == null)
                 {
@@ -119,8 +119,8 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Employee c = new Employee();
-                    string comid = "E1";
-                    c.employeeId = comid;
+                    string comId = "E1";
+                    c.employeeId = comId;
                     c.employeeName = employee.employeeName;
                     c.employeeeMail = employee.employeeeMail;
                     c.employeeContactNo = employee.employeeContactNo;
@@ -136,8 +136,8 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Employee c = new Employee();
-                    string comid = "E" + (int.Parse(autoId) + 1);
-                    c.employeeId = comid;
+                    string comId = "E" + (int.Parse(autoId) + 1);
+                    c.employeeId = comId;
                     c.employeeName = employee.employeeName;
                     c.employeeeMail = employee.employeeeMail;
                     c.employeeContactNo = employee.employeeContactNo;
@@ -181,11 +181,11 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/Employees/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(string id, string eid)
+        public async Task<IActionResult> DeleteEmployee(string id, string eId)
         {
             try
             {
-                var employee = _context.employees.Where(x => x.companyId == id && x.employeeId == eid).FirstOrDefault();
+                var employee = _context.employees.Where(x => x.companyId == id && x.employeeId == eId).FirstOrDefault();
                 if (employee == null)
                 {
                     return NotFound();

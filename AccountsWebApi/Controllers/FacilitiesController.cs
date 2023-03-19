@@ -25,11 +25,11 @@ namespace AccountsWebApi.Controllers
 
         // GET: api/Facilities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Facility>>> Getfacilities(string cid)
+        public async Task<ActionResult<IEnumerable<Facility>>> Getfacilities(string cId)
         {
             try
             {
-                return await _context.facilities.Where(x => x.companyId == cid).ToListAsync();
+                return await _context.facilities.Where(x => x.companyId == cId).ToListAsync();
             }
             catch(Exception ex)
             {
@@ -118,8 +118,8 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Facility f = new Facility();
-                    string comid = "B1";
-                    f.facilityId = comid;
+                    string comId = "B1";
+                    f.facilityId = comId;
                     f.facilityName = facility.facilityName;
                     f.companyId = facility.companyId;
                     f.status = facility.status;
@@ -131,8 +131,8 @@ namespace AccountsWebApi.Controllers
                 {
                     _context.ChangeTracker.Clear();
                     Facility f = new Facility();
-                    string comid = "B" + (int.Parse(autoId) + 1);
-                    f.facilityId = comid;
+                    string comId = "B" + (int.Parse(autoId) + 1);
+                    f.facilityId = comId;
                     f.facilityName = facility.facilityName;
                     f.companyId = facility.companyId;
                     f.status = facility.status;

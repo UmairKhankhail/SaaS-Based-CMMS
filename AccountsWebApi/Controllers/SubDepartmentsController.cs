@@ -120,10 +120,10 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var subdept = _context.subDepartments.Where(d => d.companyId == subDepartment.companyId).Select(d => d.subDeptId).ToList();
+                var subDept = _context.subDepartments.Where(d => d.companyId == subDepartment.companyId).Select(d => d.subDeptId).ToList();
                 List<string> subDeptList = new List<string>();
                 List<int> subDeptNoList = new List<int>();
-                foreach (var z in subdept)
+                foreach (var z in subDept)
                 {
                     if (z.Contains(subDepartment.deptSingleId + "S"))
                     {
@@ -241,11 +241,11 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/SubDepartments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubDepartment(string id, string sid)
+        public async Task<IActionResult> DeleteSubDepartment(string id, string sId)
         {
             try
             {
-                var subDepartment = _context.subDepartments.Where(x => x.companyId == id && x.subDeptId == sid).FirstOrDefault();
+                var subDepartment = _context.subDepartments.Where(x => x.companyId == id && x.subDeptId == sId).FirstOrDefault();
                 if (subDepartment == null)
                 {
                     return NotFound();

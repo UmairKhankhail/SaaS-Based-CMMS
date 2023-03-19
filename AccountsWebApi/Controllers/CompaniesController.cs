@@ -22,7 +22,7 @@ namespace AccountsWebApi.Controllers
         private readonly ILogger<CompaniesController> _logger;
         private readonly UserDbContext _context;
         private readonly ICacheService _cacheService;
-        public string companyidglobal { get; set; }
+        public string companyIdGlobal { get; set; }
         public CompaniesController(UserDbContext context, ILogger<CompaniesController> logger, ICacheService cacheService)
         {
             _context = context;
@@ -65,7 +65,7 @@ namespace AccountsWebApi.Controllers
 
             //var expiryTime = DateTimeOffset.Now.AddSeconds(30);
             //_cacheService.SetData<IEnumerable<Company>>("com", cacheData, expiryTime);
-            return Ok(newcache);
+            return Ok(newCache);
         }
 
         //[HttpPost("adddrivers")]
@@ -129,23 +129,23 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compid = _context.companies.Select(x => x.companyId).ToList();
-                var autoid = "";
-                if (compid.Count > 0)
+                var compId = _context.companies.Select(x => x.companyId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
                 {
-                    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
                 }
 
                 //string autoid = _context.companies.Max(p => p.companyid);
                 //var autoid=_context.companies.OrderByDescending(x => x.companyid).FirstOrDefault().ToString();
 
-                if (autoid == "")
+                if (autoId == "")
                 {
                     _context.ChangeTracker.Clear();
                     Company c = new Company();
-                    string comid = "C1";
-                    c.companyId = comid;
-                    companyidglobal = comid;
+                    string comId = "C1";
+                    c.companyId = comId;
+                    companyIdGlobal = comId;
                     c.companyName = company.companyName;
                     c.companyEmail = company.companyEmail;
                     c.companyPhone = company.companyPhone;
@@ -157,13 +157,13 @@ namespace AccountsWebApi.Controllers
                     var record = await _context.SaveChangesAsync();
                     //return Ok(c);
                 }
-                if (autoid != "")
+                if (autoId != "")
                 {
                     _context.ChangeTracker.Clear();
                     Company c = new Company();
-                    string comid = "C" + (int.Parse(autoid) + 1);
-                    c.companyId = comid;
-                    companyidglobal = comid;
+                    string comId = "C" + (int.Parse(autoId) + 1);
+                    c.companyId = comId;
+                    companyIdGlobal = comId;
                     c.companyName = company.companyName;
                     c.companyEmail = company.companyEmail;
                     c.companyPhone = company.companyPhone;
