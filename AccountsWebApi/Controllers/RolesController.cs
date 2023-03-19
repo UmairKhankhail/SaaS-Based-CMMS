@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AccountsWebApi.Models;
 using NuGet.Protocol;
 using System.Security.Cryptography;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace AccountsWebApi.Controllers
 {
@@ -17,10 +19,12 @@ namespace AccountsWebApi.Controllers
     {
         private readonly UserDbContext _context;
         private readonly ILogger<RolesController> _logger;
-        public RolesController(UserDbContext context, ILogger<RolesController> logger)
+        private readonly JwtTokenHandler _jwtTokenHandler;
+        public RolesController(UserDbContext context, ILogger<RolesController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
-            _logger = logger;   
+            _logger = logger;
+            _jwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Roles
@@ -198,6 +202,13 @@ namespace AccountsWebApi.Controllers
 
 
                     await _context.SaveChangesAsync();
+
+                    var getRoleUsersList = _context.userAndRoles.Where(x => x.roleAutoId == role.roleAutoId && x.companyId == role.companyId).Select(x => x.userAutoId).ToList();
+
+                    var resultDestroyingUsers= _jwtTokenHandler.DestroyingCacheByAdminAsync(new DestroyCacheRequest { userAutoIds=getRoleUsersList });
+                    if (resultDestroyingUsers == true)
+                        return Ok();
+                    return NotFound();
 
                 }
                 return NoContent();

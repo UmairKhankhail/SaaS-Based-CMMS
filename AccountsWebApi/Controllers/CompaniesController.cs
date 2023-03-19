@@ -55,9 +55,10 @@ namespace AccountsWebApi.Controllers
         [HttpGet("com")]
         public async Task<ActionResult<IEnumerable<Company>>> GetCaheData()
         {
-            var newcache = _cacheService.GetData<IEnumerable<string>>("2");
+            //var newcache = _cacheService.RemoveData("1");
             
-            //var cacheData = _cacheService.GetData<IEnumerable<Company>>("com");
+            var newcache = _cacheService.GetData<IEnumerable<string>>("1");
+            var newcache1 = _cacheService.GetData<string>("1Param");
             //if (cacheData != null && cacheData.Count()>0)
             //    return Ok(cacheData);
             //cacheData= await _context.companies.ToListAsync();

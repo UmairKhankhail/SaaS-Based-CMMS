@@ -77,6 +77,7 @@ namespace JwtAuthenticationManager
                     //claims.AddRange(authenticationRequest.list_permissions.Select(role => new Claim(ClaimTypes.Role, role)));
                     var expiryTime = DateTimeOffset.Now.AddMinutes(JWT_TOKEN_VALIDITY_MINS);
                     _cacheService.SetData(authenticationRequest.uAutoId.ToString(), authenticationRequest.listPermissions, expiryTime);
+                    _cacheService.SetData(authenticationRequest.uAutoId.ToString()+"Param", "U" , expiryTime);
                 }
 
                 var signingCredentials = new SigningCredentials(
@@ -218,12 +219,21 @@ namespace JwtAuthenticationManager
                 //        .Where(c => c.Type == "role")
                 //        .Select(c => c.Value)
                 //        .ToList();
-                var claim2 = _cacheService.GetData<IEnumerable<string>>(claim1);
-
-
+                
                 string claim3 = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData).Value;
                 string claim4 = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Anonymous).Value;
                 string claim5 = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Locality).Value;
+                
+                var changeUnchange = _cacheService.GetData<string>(claim1+"Param");
+                if (changeUnchange != null)
+                {
+                if (changeUnchange == "C")
+                {
+                    Task<bool> task = RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId = int.Parse(claim1), cId = claim3, uId = claim4 });
+                    _cacheService.UpdateDataAsync(claim1 + "Param", "U");
+                }
+
+                var claim2 = _cacheService.GetData<IEnumerable<string>>(claim1);
 
                 if (claim5 == "admin")
                 {
@@ -263,9 +273,14 @@ namespace JwtAuthenticationManager
                     appRole = claim5,
                     isAuth = isAuth
                 };
-        
+            }
+            return new ClaimResponse
+            {
+                
+                isAuth = false
+            };
 
-}
+        }
 
 
         //Checking Claims for Logout
@@ -341,6 +356,21 @@ namespace JwtAuthenticationManager
             }
             await _cacheService.UpdateDataAsync(cacheChangeRequest.uAutoId.ToString(), responseList);
 
+            return true;
+        }
+
+        
+
+        public bool DestroyingCacheByAdminAsync(DestroyCacheRequest destroyCacheRequest)
+        {
+            List<int> userAutoIdsList=destroyCacheRequest.userAutoIds;
+            foreach (var item in userAutoIdsList)
+            {
+                if (_cacheService.Checkkey(item.ToString())==true)
+                {
+                    _cacheService.UpdateDataAsync(item.ToString() + "Param","C");
+                }
+            }
             return true;
         }
 

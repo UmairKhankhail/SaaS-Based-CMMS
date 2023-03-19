@@ -48,5 +48,10 @@ public class CacheService : ICacheService
         var expiryTime = await _cacheDb.KeyTimeToLiveAsync(key);
         return await _cacheDb.StringSetAsync(key, JsonSerializer.Serialize(value), expiryTime);
     }
+    public async Task<bool> IsCacheExpiredAsync(string Key)
+    {
+        var ttl = await _cacheDb.KeyTimeToLiveAsync(Key);
+        return ttl.HasValue && ttl.Value < TimeSpan.Zero;
+    }
 }
 
