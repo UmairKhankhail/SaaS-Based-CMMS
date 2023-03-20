@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace JwtAuthenticationManager
 {
@@ -200,17 +201,19 @@ namespace JwtAuthenticationManager
 
         public ClaimResponse GetCustomClaims(ClaimRequest claimRequest)
         {
-            
-            bool isAuth = false;
-            int count= 0;
-            string secret = "KDSJFVHAFGASFVAS" + "JFVSADFHBAKBJSDJBFXD";
-            //KDSJFVHAFGASFVASJFVSADFHBAKBJSDJBFXD
-            var key = Encoding.ASCII.GetBytes(secret);
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(claimRequest.token);
-            Console.WriteLine("Token"+jwtToken);
-            //string validityClaim= jwtToken.Claims.First(c => c.Type == ClaimTypes.Expiration).Value;
-            
+            if (claimRequest.token != null)
+            {
+
+                bool isAuth = false;
+                int count = 0;
+                string secret = "KDSJFVHAFGASFVAS" + "JFVSADFHBAKBJSDJBFXD";
+                //KDSJFVHAFGASFVASJFVSADFHBAKBJSDJBFXD
+                var key = Encoding.ASCII.GetBytes(secret);
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(claimRequest.token);
+                Console.WriteLine("Token" + jwtToken);
+                //string validityClaim= jwtToken.Claims.First(c => c.Type == ClaimTypes.Expiration).Value;
+
                 string claim1 = jwtToken.Claims.First(c => c.Type == "name").Value;
                 //jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
                 //List<string> claim2list = new List<string>();
@@ -219,74 +222,94 @@ namespace JwtAuthenticationManager
                 //        .Where(c => c.Type == "role")
                 //        .Select(c => c.Value)
                 //        .ToList();
-                
+
                 string claim3 = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.UserData).Value;
                 string claim4 = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Anonymous).Value;
                 string claim5 = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Locality).Value;
-                
-                var changeUnchange = _cacheService.GetData<string>(claim1+"Param");
-                if (changeUnchange != null)
-                {
-                if (changeUnchange == "C")
-                {
-                    Task<bool> task = RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId = int.Parse(claim1), cId = claim3, uId = claim4 });
-                    _cacheService.UpdateDataAsync(claim1 + "Param", "U");
-                }
-
-                var claim2 = _cacheService.GetData<IEnumerable<string>>(claim1);
-
                 if (claim5 == "admin")
                 {
-                    count += 1;
+                    return new ClaimResponse
+                    {
+                        uAutoId = int.Parse(claim1),
+                        //role = claim2.ToList(),
+                        companyId = claim3,
+                        uId = claim4,
+                        appRole = claim5,
+                        isAuth = true
+                    };
                 }
                 else if (claim5 == "user")
                 {
-                    if (claim2 != null)
+                    var changeUnchange = _cacheService.GetData<string>(claim1 + "Param");
+                    if (changeUnchange != null)
                     {
-                        foreach (var item in claim2)
+                        if (changeUnchange == "C")
                         {
-                            if (item == claimRequest.controllerActionName)
-                            {
-                                count += 1;
-                                if (count > 0)
-                                    break;
+                            Task<bool> task = RevokingCachePermissionsAsync(new CacheChangeRequest { uAutoId = int.Parse(claim1), cId = claim3, uId = claim4 });
+                            _cacheService.UpdateDataAsync(claim1 + "Param", "U");
+                        }
 
+                        var claim2 = _cacheService.GetData<IEnumerable<string>>(claim1);
+
+
+                        if (claim2 != null)
+                        {
+                            foreach (var item in claim2)
+                            {
+                                if (item == claimRequest.controllerActionName)
+                                {
+                                    count += 1;
+                                    if (count > 0)
+                                        break;
+
+                                }
                             }
                         }
-                    }
-                }
 
-                if (count > 0)
-                {
-                    isAuth = true;
-                }
-                else
-                {
-                    isAuth = false;
+
+                        if (count > 0)
+                        {
+                            isAuth = true;
+                        }
+                        else
+                        {
+                            isAuth = false;
+                        }
+                        return new ClaimResponse
+                        {
+                            uAutoId = int.Parse(claim1),
+                            //role = claim2.ToList(),
+                            companyId = claim3,
+                            uId = claim4,
+                            appRole = claim5,
+                            isAuth = isAuth
+                        };
+                    }
+                    return new ClaimResponse
+                    {
+
+                        isAuth = false
+                    };
                 }
                 return new ClaimResponse
                 {
-                    uAutoId = int.Parse(claim1),
-                    //role = claim2.ToList(),
-                    companyId = claim3,
-                    uId = claim4,
-                    appRole = claim5,
-                    isAuth = isAuth
+
+                    isAuth = false
                 };
             }
             return new ClaimResponse
             {
-                
+
                 isAuth = false
             };
-
         }
 
 
         //Checking Claims for Logout
         public ClaimResponse GetCustomClaimsForLogout(ClaimRequest claimRequest)
         {
-            
+            if (claimRequest.token != null)
+            {
                 bool isAuth = false;
                 int count = 0;
                 string secret = "KDSJFVHAFGASFVAS" + "JFVSADFHBAKBJSDJBFXD";
@@ -338,7 +361,13 @@ namespace JwtAuthenticationManager
                     appRole = claim5,
                     isAuth = isAuth
                 };
-            
+            }
+            return new ClaimResponse
+            {
+                
+                isAuth = false
+            };
+
         }
 
 
@@ -384,6 +413,7 @@ namespace JwtAuthenticationManager
             else if(logoutRequest.role == "user")
             {
                 _cacheService.RemoveData(logoutRequest.userAutoId.ToString());
+                _cacheService.RemoveData(logoutRequest.userAutoId.ToString()+"Param");
                 return true;
             }
             return false;

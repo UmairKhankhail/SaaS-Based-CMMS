@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AccountsWebApi.Models;
 using System.Security.Cryptography;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AccountsWebApi.Controllers
 {
@@ -16,19 +19,28 @@ namespace AccountsWebApi.Controllers
     {
         private readonly UserDbContext _context;
         private readonly ILogger<ToolsController> _logger;
-        public ToolsController(UserDbContext context, ILogger<ToolsController> logger)
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public ToolsController(UserDbContext context, ILogger<ToolsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Tools
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Tool>>> Gettools(string cid)
         {
             try
             {
-                return await _context.tools.Where(x => x.companyId == cid).ToListAsync();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.tools.Where(x => x.companyId == cid && x.status == "Active").ToListAsync();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -38,19 +50,26 @@ namespace AccountsWebApi.Controllers
         }
 
         // GET: api/Tools/5
-        [HttpGet("{id}")]
+        [HttpGet("getTool")]
+        [Authorize]
         public async Task<ActionResult<Tool>> GetTool(int id)
         {
             try
             {
-                var tool = await _context.tools.FindAsync(id);
-
-                if (tool == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
+                    var tool = await _context.tools.FindAsync(id);
 
-                return tool;
+                    if (tool == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return tool;
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -62,18 +81,25 @@ namespace AccountsWebApi.Controllers
         // PUT: api/Tools/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutTool(int id, Tool tool)
         {
             try
             {
-                if (id != tool.toolAutoId)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return BadRequest();
-                }
+                    if (id != tool.toolAutoId)
+                    {
+                        return BadRequest();
+                    }
 
-                _context.Entry(tool).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return Ok();
+                    _context.Entry(tool).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                    return Ok();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -85,45 +111,52 @@ namespace AccountsWebApi.Controllers
         // POST: api/Tools
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Tool>> PostTool(Tool tool)
         {
             try
             {
-                var compId = _context.tools.Where(d => d.companyId == tool.companyId).Select(d => d.toolId).ToList();
-                var autoId = "";
-                if (compId.Count > 0)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
-                }
+                    var compId = _context.tools.Where(d => d.companyId == tool.companyId).Select(d => d.toolId).ToList();
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
+                        autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
+                    }
 
-                if (autoId == "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Tool t = new Tool();
-                    string comId = "T1";
-                    t.toolId = comId;
-                    t.toolName = tool.toolName;
-                    t.companyId = tool.companyId;
-                    t.status = tool.status;
-                    _context.tools.Add(t);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
-                if (autoId != "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Tool t = new Tool();
-                    string comid = "T" + (int.Parse(autoId) + 1);
-                    t.toolId = comid;
-                    t.toolName = tool.toolName;
-                    t.companyId = tool.companyId;
-                    t.status = tool.status;
-                    _context.tools.Add(t);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Tool t = new Tool();
+                        string comId = "T1";
+                        t.toolId = comId;
+                        t.toolName = tool.toolName;
+                        t.companyId = tool.companyId;
+                        t.status = tool.status;
+                        _context.tools.Add(t);
+                        await _context.SaveChangesAsync();
+                        //return Ok(c);
+                    }
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Tool t = new Tool();
+                        string comid = "T" + (int.Parse(autoId) + 1);
+                        t.toolId = comid;
+                        t.toolName = tool.toolName;
+                        t.companyId = tool.companyId;
+                        t.status = tool.status;
+                        _context.tools.Add(t);
+                        await _context.SaveChangesAsync();
+                        //return Ok(c);
+                    }
 
-                return Ok();
+                    return Ok();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -136,20 +169,27 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/Tools/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteTool(int id)
         {
             try
             {
-                var tool = await _context.tools.FindAsync(id);
-                if (tool == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
+                    var tool = await _context.tools.FindAsync(id);
+                    if (tool == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.tools.Remove(tool);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
                 }
-
-                _context.tools.Remove(tool);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {

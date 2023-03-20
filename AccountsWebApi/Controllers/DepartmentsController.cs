@@ -53,7 +53,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    return await _context.departments.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                    return await _context.departments.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
                 }
                 return Unauthorized();
             }
@@ -98,26 +98,33 @@ namespace AccountsWebApi.Controllers
         //return Unauthorized();
 
         // GET: api/Departments/5
-        [HttpGet("{id}")]
+        [HttpGet("getDepartment")]
         [Authorize]
-        public async Task<ActionResult<Department>> GetDepartment(string id, string cId)
+        public async Task<ActionResult<Department>> GetDepartment(string id)
         {
-            try 
+            try
             {
-                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cId).FirstOrDefault();
-
-                if (department == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
+                    var department = _context.departments.Where(x => x.deptId == id && x.companyId == claimresponse.companyId).FirstOrDefault();
 
-                return department;
+                    if (department == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return department;
+                }
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            
             //int count = 0;
             //var actionname = base.ControllerContext.ActionDescriptor.ActionName;
             //var controller = RouteData.Values["controller"].ToString();
@@ -164,7 +171,7 @@ namespace AccountsWebApi.Controllers
 
             //    return department;
             //}
-            return Ok();
+            //return Ok();
             
             
         }
@@ -173,26 +180,32 @@ namespace AccountsWebApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutDepartment(string id, Department department)
+        public async Task<IActionResult> PutDepartment(Department department)
         {
             try
             {
-                if (id != department.deptId)
-                {
-                    return BadRequest();
-                }
-
-                Department d = new Department();
-                d.deptAutoId = department.deptAutoId;
-                d.deptId = department.deptId;
-                d.deptName = department.deptName;
-                d.status = department.status;
-                d.companyId = department.companyId;
-                _context.Entry(d).State = EntityState.Modified;
-
                 
-                await _context.SaveChangesAsync();
-               
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    if (DepartmentExists(department.deptAutoId))
+                    {
+                        Department d = new Department();
+                        d.deptAutoId = department.deptAutoId;
+                        d.deptId = department.deptId;
+                        d.deptName = department.deptName;
+                        d.status = department.status;
+                        d.companyId = claimresponse.companyId;
+                        _context.Entry(d).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                    return NotFound();
+                }
+                return Unauthorized();
+
             }
             catch (Exception ex)
             {
@@ -258,7 +271,7 @@ namespace AccountsWebApi.Controllers
             //        throw;
             //    }
             //}
-            return Ok();
+            //return Ok();
             
         }
 
@@ -270,41 +283,47 @@ namespace AccountsWebApi.Controllers
         {
             try
             {
-                var compId = _context.departments.Where(d => d.companyId == department.companyId).Select(d => d.deptId).ToList();
-
-                var autoId = "";
-                if (compId.Count > 0)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
+                    var compId = _context.departments.Where(d => d.companyId == claimresponse.companyId).Select(d => d.deptId).ToList();
 
-                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
-                }
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
 
-                if (autoId == "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Department c = new Department();
-                    string comid = "D1";
-                    c.deptId = comid;
-                    c.deptName = department.deptName;
-                    c.companyId = department.companyId;
-                    c.status = department.status;
-                    _context.departments.Add(c);
-                    await _context.SaveChangesAsync();
-                }
-                if (autoId != "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Department c = new Department();
-                    string comid = "D" + (int.Parse(autoId) + 1);
-                    c.deptId = comid;
-                    c.deptName = department.deptName;
-                    c.companyId = department.companyId;
-                    c.status = department.status;
-                    _context.departments.Add(c);
-                    await _context.SaveChangesAsync();
-                }
+                        autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
+                    }
 
-                return await _context.departments.Where(x => x.companyId == department.companyId).ToListAsync();
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Department c = new Department();
+                        string comid = "D1";
+                        c.deptId = comid;
+                        c.deptName = department.deptName;
+                        c.companyId = claimresponse.companyId;
+                        c.status = department.status;
+                        _context.departments.Add(c);
+                        await _context.SaveChangesAsync();
+                    }
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Department c = new Department();
+                        string comid = "D" + (int.Parse(autoId) + 1);
+                        c.deptId = comid;
+                        c.deptName = department.deptName;
+                        c.companyId = claimresponse.companyId;
+                        c.status = department.status;
+                        _context.departments.Add(c);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                return Unauthorized();
 
             }
             catch(Exception ex)
@@ -410,18 +429,30 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/Departments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDepartment(string id, string cId)
+        [Authorize]
+        public async Task<IActionResult> DeleteDepartment(int id)
         {
             try
             {
-                var department = _context.departments.Where(x => x.deptId == id && x.companyId == cId).FirstOrDefault();
-                if (department == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
+                    if (DepartmentExists(id))
+                    {
+                        var department = await _context.departments.FindAsync(id);
+                        if (department == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.departments.Remove(department);
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
                     return NotFound();
                 }
-
-                _context.departments.Remove(department);
-                await _context.SaveChangesAsync();
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -482,9 +513,9 @@ namespace AccountsWebApi.Controllers
             
         }
 
-        private bool DepartmentExists(string id, string cId)
+        private bool DepartmentExists(int id)
         {
-            return _context.departments.Any(x => x.deptId == id && x.companyId == cId);
+            return _context.departments.Any(x => x.deptAutoId==id);
         }
     }
 }

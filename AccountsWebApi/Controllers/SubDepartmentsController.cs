@@ -14,6 +14,9 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Xml.Linq;
 using System.Security.Cryptography;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AccountsWebApi.Controllers
 {
@@ -24,20 +27,29 @@ namespace AccountsWebApi.Controllers
         private readonly UserDbContext _context;
         private readonly HttpClient _httpClient; 
         private readonly ILogger<SubDepartmentsController> _logger;
-        public SubDepartmentsController(UserDbContext context, HttpClient httpClient, ILogger<SubDepartmentsController> logger)
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public SubDepartmentsController(UserDbContext context, HttpClient httpClient, ILogger<SubDepartmentsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/SubDepartments
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<SubDepartment>>> Getsub_departments(string id)
         {
             try
             {
-                return await _context.subDepartments.Where(x => x.companyId == id).ToListAsync();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.subDepartments.Where(x => x.companyId == id && x.status == "Active").ToListAsync();
+                }
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -64,20 +76,26 @@ namespace AccountsWebApi.Controllers
         
 
         // GET: api/SubDepartments/5
-        [HttpGet("{id}")]
+        [HttpGet("getSubDepartment")]
+        [Authorize]
         public async Task<ActionResult<SubDepartment>> GetSubDepartment(string id, string cid)
         {
             try
             {
-
-                var subDepartment = await _context.subDepartments.Where(x => x.companyId == cid && x.subDeptId == id).FirstOrDefaultAsync();
-
-                if (subDepartment == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
+                    var subDepartment = await _context.subDepartments.Where(x => x.companyId == cid && x.subDeptId == id).FirstOrDefaultAsync();
 
-                return subDepartment;
+                    if (subDepartment == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return subDepartment;
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -89,21 +107,28 @@ namespace AccountsWebApi.Controllers
         // PUT: api/SubDepartments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutSubDepartment(string id, SubDepartment subDepartment)
         {
             try
             {
-                if (id != subDepartment.subDeptId)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return BadRequest();
+                    if (id != subDepartment.subDeptId)
+                    {
+                        return BadRequest();
+                    }
+
+                    _context.Entry(subDepartment).State = EntityState.Modified;
+
+                    await _context.SaveChangesAsync();
+
+
+                    return NoContent();
                 }
-
-                _context.Entry(subDepartment).State = EntityState.Modified;
-
-                await _context.SaveChangesAsync();
-
-
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -116,102 +141,109 @@ namespace AccountsWebApi.Controllers
         // POST: api/SubDepartments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<SubDepartment>>> PostSubDepartment(SubDepartment subDepartment)
         {
             try
             {
-                var subDept = _context.subDepartments.Where(d => d.companyId == subDepartment.companyId).Select(d => d.subDeptId).ToList();
-                List<string> subDeptList = new List<string>();
-                List<int> subDeptNoList = new List<int>();
-                foreach (var z in subDept)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    if (z.Contains(subDepartment.deptSingleId + "S"))
+                    var subDept = _context.subDepartments.Where(d => d.companyId == subDepartment.companyId).Select(d => d.subDeptId).ToList();
+                    List<string> subDeptList = new List<string>();
+                    List<int> subDeptNoList = new List<int>();
+                    foreach (var z in subDept)
                     {
-                        subDeptList.Add(z);
+                        if (z.Contains(subDepartment.deptSingleId + "S"))
+                        {
+                            subDeptList.Add(z);
+                        }
                     }
-                }
-                if (subDeptList.Count > 0)
-                {
-                    foreach (var x in subDeptList)
+                    if (subDeptList.Count > 0)
                     {
-                        subDeptNoList.Add(int.Parse(x.Split("S").Last().ToString()));
+                        foreach (var x in subDeptList)
+                        {
+                            subDeptNoList.Add(int.Parse(x.Split("S").Last().ToString()));
+                        }
                     }
+                    //foreach (var x in subdept)
+                    //{
+                    //    if (x.Contains(subDepartment.deptsingleid + "S"))
+                    //    {
+                    //        subdeptlist.Add(x);
+                    //    }
+                    //}
+                    //Console.WriteLine(subdeptlist.Count);
+
+
+
+                    if (subDeptNoList.Count == 0)
+                    {
+                        _context.ChangeTracker.Clear();
+                        SubDepartment c = new SubDepartment();
+                        c.subDeptId = subDepartment.deptSingleId + "S1";
+                        c.subDeptName = subDepartment.subDeptName;
+                        c.companyId = subDepartment.companyId;
+                        c.status = "Active";
+                        c.deptAutoId = subDepartment.deptAutoId;
+                        _context.subDepartments.Add(c);
+                        await _context.SaveChangesAsync();
+                    }
+                    if (subDeptNoList.Count > 0)
+                    {
+                        _context.ChangeTracker.Clear();
+                        SubDepartment c = new SubDepartment();
+                        string comid = subDepartment.deptSingleId + "S" + (subDeptNoList.Max() + 1);
+                        c.subDeptId = comid;
+                        c.subDeptName = subDepartment.subDeptName;
+                        c.companyId = subDepartment.companyId;
+                        c.status = "Active";
+                        c.deptAutoId = subDepartment.deptAutoId;
+                        _context.subDepartments.Add(c);
+                        await _context.SaveChangesAsync();
+                    }
+
+
+
+
+                    //var compid = _context.sub_departments.Select(x => x.subdeptid).ToList();
+                    //var autoid = "";
+                    //if (compid.Count > 0)
+                    //{
+                    //    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
+                    //}
+
+                    //if (autoid == "")
+                    //{
+                    //    _context.ChangeTracker.Clear();
+                    //    SubDepartment c = new SubDepartment();
+                    //    string comid = subDepartment.deptid+"S1";
+                    //    c.subdeptid = comid;
+                    //    c.subdeptname = subDepartment.subdeptname;
+                    //    c.companyid = subDepartment.companyid;
+                    //    c.deptid = subDepartment.deptid;
+                    //    c.status = subDepartment.status;
+                    //    _context.sub_departments.Add(c);
+                    //    await _context.SaveChangesAsync();
+                    //}
+                    //if (autoid != "")
+                    //{
+                    //    _context.ChangeTracker.Clear();
+                    //    SubDepartment c = new SubDepartment();
+                    //    string comid = "D" + (int.Parse(autoid) + 1);
+                    //    c.subdeptid = comid;
+                    //    c.subdeptname = subDepartment.subdeptname;
+                    //    c.companyid = subDepartment.companyid;
+                    //    c.deptid = subDepartment.deptid;
+                    //    c.status = subDepartment.status;
+                    //    _context.sub_departments.Add(c);
+                    //    await _context.SaveChangesAsync();
+                    //}
+
+                    return Ok();
                 }
-                //foreach (var x in subdept)
-                //{
-                //    if (x.Contains(subDepartment.deptsingleid + "S"))
-                //    {
-                //        subdeptlist.Add(x);
-                //    }
-                //}
-                //Console.WriteLine(subdeptlist.Count);
-
-
-
-                if (subDeptNoList.Count == 0)
-                {
-                    _context.ChangeTracker.Clear();
-                    SubDepartment c = new SubDepartment();
-                    c.subDeptId = subDepartment.deptSingleId + "S1";
-                    c.subDeptName = subDepartment.subDeptName;
-                    c.companyId = subDepartment.companyId;
-                    c.status = "Active";
-                    c.deptAutoId = subDepartment.deptAutoId;
-                    _context.subDepartments.Add(c);
-                    await _context.SaveChangesAsync();
-                }
-                if (subDeptNoList.Count > 0)
-                {
-                    _context.ChangeTracker.Clear();
-                    SubDepartment c = new SubDepartment();
-                    string comid = subDepartment.deptSingleId + "S" + (subDeptNoList.Max() + 1);
-                    c.subDeptId = comid;
-                    c.subDeptName = subDepartment.subDeptName;
-                    c.companyId = subDepartment.companyId;
-                    c.status = "Active";
-                    c.deptAutoId = subDepartment.deptAutoId;
-                    _context.subDepartments.Add(c);
-                    await _context.SaveChangesAsync();
-                }
-
-
-
-
-                //var compid = _context.sub_departments.Select(x => x.subdeptid).ToList();
-                //var autoid = "";
-                //if (compid.Count > 0)
-                //{
-                //    autoid = compid.Max(x => int.Parse(x.Substring(1))).ToString();
-                //}
-
-                //if (autoid == "")
-                //{
-                //    _context.ChangeTracker.Clear();
-                //    SubDepartment c = new SubDepartment();
-                //    string comid = subDepartment.deptid+"S1";
-                //    c.subdeptid = comid;
-                //    c.subdeptname = subDepartment.subdeptname;
-                //    c.companyid = subDepartment.companyid;
-                //    c.deptid = subDepartment.deptid;
-                //    c.status = subDepartment.status;
-                //    _context.sub_departments.Add(c);
-                //    await _context.SaveChangesAsync();
-                //}
-                //if (autoid != "")
-                //{
-                //    _context.ChangeTracker.Clear();
-                //    SubDepartment c = new SubDepartment();
-                //    string comid = "D" + (int.Parse(autoid) + 1);
-                //    c.subdeptid = comid;
-                //    c.subdeptname = subDepartment.subdeptname;
-                //    c.companyid = subDepartment.companyid;
-                //    c.deptid = subDepartment.deptid;
-                //    c.status = subDepartment.status;
-                //    _context.sub_departments.Add(c);
-                //    await _context.SaveChangesAsync();
-                //}
-
-                return Ok();
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -241,20 +273,27 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/SubDepartments/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteSubDepartment(string id, string sId)
         {
             try
             {
-                var subDepartment = _context.subDepartments.Where(x => x.companyId == id && x.subDeptId == sId).FirstOrDefault();
-                if (subDepartment == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
+                    var subDepartment = _context.subDepartments.Where(x => x.companyId == id && x.subDeptId == sId).FirstOrDefault();
+                    if (subDepartment == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.subDepartments.Remove(subDepartment);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
                 }
-
-                _context.subDepartments.Remove(subDepartment);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {

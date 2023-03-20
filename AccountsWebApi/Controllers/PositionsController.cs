@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AccountsWebApi.Models;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AccountsWebApi.Controllers
 {
@@ -15,20 +18,28 @@ namespace AccountsWebApi.Controllers
     {
         private readonly UserDbContext _context;
         private readonly ILogger<PositionsController> _logger;
-
-        public PositionsController(UserDbContext context, ILogger<PositionsController> logger)
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public PositionsController(UserDbContext context, ILogger<PositionsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
-            _logger = logger;   
+            _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Positions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Position>>> Getpositions(string cId)
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Position>>> Getpositions()
         {
             try
             {
-                return await _context.positions.Where(x => x.companyId == cId).ToListAsync();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.positions.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -38,19 +49,26 @@ namespace AccountsWebApi.Controllers
         }
 
         // GET: api/Positions/5
-        [HttpGet("{id}")]
+        [HttpGet("getPosition")]
+        [Authorize]
         public async Task<ActionResult<Position>> GetPosition(int id)
         {
             try
             {
-                var position = await _context.positions.FindAsync(id);
-
-                if (position == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
+                    var position = await _context.positions.FindAsync(id);
 
-                return position;
+                    if (position == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return position;
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -62,34 +80,24 @@ namespace AccountsWebApi.Controllers
         // PUT: api/Positions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPosition(int id, Position position)
+        [Authorize]
+        public async Task<IActionResult> PutPosition(Position position)
         {
             try
             {
-                if (id != position.positionAutoId)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return BadRequest();
-                }
-
-                _context.Entry(position).State = EntityState.Modified;
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PositionExists(id))
+                    if (PositionExists(position.positionAutoId))
                     {
-                        return NotFound();
+                        position.companyId = claimresponse.companyId;
+                        _context.Entry(position).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+                        return Ok();
                     }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return NoContent();
+                    return NotFound();
+                }return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -101,45 +109,52 @@ namespace AccountsWebApi.Controllers
         // POST: api/Positions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Position>> PostPosition(Position position)
         {
             try
             {
-                var compId = _context.positions.Where(d => d.companyId == position.companyId).Select(d => d.positionId).ToList();
-                var autoId = "";
-                if (compId.Count > 0)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
-                }
+                    var compId = _context.positions.Where(d => d.companyId == claimresponse.companyId).Select(d => d.positionId).ToList();
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
+                        autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
+                    }
 
-                if (autoId == "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Position p = new Position();
-                    string comId = "P1";
-                    p.positionId = comId;
-                    p.positionName = position.positionName;
-                    p.companyId = position.companyId;
-                    p.status = position.status;
-                    _context.positions.Add(p);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
-                if (autoId != "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Position p = new Position();
-                    string comid = "P" + (int.Parse(autoId) + 1);
-                    p.positionId = comid;
-                    p.positionName = position.positionName;
-                    p.companyId = position.companyId;
-                    p.status = position.status;
-                    _context.positions.Add(p);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Position p = new Position();
+                        string comId = "P1";
+                        p.positionId = comId;
+                        p.positionName = position.positionName;
+                        p.companyId = claimresponse.companyId;
+                        p.status = position.status;
+                        _context.positions.Add(p);
+                        await _context.SaveChangesAsync();
+                        //return Ok(c);
+                    }
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Position p = new Position();
+                        string comid = "P" + (int.Parse(autoId) + 1);
+                        p.positionId = comid;
+                        p.positionName = position.positionName;
+                        p.companyId = claimresponse.companyId;
+                        p.status = position.status;
+                        _context.positions.Add(p);
+                        await _context.SaveChangesAsync();
+                        //return Ok(c);
+                    }
 
-                return Ok();
+                    return Ok();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -150,20 +165,32 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/Positions/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeletePosition(int id)
         {
             try
             {
-                var position = await _context.positions.FindAsync(id);
-                if (position == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
+                    if (PositionExists(id))
+                    {
+
+                        var position = await _context.positions.FindAsync(id);
+                        if (position == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.positions.Remove(position);
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
+                    }
                     return NotFound();
                 }
-
-                _context.positions.Remove(position);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {

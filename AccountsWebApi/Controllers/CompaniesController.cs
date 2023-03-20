@@ -12,6 +12,8 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using RedisCachingService;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
 
 namespace AccountsWebApi.Controllers
 {
@@ -37,10 +39,10 @@ namespace AccountsWebApi.Controllers
             
             try
             {
-
-                //object m = null;
-                //string s = m.ToString();
-                return await _context.companies.ToListAsync();
+                
+                    //object m = null;
+                    //string s = m.ToString();
+                    return await _context.companies.ToListAsync();
 
             }
             catch (Exception ex)
@@ -57,8 +59,8 @@ namespace AccountsWebApi.Controllers
         {
             //var newcache = _cacheService.RemoveData("1");
             
-            var newcache = _cacheService.GetData<IEnumerable<string>>("1");
-            var newcache1 = _cacheService.GetData<string>("1Param");
+            var newCache = _cacheService.GetData<IEnumerable<string>>("1");
+            var newCache1 = _cacheService.GetData<string>("1Param");
             //if (cacheData != null && cacheData.Count()>0)
             //    return Ok(cacheData);
             //cacheData= await _context.companies.ToListAsync();

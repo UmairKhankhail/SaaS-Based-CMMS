@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AccountsWebApi.Models;
 using System.Security.Cryptography;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AccountsWebApi.Controllers
 {
@@ -16,20 +19,29 @@ namespace AccountsWebApi.Controllers
     {
         private readonly UserDbContext _context;
         private readonly ILogger<MethodtypesController> _logger;
+        private readonly JwtTokenHandler _JwtTokenHandler;
 
-        public MethodtypesController(UserDbContext context, ILogger<MethodtypesController> logger)
+        public MethodtypesController(UserDbContext context, ILogger<MethodtypesController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Methodtypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Methodtype>>> Getmethodtypes(string cId)
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Methodtype>>> Getmethodtypes()
         {
             try
             {
-                return await _context.methodTypes.Where(x => x.companyId == cId).ToListAsync();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.methodTypes.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -39,19 +51,26 @@ namespace AccountsWebApi.Controllers
         }
 
         // GET: api/Methodtypes/5
-        [HttpGet("{id}")]
+        [HttpGet("getMethodType")]
+        [Authorize]
         public async Task<ActionResult<Methodtype>> GetMethodtype(int id)
         {
             try
             {
-                var methodType = await _context.methodTypes.FindAsync(id);
-
-                if (methodType == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
+                    var methodType = await _context.methodTypes.FindAsync(id);
 
-                return methodType;
+                    if (methodType == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return methodType;
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -63,22 +82,25 @@ namespace AccountsWebApi.Controllers
         // PUT: api/Methodtypes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMethodtype(int id, Methodtype methodtype)
+        [Authorize]
+        public async Task<IActionResult> PutMethodtype(Methodtype methodtype)
         {
             try
             {
-                if (id != methodtype.mtAutoId)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return BadRequest();
+                    if (MethodtypeExists(methodtype.mtAutoId))
+                    {
+                        methodtype.companyId = claimresponse.companyId;
+                        _context.Entry(methodtype).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                    return NotFound();
                 }
-
-                _context.Entry(methodtype).State = EntityState.Modified;
-
-                
-                await _context.SaveChangesAsync();
-                
-
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -90,45 +112,52 @@ namespace AccountsWebApi.Controllers
         // POST: api/Methodtypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Methodtype>> PostMethodtype(Methodtype methodType)
         {
             try
             {
-                var compId = _context.methodTypes.Where(d => d.companyId == methodType.companyId).Select(d => d.mtId).ToList();
-                var autoId = "";
-                if (compId.Count > 0)
-                {
-                    autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
-                }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                    if (claimresponse.isAuth == true)
+                    {
+                        var compId = _context.methodTypes.Where(d => d.companyId == claimresponse.companyId).Select(d => d.mtId).ToList();
+                        var autoId = "";
+                        if (compId.Count > 0)
+                        {
+                            autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
+                        }
 
-                if (autoId == "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Methodtype m = new Methodtype();
-                    string comId = "M1";
-                    m.mtId = comId;
-                    m.mtName = methodType.mtName;
-                    m.companyId = methodType.companyId;
-                    m.status = methodType.status;
-                    _context.methodTypes.Add(m);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
-                if (autoId != "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Methodtype m = new Methodtype();
-                    string comId = "M" + (int.Parse(autoId) + 1);
-                    m.mtId = comId;
-                    m.mtName = methodType.mtName;
-                    m.companyId = methodType.companyId;
-                    m.status = methodType.status;
-                    _context.methodTypes.Add(m);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
+                        if (autoId == "")
+                        {
+                            _context.ChangeTracker.Clear();
+                            Methodtype m = new Methodtype();
+                            string comId = "M1";
+                            m.mtId = comId;
+                            m.mtName = methodType.mtName;
+                            m.companyId = claimresponse.companyId;
+                            m.status = methodType.status;
+                            _context.methodTypes.Add(m);
+                            await _context.SaveChangesAsync();
+                            //return Ok(c);
+                        }
+                        if (autoId != "")
+                        {
+                            _context.ChangeTracker.Clear();
+                            Methodtype m = new Methodtype();
+                            string comId = "M" + (int.Parse(autoId) + 1);
+                            m.mtId = comId;
+                            m.mtName = methodType.mtName;
+                            m.companyId = claimresponse.companyId;
+                            m.status = methodType.status;
+                            _context.methodTypes.Add(m);
+                            await _context.SaveChangesAsync();
+                            //return Ok(c);
+                        }
 
-                return Ok();
+                        return Ok();
+                    }
+                    return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -139,20 +168,27 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/Methodtypes/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteMethodtype(int id)
         {
             try
             {
-                var methodType = await _context.methodTypes.FindAsync(id);
-                if (methodType == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
+                    if (MethodtypeExists(id))
+                    {
+                        var methodType = await _context.methodTypes.FindAsync(id);
+
+                        _context.methodTypes.Remove(methodType);
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
+                    }
                     return NotFound();
                 }
-
-                _context.methodTypes.Remove(methodType);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {

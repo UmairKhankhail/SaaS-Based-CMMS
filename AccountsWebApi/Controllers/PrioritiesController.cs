@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AccountsWebApi.Models;
 using System.Security.Cryptography;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AccountsWebApi.Controllers
 {
@@ -16,19 +20,28 @@ namespace AccountsWebApi.Controllers
     {
         private readonly UserDbContext _context;
         private readonly ILogger<PrioritiesController> _logger;
-        public PrioritiesController(UserDbContext context, ILogger<PrioritiesController> logger)
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public PrioritiesController(UserDbContext context, ILogger<PrioritiesController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Priorities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Priority>>> Getpriorities(string cid)
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Priority>>> Getpriorities()
         {
             try
             {
-                return await _context.priorities.Where(x => x.companyId == cid).ToListAsync();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.priorities.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -38,19 +51,26 @@ namespace AccountsWebApi.Controllers
         }
 
         // GET: api/Priorities/5
-        [HttpGet("{id}")]
+        [HttpGet("getPriority")]
+        [Authorize]
         public async Task<ActionResult<Priority>> GetPriority(int id)
         {
             try
             {
-                var priority = await _context.priorities.FindAsync(id);
-
-                if (priority == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
+                    var priority = await _context.priorities.FindAsync(id);
 
-                return priority;
+                    if (priority == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return priority;
+                }
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -62,20 +82,27 @@ namespace AccountsWebApi.Controllers
         // PUT: api/Priorities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutPriority(int id, Priority priority)
         {
             try
             {
-                if (id != priority.priorityAutoId)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return BadRequest();
+                    if (PriorityExists(priority.priorityAutoId))
+                    {
+                        priority.companyId = claimresponse.companyId;
+                        _context.Entry(priority).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
+                    }
+                    return NotFound();
                 }
-
-                _context.Entry(priority).State = EntityState.Modified;
-
-                await _context.SaveChangesAsync();
-                
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -87,45 +114,52 @@ namespace AccountsWebApi.Controllers
         // POST: api/Priorities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Priority>> PostPriority(Priority priority)
         {
             try
             {
-                var compId = _context.priorities.Where(d => d.companyId == priority.companyId).Select(d => d.priorityId).ToList();
-                var autoId = "";
-                if (compId.Count > 0)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
-                }
+                    var compId = _context.priorities.Where(d => d.companyId == claimresponse.companyId).Select(d => d.priorityId).ToList();
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
+                        autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
+                    }
 
-                if (autoId == "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Priority p = new Priority();
-                    string comid = "PR1";
-                    p.priorityId = comid;
-                    p.priorityName = priority.priorityName;
-                    p.companyId = priority.companyId;
-                    p.status = priority.status;
-                    _context.priorities.Add(p);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
-                if (autoId != "")
-                {
-                    _context.ChangeTracker.Clear();
-                    Priority p = new Priority();
-                    string comId = "PR" + (int.Parse(autoId) + 1);
-                    p.priorityId = comId;
-                    p.priorityName = priority.priorityName;
-                    p.companyId = priority.companyId;
-                    p.status = priority.status;
-                    _context.priorities.Add(p);
-                    await _context.SaveChangesAsync();
-                    //return Ok(c);
-                }
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Priority p = new Priority();
+                        string comid = "PR1";
+                        p.priorityId = comid;
+                        p.priorityName = priority.priorityName;
+                        p.companyId = claimresponse.companyId;
+                        p.status = priority.status;
+                        _context.priorities.Add(p);
+                        await _context.SaveChangesAsync();
+                        //return Ok(c);
+                    }
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Priority p = new Priority();
+                        string comId = "PR" + (int.Parse(autoId) + 1);
+                        p.priorityId = comId;
+                        p.priorityName = priority.priorityName;
+                        p.companyId = claimresponse.companyId;
+                        p.status = priority.status;
+                        _context.priorities.Add(p);
+                        await _context.SaveChangesAsync();
+                        //return Ok(c);
+                    }
 
-                return Ok();
+                    return Ok();
+                }
+                return Unauthorized();
             }
             catch(Exception ex)
             {
@@ -136,20 +170,31 @@ namespace AccountsWebApi.Controllers
 
         // DELETE: api/Priorities/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeletePriority(int id)
         {
             try
             {
-                var priority = await _context.priorities.FindAsync(id);
-                if (priority == null)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
+                    if (PriorityExists(id))
+                    {
+                        var priority = await _context.priorities.FindAsync(id);
+                        if (priority == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.priorities.Remove(priority);
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
+                    }
                     return NotFound();
                 }
-
-                _context.priorities.Remove(priority);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
+                return Unauthorized();
             }
             catch(Exception ex)
             {
