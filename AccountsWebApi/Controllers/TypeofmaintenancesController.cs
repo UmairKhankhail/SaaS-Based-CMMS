@@ -30,7 +30,7 @@ namespace AccountsWebApi.Controllers
         // GET: api/Typeofmaintenances
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Typeofmaintenance>>> Gettypeofmaintenances(string cid)
+        public async Task<ActionResult<IEnumerable<Typeofmaintenance>>> Gettypeofmaintenances()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    return await _context.typeOfMaintenances.Where(x => x.companyId == cid && x.status == "Active").ToListAsync();
+                    return await _context.typeOfMaintenances.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
                 }
                 return Unauthorized();
             }
@@ -82,7 +82,7 @@ namespace AccountsWebApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutTypeofmaintenance(int id, Typeofmaintenance typeOfMaintenance)
+        public async Task<IActionResult> PutTypeofmaintenance(Typeofmaintenance typeOfMaintenance)
         {
             try
             {
@@ -90,16 +90,16 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    if (id != typeOfMaintenance.tomAutoId)
+                    if (TypeofmaintenanceExists(typeOfMaintenance.tomAutoId))
                     {
-                        return BadRequest();
+                        typeOfMaintenance.companyId = claimresponse.companyId;
+                        _context.Entry(typeOfMaintenance).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+                        return Ok();
                     }
 
-                    _context.Entry(typeOfMaintenance).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
 
-
-                    return Ok();
+                    return NotFound();
                 }
                 return Unauthorized();
             }
@@ -123,7 +123,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var compId = _context.typeOfMaintenances.Where(d => d.companyId == typeOfMaintenance.companyId).Select(d => d.tomId).ToList();
+                    var compId = _context.typeOfMaintenances.Where(d => d.companyId == claimresponse.companyId).Select(d => d.tomId).ToList();
                     var autoId = "";
                     if (compId.Count > 0)
                     {
@@ -137,7 +137,7 @@ namespace AccountsWebApi.Controllers
                         string comId = "TM1";
                         m.tomId = comId;
                         m.tomName = typeOfMaintenance.tomName;
-                        m.companyId = typeOfMaintenance.companyId;
+                        m.companyId = claimresponse.companyId;
                         m.status = typeOfMaintenance.status;
                         _context.typeOfMaintenances.Add(m);
                         await _context.SaveChangesAsync();
@@ -150,7 +150,7 @@ namespace AccountsWebApi.Controllers
                         string comId = "TM" + (int.Parse(autoId) + 1);
                         m.tomId = comId;
                         m.tomName = typeOfMaintenance.tomName;
-                        m.companyId = typeOfMaintenance.companyId;
+                        m.companyId = claimresponse.companyId;
                         m.status = typeOfMaintenance.status;
                         _context.typeOfMaintenances.Add(m);
                         await _context.SaveChangesAsync();
@@ -179,15 +179,19 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var typeOfMaintenance = await _context.typeOfMaintenances.FindAsync(id);
-                    if (typeOfMaintenance == null)
+                    if (TypeofmaintenanceExists(id))
                     {
-                        return NotFound();
+                        var typeOfMaintenance = await _context.typeOfMaintenances.FindAsync(id);
+                        if (typeOfMaintenance == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.typeOfMaintenances.Remove(typeOfMaintenance);
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
                     }
-
-                    _context.typeOfMaintenances.Remove(typeOfMaintenance);
-                    await _context.SaveChangesAsync();
-
                     return NoContent();
                 }
                 return Unauthorized();

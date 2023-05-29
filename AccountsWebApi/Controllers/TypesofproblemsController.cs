@@ -30,7 +30,7 @@ namespace AccountsWebApi.Controllers
         // GET: api/Typesofproblems
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Typesofproblem>>> Gettypesofproblems(string cid)
+        public async Task<ActionResult<IEnumerable<Typesofproblem>>> Gettypesofproblems()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    return await _context.typesOfProblems.Where(x => x.companyId == cid && x.status == "Active").ToListAsync();
+                    return await _context.typesOfProblems.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
                 }
                 return Unauthorized();
             }
@@ -82,7 +82,7 @@ namespace AccountsWebApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutTypesofproblem(int id, Typesofproblem typesofproblem)
+        public async Task<IActionResult> PutTypesofproblem(Typesofproblem typesofproblem)
         {
             try
             {
@@ -90,15 +90,15 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    if (id != typesofproblem.topAutoId)
+                    if (TypesofproblemExists(typesofproblem.topAutoId))
                     {
-                        return BadRequest();
+                        typesofproblem.companyId = claimresponse.companyId;
+                        _context.Entry(typesofproblem).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+                        return Ok();
                     }
-
-                    _context.Entry(typesofproblem).State = EntityState.Modified;
-
-                    await _context.SaveChangesAsync();
-                    return Ok();
+                    return NotFound();
                 }
                 return Unauthorized();
             }
@@ -121,7 +121,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var compId = _context.typesOfProblems.Where(d => d.companyId == typesOfProblem.companyId).Select(d => d.topId).ToList();
+                    var compId = _context.typesOfProblems.Where(d => d.companyId == claimresponse.companyId).Select(d => d.topId).ToList();
                     var autoId = "";
                     if (compId.Count > 0)
                     {
@@ -135,7 +135,7 @@ namespace AccountsWebApi.Controllers
                         string comid = "TP1";
                         m.topId = comid;
                         m.topName = typesOfProblem.topName;
-                        m.companyId = typesOfProblem.companyId;
+                        m.companyId = claimresponse.companyId;
                         m.status = typesOfProblem.status;
                         _context.typesOfProblems.Add(m);
                         await _context.SaveChangesAsync();
@@ -148,7 +148,7 @@ namespace AccountsWebApi.Controllers
                         string comid = "TP" + (int.Parse(autoId) + 1);
                         m.topId = comid;
                         m.topName = typesOfProblem.topName;
-                        m.companyId = typesOfProblem.companyId;
+                        m.companyId = claimresponse.companyId;
                         m.status = typesOfProblem.status;
                         _context.typesOfProblems.Add(m);
                         await _context.SaveChangesAsync();
@@ -177,15 +177,19 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var typesOfProblem = await _context.typesOfProblems.FindAsync(id);
-                    if (typesOfProblem == null)
+                    if (TypesofproblemExists(id))
                     {
-                        return NotFound();
+                        var typesOfProblem = await _context.typesOfProblems.FindAsync(id);
+                        if (typesOfProblem == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.typesOfProblems.Remove(typesOfProblem);
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
                     }
-
-                    _context.typesOfProblems.Remove(typesOfProblem);
-                    await _context.SaveChangesAsync();
-
                     return NoContent();
                 }
                 return Unauthorized();

@@ -31,7 +31,7 @@ namespace AccountsWebApi.Controllers
         // GET: api/Roles
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Role>>> Getroles(string id)
+        public async Task<ActionResult<IEnumerable<Role>>> Getroles()
         {
             try
             {
@@ -39,7 +39,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    return await _context.roles.Where(x => x.companyId == id && x.status == "Active").ToListAsync();
+                    return await _context.roles.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
                 }
                 return Unauthorized();
             }
@@ -53,7 +53,7 @@ namespace AccountsWebApi.Controllers
         // GET: api/Roles/5
         [HttpGet("getRole")]
         [Authorize]
-        public async Task<ActionResult<Role>> GetRole(string id, int rId)
+        public async Task<ActionResult<Role>> GetRole(int rId)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace AccountsWebApi.Controllers
                 {
                     var getRoleId = await _context.roles
                    .Join(_context.roleAndPermissions, d => d.roleAutoId, sd => sd.roleAutoId, (d, sd) => new { d, sd })
-                   .Where(x => x.sd.companyId == id && x.d.companyId == id && x.d.roleAutoId == rId)
+                   .Where(x => x.sd.companyId == claimresponse.companyId && x.d.companyId == claimresponse.companyId && x.d.roleAutoId == rId)
                    .Select(result => new
                    {
                        result.sd.roleAutoId,
@@ -96,7 +96,7 @@ namespace AccountsWebApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutRole(string id, Role role)
+        public async Task<IActionResult> PutRole(Role role)
         {
             try
             {
@@ -104,11 +104,11 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    if (RoleExists(id, role.companyId) == true)
+                    if (RoleExists(role.roleAutoId))
                     {
                         var listPermissions = role.listPermissions;
                         var listDbPermissions = new List<string>();
-                        var getRolePermissions = _context.roleAndPermissions.Where(x => x.roleAutoId == role.roleAutoId && x.companyId == role.companyId).Select(x => x.permissionId);
+                        var getRolePermissions = _context.roleAndPermissions.Where(x => x.roleAutoId == role.roleAutoId && x.companyId == claimresponse.companyId).Select(x => x.permissionId);
                         foreach (var x in getRolePermissions)
                         {
                             listDbPermissions.Add(x.ToString());
@@ -141,7 +141,7 @@ namespace AccountsWebApi.Controllers
                         {
                             foreach (var item in rll)
                             {
-                                var delUser = _context.roleAndPermissions.Where(x => x.companyId == role.companyId && x.roleAutoId == role.roleAutoId && x.permissionId == item).FirstOrDefault();
+                                var delUser = _context.roleAndPermissions.Where(x => x.companyId == claimresponse.companyId && x.roleAutoId == role.roleAutoId && x.permissionId == item).FirstOrDefault();
                                 if (delUser == null)
                                 {
                                     return NotFound();
@@ -157,7 +157,7 @@ namespace AccountsWebApi.Controllers
                                 RoleandPermission rolePermissions = new RoleandPermission();
                                 rolePermissions.roleAutoId = role.roleAutoId;
                                 rolePermissions.permissionId = item;
-                                rolePermissions.companyId = role.companyId;
+                                rolePermissions.companyId = claimresponse.companyId;
                                 _context.roleAndPermissions.Add(rolePermissions);
                             }
 
@@ -165,7 +165,7 @@ namespace AccountsWebApi.Controllers
 
                         var listDepartments = role.listDepartments;
                         var listDbDepartments = new List<string>();
-                        var getRoleDepartments = _context.roleAndDepartments.Where(x => x.roleAutoId == role.roleAutoId && x.companyId == role.companyId).Select(x => x.deptAutoId);
+                        var getRoleDepartments = _context.roleAndDepartments.Where(x => x.roleAutoId == role.roleAutoId && x.companyId == claimresponse.companyId).Select(x => x.deptAutoId);
                         foreach (var x in getRoleDepartments)
                         {
                             listDbDepartments.Add(x.ToString());
@@ -198,7 +198,7 @@ namespace AccountsWebApi.Controllers
                         {
                             foreach (var item in rlld)
                             {
-                                var delUser = _context.roleAndDepartments.Where(x => x.companyId == role.companyId && x.roleAutoId == role.roleAutoId && x.deptAutoId == int.Parse(item)).FirstOrDefault();
+                                var delUser = _context.roleAndDepartments.Where(x => x.companyId == claimresponse.companyId && x.roleAutoId == role.roleAutoId && x.deptAutoId == int.Parse(item)).FirstOrDefault();
                                 if (delUser == null)
                                 {
                                     return NotFound();
@@ -214,7 +214,7 @@ namespace AccountsWebApi.Controllers
                                 RoleandDepartment roleDept = new RoleandDepartment();
                                 roleDept.roleAutoId = role.roleAutoId;
                                 roleDept.deptAutoId = int.Parse(item);
-                                roleDept.companyId = role.companyId;
+                                roleDept.companyId = claimresponse.companyId;
                                 _context.roleAndDepartments.Add(roleDept);
                             }
 
@@ -223,7 +223,7 @@ namespace AccountsWebApi.Controllers
 
                         await _context.SaveChangesAsync();
 
-                        var getRoleUsersList = _context.userAndRoles.Where(x => x.roleAutoId == role.roleAutoId && x.companyId == role.companyId).Select(x => x.userAutoId).ToList();
+                        var getRoleUsersList = _context.userAndRoles.Where(x => x.roleAutoId == role.roleAutoId && x.companyId == claimresponse.companyId).Select(x => x.userAutoId).ToList();
 
                         var resultDestroyingUsers = _JwtTokenHandler.DestroyingCacheByAdminAsync(new DestroyCacheRequest { userAutoIds = getRoleUsersList });
                         if (resultDestroyingUsers == true)
@@ -232,6 +232,7 @@ namespace AccountsWebApi.Controllers
 
                     }
                     return NoContent();
+                
                 }
                 return Unauthorized();
             }
@@ -279,71 +280,73 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    int getRoleAutoId = 0;
-                    var compId = _context.roles.Where(d => d.companyId == role.companyId).Select(d => d.roleId).ToList();
+                    
+                        int getRoleAutoId = 0;
+                        var compId = _context.roles.Where(d => d.companyId == claimresponse.companyId).Select(d => d.roleId).ToList();
 
-                    var autoId = "";
-                    if (compId.Count > 0)
-                    {
+                        var autoId = "";
+                        if (compId.Count > 0)
+                        {
 
-                        autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
-                    }
+                            autoId = compId.Max(x => int.Parse(x.Substring(1))).ToString();
+                        }
 
-                    if (autoId == "")
-                    {
-                        _context.ChangeTracker.Clear();
-                        Role c = new Role();
-                        string comId = "R1";
-                        c.roleId = comId;
-                        c.roleName = role.roleName;
-                        c.companyId = role.companyId;
-                        c.status = role.status;
-                        _context.roles.Add(c);
-                        await _context.SaveChangesAsync();
-                        getRoleAutoId = c.roleAutoId;
-                    }
-                    if (autoId != "")
-                    {
-                        _context.ChangeTracker.Clear();
-                        Role c = new Role();
-                        string comId = "R" + (int.Parse(autoId) + 1);
-                        c.roleId = comId;
-                        c.roleName = role.roleName;
-                        c.companyId = role.companyId;
-                        c.status = role.status;
-                        _context.roles.Add(c);
-                        await _context.SaveChangesAsync();
-                        getRoleAutoId = c.roleAutoId;
-                    }
+                        if (autoId == "")
+                        {
+                            _context.ChangeTracker.Clear();
+                            Role c = new Role();
+                            string comId = "R1";
+                            c.roleId = comId;
+                            c.roleName = role.roleName;
+                            c.companyId = claimresponse.companyId;
+                            c.status = role.status;
+                            _context.roles.Add(c);
+                            await _context.SaveChangesAsync();
+                            getRoleAutoId = c.roleAutoId;
+                        }
+                        if (autoId != "")
+                        {
+                            _context.ChangeTracker.Clear();
+                            Role c = new Role();
+                            string comId = "R" + (int.Parse(autoId) + 1);
+                            c.roleId = comId;
+                            c.roleName = role.roleName;
+                            c.companyId = claimresponse.companyId;
+                            c.status = role.status;
+                            _context.roles.Add(c);
+                            await _context.SaveChangesAsync();
+                            getRoleAutoId = c.roleAutoId;
+                        }
 
-                    //Console.WriteLine("Id: "+ getroleautoid.ToString());
-                    //_context.roles.Add(role);
-                    //await _context.SaveChangesAsync();
+                        //Console.WriteLine("Id: "+ getroleautoid.ToString());
+                        //_context.roles.Add(role);
+                        //await _context.SaveChangesAsync();
 
 
-                    var listSubdepart = role.listDepartments;
-                    var listPermissions = role.listPermissions;
+                        var listSubdepart = role.listDepartments;
+                        var listPermissions = role.listPermissions;
 
-                    foreach (var items in listSubdepart)
-                    {
-                        RoleandDepartment roleDept = new RoleandDepartment();
-                        roleDept.deptAutoId = Convert.ToInt32(items);
-                        roleDept.roleAutoId = getRoleAutoId;
-                        roleDept.companyId = role.companyId;
-                        _context.roleAndDepartments.Add(roleDept);
-                        await _context.SaveChangesAsync();
-                    }
-                    foreach (var items in listPermissions)
-                    {
-                        RoleandPermission rolePerm = new RoleandPermission();
-                        rolePerm.permissionId = items.ToString();
-                        rolePerm.roleAutoId = getRoleAutoId;
-                        rolePerm.companyId = role.companyId;
-                        _context.roleAndPermissions.Add(rolePerm);
-                        await _context.SaveChangesAsync();
-                    }
+                        foreach (var items in listSubdepart)
+                        {
+                            RoleandDepartment roleDept = new RoleandDepartment();
+                            roleDept.deptAutoId = Convert.ToInt32(items);
+                            roleDept.roleAutoId = getRoleAutoId;
+                            roleDept.companyId = claimresponse.companyId;
+                            _context.roleAndDepartments.Add(roleDept);
+                            await _context.SaveChangesAsync();
+                        }
+                        foreach (var items in listPermissions)
+                        {
+                            RoleandPermission rolePerm = new RoleandPermission();
+                            rolePerm.permissionId = items.ToString();
+                            rolePerm.roleAutoId = getRoleAutoId;
+                            rolePerm.companyId = claimresponse.companyId;
+                            _context.roleAndPermissions.Add(rolePerm);
+                            await _context.SaveChangesAsync();
+                        }
 
-                    return Ok();
+                        return Ok();
+                    
                 }
                 return Unauthorized();
 
@@ -378,7 +381,7 @@ namespace AccountsWebApi.Controllers
         // DELETE: api/Roles/5
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteRole(string id, string rId)
+        public async Task<IActionResult> DeleteRole(int id)
         {
             try
             {
@@ -386,15 +389,18 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var role = _context.roles.Where(x => x.companyId == id && x.roleId == rId).FirstOrDefault();
-                    if (role == null)
+                    if (RoleExists(id))
                     {
-                        return NotFound();
+                        var role = await _context.roles.FindAsync(id);
+                        if (role == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.roles.Remove(role);
+                        await _context.SaveChangesAsync();
+                        return Ok();
                     }
-
-                    _context.roles.Remove(role);
-                    await _context.SaveChangesAsync();
-
                     return NoContent();
                 }
                 return Unauthorized();
@@ -406,9 +412,9 @@ namespace AccountsWebApi.Controllers
             }
         }
 
-        private bool RoleExists(string id, string cId)
+        private bool RoleExists(int id)
         {
-            return _context.roles.Any(x => x.roleId == id && x.companyId ==cId);
+            return _context.roles.Any(x => x.roleAutoId == id);
         }
     }
 }

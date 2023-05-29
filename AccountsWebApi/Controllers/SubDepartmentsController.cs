@@ -39,7 +39,7 @@ namespace AccountsWebApi.Controllers
         // GET: api/SubDepartments
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<SubDepartment>>> Getsub_departments(string id)
+        public async Task<ActionResult<IEnumerable<SubDepartment>>> Getsub_departments()
         {
             try
             {
@@ -47,7 +47,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    return await _context.subDepartments.Where(x => x.companyId == id && x.status == "Active").ToListAsync();
+                    return await _context.subDepartments.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
                 }
                 return Unauthorized();
             }
@@ -78,7 +78,7 @@ namespace AccountsWebApi.Controllers
         // GET: api/SubDepartments/5
         [HttpGet("getSubDepartment")]
         [Authorize]
-        public async Task<ActionResult<SubDepartment>> GetSubDepartment(string id, string cid)
+        public async Task<ActionResult<SubDepartment>> GetSubDepartment(string id)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var subDepartment = await _context.subDepartments.Where(x => x.companyId == cid && x.subDeptId == id).FirstOrDefaultAsync();
+                    var subDepartment = await _context.subDepartments.Where(x => x.companyId == claimresponse.companyId && x.subDeptId == id).FirstOrDefaultAsync();
 
                     if (subDepartment == null)
                     {
@@ -108,7 +108,7 @@ namespace AccountsWebApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutSubDepartment(string id, SubDepartment subDepartment)
+        public async Task<IActionResult> PutSubDepartment(SubDepartment subDepartment)
         {
             try
             {
@@ -116,17 +116,14 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    if (id != subDepartment.subDeptId)
+                    if (SubDepartmentExists(subDepartment.subDeptAutoId))
                     {
-                        return BadRequest();
+                        subDepartment.companyId = claimresponse.companyId;
+                        _context.Entry(subDepartment).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+                        return Ok();
                     }
-
-                    _context.Entry(subDepartment).State = EntityState.Modified;
-
-                    await _context.SaveChangesAsync();
-
-
-                    return NoContent();
+                    return NotFound();
                 }
                 return Unauthorized();
             }
@@ -150,7 +147,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var subDept = _context.subDepartments.Where(d => d.companyId == subDepartment.companyId).Select(d => d.subDeptId).ToList();
+                    var subDept = _context.subDepartments.Where(d => d.companyId == claimresponse.companyId).Select(d => d.subDeptId).ToList();
                     List<string> subDeptList = new List<string>();
                     List<int> subDeptNoList = new List<int>();
                     foreach (var z in subDept)
@@ -184,7 +181,7 @@ namespace AccountsWebApi.Controllers
                         SubDepartment c = new SubDepartment();
                         c.subDeptId = subDepartment.deptSingleId + "S1";
                         c.subDeptName = subDepartment.subDeptName;
-                        c.companyId = subDepartment.companyId;
+                        c.companyId = claimresponse.companyId;
                         c.status = "Active";
                         c.deptAutoId = subDepartment.deptAutoId;
                         _context.subDepartments.Add(c);
@@ -197,7 +194,7 @@ namespace AccountsWebApi.Controllers
                         string comid = subDepartment.deptSingleId + "S" + (subDeptNoList.Max() + 1);
                         c.subDeptId = comid;
                         c.subDeptName = subDepartment.subDeptName;
-                        c.companyId = subDepartment.companyId;
+                        c.companyId = claimresponse.companyId;
                         c.status = "Active";
                         c.deptAutoId = subDepartment.deptAutoId;
                         _context.subDepartments.Add(c);
@@ -274,7 +271,7 @@ namespace AccountsWebApi.Controllers
         // DELETE: api/SubDepartments/5
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteSubDepartment(string id, string sId)
+        public async Task<IActionResult> DeleteSubDepartment(int id)
         {
             try
             {
@@ -282,15 +279,19 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var subDepartment = _context.subDepartments.Where(x => x.companyId == id && x.subDeptId == sId).FirstOrDefault();
-                    if (subDepartment == null)
+                    if (SubDepartmentExists(id))
                     {
-                        return NotFound();
+                        var subDepartment = await _context.subDepartments.FindAsync(id);
+                        if (subDepartment == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.subDepartments.Remove(subDepartment);
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
                     }
-
-                    _context.subDepartments.Remove(subDepartment);
-                    await _context.SaveChangesAsync();
-
                     return NoContent();
                 }
                 return Unauthorized();
@@ -302,9 +303,9 @@ namespace AccountsWebApi.Controllers
             }
         }
 
-        private bool SubDepartmentExists(string id)
+        private bool SubDepartmentExists(int id)
         {
-            return _context.subDepartments.Any(e => e.subDeptId == id);
+            return _context.subDepartments.Any(e => e.subDeptAutoId == id);
         }
     }
 }
