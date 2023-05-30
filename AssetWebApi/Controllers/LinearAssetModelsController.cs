@@ -75,9 +75,48 @@ namespace AssetWebApi.Controllers
         // POST: api/LinearAssetModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LinearAssetModel>> PostLinearAssetModel(LinearAssetModel linearAssetModel)
+        public async Task<ActionResult<LinearAssetModel>> PostLinearAssetModel( string companyId, LinearAssetModel linearAssetModel)
         {
-            _context.linearAssetModels.Add(linearAssetModel);
+            var getLamAutoId = 0;
+            var compId = _context.linearAssetModels.Where(i => i.companyId == linearAssetModel.companyId).Select(d => d.laID).ToList();
+            var autoId = "";
+            if (compId.Count > 0)
+            {
+
+                autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
+            }
+
+            if (autoId == "")
+            {
+                _context.ChangeTracker.Clear();
+                LinearAssetModel laModel = new LinearAssetModel();
+                string comId = "LAM1";
+                laModel.laAutoID= linearAssetModel.laAutoID;
+                laModel.laID = comId;
+                laModel.laName= linearAssetModel.laName;
+                laModel.status= linearAssetModel.status;
+                laModel.companyId = companyId;
+                _context.linearAssetModels.Add(laModel);
+                await _context.SaveChangesAsync();
+                getLamAutoId = laModel.laAutoID;
+            }
+
+            if (autoId != "")
+            {
+                _context.ChangeTracker.Clear();
+                LinearAssetModel laModel = new LinearAssetModel();
+                string comId = "LAM" + (int.Parse(autoId) + 1);
+                laModel.laAutoID = linearAssetModel.laAutoID;
+                laModel.laID = comId;
+                laModel.laName = linearAssetModel.laName;
+                laModel.status = linearAssetModel.status;
+                laModel.companyId = companyId;
+                _context.linearAssetModels.Add(laModel);
+                await _context.SaveChangesAsync();
+                getLamAutoId = laModel.laAutoID;
+            }
+
+_context.linearAssetModels.Add(linearAssetModel);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetLinearAssetModel", new { id = linearAssetModel.laAutoID }, linearAssetModel);

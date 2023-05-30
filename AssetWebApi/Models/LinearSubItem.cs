@@ -14,6 +14,7 @@ namespace AssetWebApi.Models
         [ForeignKey("laAutoId")]
         public virtual LinearAssetModel linearAssetModel { get; set; }
 
+        public string lsName { get; set; }
         public  string location { get; set; }
 
         public string description { get; set; }
