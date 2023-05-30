@@ -44,30 +44,31 @@ namespace AssetWebApi.Controllers
 
         // PUT: api/EquipmentAssetsBuild/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEquipmentAsset(int id, EquipmentAsset equipmentAsset)
+        [HttpPut]
+        public async Task<IActionResult> PutEquipmentAsset(EquipmentAsset equipmentAsset)
         {
-            if (id != equipmentAsset.eAssetAuotoId)
-            {
-                return BadRequest();
-            }
+            var existingModel = await _context.equipmentAssets.FindAsync(equipmentAsset.eAssetAuotoId);
 
-            _context.Entry(equipmentAsset).State = EntityState.Modified;
+            
+            existingModel.eAssetId = equipmentAsset.eAssetId;
+            existingModel.eAutoId = equipmentAsset.eAutoId;
+            existingModel.eAssetName = equipmentAsset.eAssetName;
+            existingModel.brandNmae = equipmentAsset.brandNmae;
+            existingModel.code = equipmentAsset.code;
+            existingModel.description = equipmentAsset.description;
+            existingModel.deptId = equipmentAsset.deptId;
+            existingModel.subDeptId = equipmentAsset.subDeptId;
+            existingModel.flId = equipmentAsset.flId;
+            existingModel.companyId = equipmentAsset.companyId;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EquipmentAssetExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                
             }
 
             return NoContent();
