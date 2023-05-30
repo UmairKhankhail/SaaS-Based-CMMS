@@ -2,9 +2,9 @@ using RedisCachingService;
 using JwtAuthenticationManager;
 using Microsoft.EntityFrameworkCore;
 
-using InventoryAPI.Models;
 using Microsoft.OpenApi.Models;
 using System.Text.Json;
+using AssetWebApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
