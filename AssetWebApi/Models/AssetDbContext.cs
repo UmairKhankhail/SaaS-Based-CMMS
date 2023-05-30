@@ -2,7 +2,7 @@
 using AssetWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace InventoryAPI.Models
+namespace AssetWebApi.Models
 {
     public class AssetDbContext: DbContext
     {
