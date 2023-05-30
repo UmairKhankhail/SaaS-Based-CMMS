@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.CodeAnalysis.Options;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetWebApi.Models
 {
@@ -9,9 +11,12 @@ namespace AssetWebApi.Models
 
         public string eId { get; set; }
 
-
+        [NotMapped]
+        public int validityCheck { get; set; }
         public string eName { get; set; }
 
+        [NotMapped]
+        public List<EquipmentSubItemsList> listSubItems { get; set; }
 
         public string status { get; set; }
 

@@ -8,10 +8,8 @@ namespace AssetWebApi.Models
         [Key]
         public int esAutoId { get; set; }
 
-        public string esId { get; set; }
-
         public int eAutoId { get; set; }
-        [ForeignKey("eAuotId")]
+        [ForeignKey("eAutoId")]
         public virtual EquipmentModel equipmentModel { get; set; }
 
         public string esName { get; set; }
