@@ -22,60 +22,73 @@ namespace AssetWebApi.Controllers
 
         // GET: api/LinearAssetModels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LinearAssetModel>>> GetlinearAssetModels()
+        public async Task<ActionResult<IEnumerable<LinearAssetModel>>> GetlinearAssetModels(string companyId)
         {
-            return await _context.linearAssetModels.ToListAsync();
-        }
 
+            var result=await _context.linearAssetModels.Join(
+                _context.linearSubItems, la => la.laAutoID, lsm => lsm.laAutoId, (la, lsm) => new { la, lsm }).
+                Where(x => x.la.laAutoID == x.lsm.laAutoId && x.la.companyId == companyId).
+                Select(result => new
+                {
+                    result.la.laID,
+                    result.la.laName,
+                    result.la.status,
+                    result.lsm.lsName,
+                    result.lsm.location,
+                    result.lsm.description
+
+                }).ToListAsync();
+            return Ok(result);
+         }
         // GET: api/LinearAssetModels/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<LinearAssetModel>> GetLinearAssetModel(int id)
+        public async Task<ActionResult<LinearAssetModel>> GetLinearAssetModel(int id, string companyId)
         {
-            var linearAssetModel = await _context.linearAssetModels.FindAsync(id);
+            
+                var linearAsssetModel = await _context.linearAssetModels.Join(
+                _context.linearSubItems, la => la.laAutoID, lsm => lsm.laAutoId, (la, lsm) => new { la, lsm }).
+                Where(x => x.la.companyId == companyId && x.la.laAutoID==id && x.la.laAutoID == x.lsm.laAutoId).
+                Select(result => new
+                {   result.la.status,
+                    result.lsm.lsName,
+                    result.lsm.location,
+                    result.lsm.description
 
-            if (linearAssetModel == null)
-            {
-                return NotFound();
-            }
-
-            return linearAssetModel;
+                }).ToListAsync();
+                return Ok(linearAsssetModel);
+    
         }
 
         // PUT: api/LinearAssetModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLinearAssetModel(int id, LinearAssetModel linearAssetModel)
+        [HttpPut]
+        public async Task<IActionResult> PutLinearAssetModel(LinearAssetModel linearAssetModel)
         {
-            if (id != linearAssetModel.laAutoID)
+            if (linearAssetModel.validityCheck != 0)
             {
-                return BadRequest();
-            }
+                var existingModel = await _context.linearAssetModels.FindAsync(linearAssetModel.validityCheck);
 
-            _context.Entry(linearAssetModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LinearAssetModelExists(id))
+                existingModel.laName = linearAssetModel.laName;
+                try
                 {
-                    return NotFound();
+                    await _context.SaveChangesAsync();
+                    return Ok();
                 }
-                else
+                catch (Exception ex)
                 {
-                    throw;
+                    //_logger.LogError(ex.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
             }
 
-            return NoContent();
+
+            return Unauthorized();
         }
 
         // POST: api/LinearAssetModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LinearAssetModel>> PostLinearAssetModel( string companyId, LinearAssetModel linearAssetModel)
+        public async Task<ActionResult<LinearAssetModel>> PostLinearAssetModel( LinearAssetModel linearAssetModel)
         {
             var getLamAutoId = 0;
             var compId = _context.linearAssetModels.Where(i => i.companyId == linearAssetModel.companyId).Select(d => d.laID).ToList();
@@ -95,7 +108,7 @@ namespace AssetWebApi.Controllers
                 laModel.laID = comId;
                 laModel.laName= linearAssetModel.laName;
                 laModel.status= linearAssetModel.status;
-                laModel.companyId = companyId;
+                laModel.companyId = linearAssetModel.companyId;
                 _context.linearAssetModels.Add(laModel);
                 await _context.SaveChangesAsync();
                 getLamAutoId = laModel.laAutoID;
@@ -110,29 +123,42 @@ namespace AssetWebApi.Controllers
                 laModel.laID = comId;
                 laModel.laName = linearAssetModel.laName;
                 laModel.status = linearAssetModel.status;
-                laModel.companyId = companyId;
+                laModel.companyId = linearAssetModel.companyId;
                 _context.linearAssetModels.Add(laModel);
                 await _context.SaveChangesAsync();
                 getLamAutoId = laModel.laAutoID;
             }
 
-_context.linearAssetModels.Add(linearAssetModel);
-            await _context.SaveChangesAsync();
+            List<LinearSubItemList> linearSubItemLists = linearAssetModel.listSubItems;
 
-            return CreatedAtAction("GetLinearAssetModel", new { id = linearAssetModel.laAutoID }, linearAssetModel);
+            foreach (var items in linearSubItemLists)
+            {
+                LinearSubItem laSubItem = new LinearSubItem();
+                laSubItem.laAutoId = getLamAutoId;
+                laSubItem.lsName = items.lsName;
+                laSubItem.description = items.description;
+                laSubItem.location = items.location;
+                laSubItem.companyId=linearAssetModel.companyId;
+                _context.linearSubItems.Add(laSubItem);
+                await _context.SaveChangesAsync();
+            }
+
+       
+
+            return Ok();
         }
 
         // DELETE: api/LinearAssetModels/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLinearAssetModel(int id)
         {
-            var linearAssetModel = await _context.linearAssetModels.FindAsync(id);
-            if (linearAssetModel == null)
+            var linearSubItems = await _context.linearSubItems.FindAsync(id);
+            if (linearSubItems == null)
             {
                 return NotFound();
             }
 
-            _context.linearAssetModels.Remove(linearAssetModel);
+            _context.linearSubItems.Remove(linearSubItems);
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -27,7 +27,6 @@ namespace AssetWebApi.Models
 
         public string companyId { get; set; }
 
-        [NotMapped]
-        public  List<String> linearSubItems { get; set; }
+       
     }
 }
