@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetWebApi.Models
 {
@@ -16,6 +17,11 @@ namespace AssetWebApi.Models
 
         public string companyId { get; set; }
 
+        [NotMapped]
+        public List<LinearSubItemList> listSubItems { get; set; }
+
+        [NotMapped]
+        public int validityCheck { get; set; }
 
     }
 }

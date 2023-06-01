@@ -1,0 +1,83 @@
+﻿@model IEnumerable<AssetWebApi.Models.LinearAsset>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.lAssetId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.linearAssetModel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.laAssetName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.deptId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.subDeptId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.flId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.companyId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.lAssetId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.linearAssetModel.laAutoID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.laAssetName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.deptId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.subDeptId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.flId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.companyId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.lAssetAuotId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.lAssetAuotId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.lAssetAuotId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

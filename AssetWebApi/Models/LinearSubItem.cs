@@ -8,8 +8,6 @@ namespace AssetWebApi.Models
         [Key]
         public int lsAutoId { get; set; }
 
-        public string lsId { get; set; }
-
         public int laAutoId { get; set; }
         [ForeignKey("laAutoId")]
         public virtual LinearAssetModel linearAssetModel { get; set; }
@@ -20,6 +18,8 @@ namespace AssetWebApi.Models
         public string description { get; set; }
 
         public string companyId { get; set; }
+
+
 
     }
 }

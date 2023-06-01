@@ -1,0 +1,72 @@
+﻿@model AssetWebApi.Models.LinearAsset
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>LinearAsset</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.lAssetId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.lAssetId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.linearAssetModel)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.linearAssetModel.laAutoID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.laAssetName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.laAssetName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.code)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.code)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.deptId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.deptId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.subDeptId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.subDeptId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.flId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.flId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.companyId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.companyId)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.lAssetAuotId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
