@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AssetWebApi.Models;
 using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AssetWebApi.Controllers
 {
@@ -24,9 +25,26 @@ namespace AssetWebApi.Controllers
 
         // GET: api/EquipmentModels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetequipmentModels()
+        public async Task<ActionResult<IEnumerable<EquipmentSubItem>>> GetequipmentModels(int id)
         {
-            return await _context.equipmentModels.ToListAsync();
+
+            var equipmentSubItems = _context.equipmentSubItems
+    .Where(x => x.eAutoId == id)
+    .Select(x => new
+    {
+        esName = x.esName,
+        esParentId = string.IsNullOrEmpty(x.esParentId.ToString())
+            ? "No Parent"
+            : _context.equipmentSubItems.Any(s => s.esAutoId.ToString() == x.esParentId.ToString())
+                ? _context.equipmentSubItems.FirstOrDefault(s => s.esAutoId.ToString() == x.esParentId.ToString()).esName
+                : "No Parent"
+    })
+    .ToList();
+
+            return Ok(equipmentSubItems);
+
+
+
         }
 
         // GET: api/EquipmentModels/5
