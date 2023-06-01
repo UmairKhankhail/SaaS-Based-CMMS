@@ -8,11 +8,11 @@ namespace MaintenanceWebApi.Models
         [Key]
         public int pmAutoId { get; set; }
 
-        public int pAuotId { get; set; }
+        public int pAutoId { get; set; }
         [ForeignKey("pAutoId")]
         public virtual Procedure Procedure { get; set; }
 
-        public int pmName { get; set; }
+        public string pmName { get; set; }
 
         public string subItemPosition { get; set; }
         
