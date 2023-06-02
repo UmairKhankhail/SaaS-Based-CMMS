@@ -3,20 +3,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MaintenanceWebApi.Models
 {
-    public class ProcedureHealthAndSafety
+    public class Instruction
     {
         [Key]
-        public int phsAutoId { get; set; }
+        public int insAutoId { get; set; }
 
-        public  int pAutoId { get; set; }
+        public int pAutoId { get; set; }
         [ForeignKey("pAutoId")]
         public virtual Procedure Procedure { get; set; }
 
-        public string cpName { get; set; }
+        public int woAutoId { get; set; }
+        [ForeignKey("woAutoId")]
+        public virtual WorkOrder WorkOrder { get; set; }
 
-        public string description { get; set; }
 
         public string companyId { get; set; }
+
 
     }
 }

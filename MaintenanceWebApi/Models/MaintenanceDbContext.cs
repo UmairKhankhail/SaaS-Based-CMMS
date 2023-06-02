@@ -21,7 +21,24 @@ namespace MaintenanceWebApi.Models
 
         public DbSet<MethodSteps> methodSteps { get; set; }
 
-   
+        public DbSet<WorkRequest> workRequests { get; set; }
+
+        public DbSet<WorkOrder> workOrders { get; set; }
+
+        public DbSet<Instruction> instructions { get; set; }
+
+        public DbSet<Execution> executions { get; set; }
+
+        public DbSet<Evaluation> evaluations { get; set; }
+
+        public DbSet<HealthAndSafety> healthAndSafeties { get; set; }
+
+        public DbSet<HealthAndSafetyItems> HealthAndSafetyItems { get; set; }
+
+        public DbSet<StatusAndRepair> statusAndRepairs { get; set; }
+
+        public DbSet<WOItems> wOItems { get; set; }
+
 
     }
 }

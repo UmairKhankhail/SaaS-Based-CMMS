@@ -31,7 +31,7 @@ namespace MaintenanceWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProcedureHealthAndSafety>> GetProcedureHealthAndSafety(int id,string companyId)
         {
-            var procedureHealthAndSafety = await _context.procedureHealthAndSafeties.Where(x=>x.hsAutoId==id && x.companyId==companyId).ToListAsync();
+            var procedureHealthAndSafety = await _context.procedureHealthAndSafeties.Where(x=>x.phsAutoId==id && x.companyId==companyId).ToListAsync();
 
             if (procedureHealthAndSafety == null)
             {
@@ -46,7 +46,7 @@ namespace MaintenanceWebApi.Controllers
         [HttpPut]
         public async Task<IActionResult> PutProcedureHealthAndSafety(int id,string companyId, ProcedureHealthAndSafety procedureHealthAndSafety)
         {
-            if (procedureHealthAndSafety.hsAutoId==id && procedureHealthAndSafety.companyId==companyId)
+            if (procedureHealthAndSafety.phsAutoId ==id && procedureHealthAndSafety.companyId==companyId)
             {
                 _context.Entry(procedureHealthAndSafety).State = EntityState.Modified;
 
@@ -101,7 +101,7 @@ namespace MaintenanceWebApi.Controllers
 
         private bool ProcedureHealthAndSafetyExists(int id)
         {
-            return _context.procedureHealthAndSafeties.Any(e => e.hsAutoId == id);
+            return _context.procedureHealthAndSafeties.Any(e => e.phsAutoId == id);
         }
     }
 }

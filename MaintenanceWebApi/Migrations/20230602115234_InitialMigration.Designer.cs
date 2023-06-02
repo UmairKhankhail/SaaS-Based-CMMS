@@ -3,6 +3,7 @@ using System;
 using MaintenanceWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaintenanceWebApi.Migrations
 {
     [DbContext(typeof(MaintenanceDbContext))]
-    partial class MaintenanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230602115234_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,29 +306,40 @@ namespace MaintenanceWebApi.Migrations
                     b.Property<string>("companyId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("faultyNotFaulty")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("itemName")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("srId")
                         .HasColumnType("longtext");
 
                     b.Property<string>("username")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("woAutoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("worker")
-                        .HasColumnType("longtext");
-
                     b.HasKey("srAutoId");
 
-                    b.HasIndex("woAutoId");
-
                     b.ToTable("statusAndRepairs");
+                });
+
+            modelBuilder.Entity("MaintenanceWebApi.Models.StatusAndRepairItems", b =>
+                {
+                    b.Property<int>("sriAutoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("companyId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("faultyNotFaulty")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("itemName")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("srAutoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("sriAutoId");
+
+                    b.HasIndex("srAutoId");
+
+                    b.ToTable("statusAndRepairItems");
                 });
 
             modelBuilder.Entity("MaintenanceWebApi.Models.WOItems", b =>
@@ -336,9 +349,6 @@ namespace MaintenanceWebApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("companyId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("cost")
                         .HasColumnType("longtext");
 
                     b.Property<string>("quantity")
@@ -530,15 +540,15 @@ namespace MaintenanceWebApi.Migrations
                     b.Navigation("Procedure");
                 });
 
-            modelBuilder.Entity("MaintenanceWebApi.Models.StatusAndRepair", b =>
+            modelBuilder.Entity("MaintenanceWebApi.Models.StatusAndRepairItems", b =>
                 {
-                    b.HasOne("MaintenanceWebApi.Models.WorkOrder", "WorkOrder")
+                    b.HasOne("MaintenanceWebApi.Models.StatusAndRepair", "StatusAndRepair")
                         .WithMany()
-                        .HasForeignKey("woAutoId")
+                        .HasForeignKey("srAutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("WorkOrder");
+                    b.Navigation("StatusAndRepair");
                 });
 
             modelBuilder.Entity("MaintenanceWebApi.Models.WOItems", b =>
