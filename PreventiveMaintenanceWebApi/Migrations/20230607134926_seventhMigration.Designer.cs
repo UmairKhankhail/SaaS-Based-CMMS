@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PreventiveMaintenanceWebApi.Models;
 
@@ -10,9 +11,10 @@ using PreventiveMaintenanceWebApi.Models;
 namespace PreventiveMaintenanceWebApi.Migrations
 {
     [DbContext(typeof(PreventiveMaintenanceDbContext))]
-    partial class PreventiveMaintenanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230607134926_seventhMigration")]
+    partial class seventhMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetWebApi", "AssetWebApi\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreventiveMaintenanceWebApi", "PreventiveMaintenanceWebApi\PreventiveMaintenanceWebApi.csproj", "{D3CFAB80-BFC9-4618-9861-8FC9E8EC25FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleCalendarService", "GoogleCalendarService\GoogleCalendarService.csproj", "{4272B647-ABEB-444E-A4F1-47E4A3C26A43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoogleCalendarService", "GoogleCalendarService\GoogleCalendarService.csproj", "{4272B647-ABEB-444E-A4F1-47E4A3C26A43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaintenanceWebApi", "MaintenanceWebApi\MaintenanceWebApi.csproj", "{C23C1972-98C2-4B78-8A45-34359B8693E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaintenanceWebApi", "MaintenanceWebApi\MaintenanceWebApi.csproj", "{C23C1972-98C2-4B78-8A45-34359B8693E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +45,18 @@ Global
 		{92F25E39-42B6-4A88-B66B-A712568FDE7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92F25E39-42B6-4A88-B66B-A712568FDE7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92F25E39-42B6-4A88-B66B-A712568FDE7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3CFAB80-BFC9-4618-9861-8FC9E8EC25FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3CFAB80-BFC9-4618-9861-8FC9E8EC25FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3CFAB80-BFC9-4618-9861-8FC9E8EC25FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3CFAB80-BFC9-4618-9861-8FC9E8EC25FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4272B647-ABEB-444E-A4F1-47E4A3C26A43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4272B647-ABEB-444E-A4F1-47E4A3C26A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4272B647-ABEB-444E-A4F1-47E4A3C26A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4272B647-ABEB-444E-A4F1-47E4A3C26A43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C23C1972-98C2-4B78-8A45-34359B8693E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C23C1972-98C2-4B78-8A45-34359B8693E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C23C1972-98C2-4B78-8A45-34359B8693E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C23C1972-98C2-4B78-8A45-34359B8693E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

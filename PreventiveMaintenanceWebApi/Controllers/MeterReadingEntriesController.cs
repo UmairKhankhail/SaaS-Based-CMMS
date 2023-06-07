@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using JwtAuthenticationManager.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using PreventiveMaintenanceWebApi.Models;
 
 namespace PreventiveMaintenanceWebApi.Controllers
@@ -14,16 +18,26 @@ namespace PreventiveMaintenanceWebApi.Controllers
     public class MeterReadingEntriesController : ControllerBase
     {
         private readonly PreventiveMaintenanceDbContext _context;
-
-        public MeterReadingEntriesController(PreventiveMaintenanceDbContext context)
+        private readonly HttpClient _httpClient;
+        public MeterReadingEntriesController(PreventiveMaintenanceDbContext context, HttpClient httpClient)
         {
             _context = context;
+            _httpClient = httpClient;
         }
 
         // GET: api/MeterReadingEntries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MeterReadingEntry>>> GetmeterReadingEntries()
+        public async Task<ActionResult<IEnumerable<MeterReadingEntry>>> GetmeterReadingEntries(string id)
         {
+            //var url = $"http://localhost:5145/api/WorkRequests?companyId={id}";
+            //var response = await _httpClient.GetAsync(url);
+            //var responseContent = await response.Content.ReadAsStringAsync();
+            //Console.WriteLine(responseContent);
+            //List<string> responseList = new List<string>();
+            //var mynewlist = JsonConvert.DeserializeObject<List<string>>(responseContent);
+            
+            //Console.WriteLine(mynewlist);
+
             return await _context.meterReadingEntries.ToListAsync();
         }
 
@@ -86,11 +100,45 @@ namespace PreventiveMaintenanceWebApi.Controllers
             mre.value = meterReadingEntry.value;
             mre.companyId = meterReadingEntry.companyId;
             mre.remarks = meterReadingEntry.remarks;
+            
+
+            var meterReading = _context.meterReadings.Where(x=>x.paramName==mre.paramName && x.companyId==mre.companyId && x.assetId==mre.assetId).FirstOrDefault();
+            if (meterReading == null)
+            {
+                return NotFound();
+            }
+            if(mre.value >= meterReading.minValue && mre.value<=meterReading.maxValue){}
+            else
+            {
+                Console.WriteLine("Generate Work Request");
+                var url = "http://localhost:5145/api/WorkRequests";
+                var parameters = new Dictionary<string, string>
+                    {
+                        { "topName", mre.paramName + " " + mre.value },
+                    { "description", mre.remarks  },
+                    { "approve", "Y" },
+                    { "companyId", mre.companyId }
+                    };
+
+
+                var json = JsonConvert.SerializeObject(parameters);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(url, content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine(responseContent);
+
+            }
+
             _context.meterReadingEntries.Add(mre);
             await _context.SaveChangesAsync();
             getmrId = mre.mreAutoId;
             Console.WriteLine(getmrId);
+
             return Ok();
+
+
             //_context.meterReadingEntries.Add(meterReadingEntry);
             //await _context.SaveChangesAsync();
 

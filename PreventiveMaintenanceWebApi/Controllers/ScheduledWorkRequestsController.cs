@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
@@ -93,13 +94,15 @@ namespace PreventiveMaintenanceWebApi.Controllers
             GoogleCalendarRecord gcr = new GoogleCalendarRecord();
             gcr.calendarSummary = googleCalendarRecord.calendarSummary;
             gcr.calendarDescription = googleCalendarRecord.calendarDescription;
-            gcr.iFrame = googleCalendarRecord.iFrame;
-            gcr.timeZone = googleCalendarRecord.timeZone;
+            gcr.iFrame = googleCalendarRecord.iFrame.ToString();
+            gcr.timeZoneRegional = googleCalendarRecord.timeZoneRegional;
+            gcr.timeZoneWord = googleCalendarRecord.timeZoneWord;
+            gcr.timeZoneGMT = googleCalendarRecord.timeZoneGMT;
             gcr.companyId = googleCalendarRecord.companyId;
            
 
             GoogleCalendar gc = new GoogleCalendar();
-            var gcId=gc.CreateCalendar(gcr.calendarSummary, gcr.calendarDescription, gcr.timeZone);
+            var gcId=gc.CreateCalendar(gcr.calendarSummary, gcr.calendarDescription, gcr.timeZoneRegional);
             gcr.googleCalendarId = gcId;
             _context.googleCalendarRecords.Add(gcr);
             await _context.SaveChangesAsync();
@@ -115,15 +118,17 @@ namespace PreventiveMaintenanceWebApi.Controllers
             {
                 existingModel.calendarDescription = googleCalendarRecord.calendarDescription;
                 existingModel.calendarSummary = googleCalendarRecord.calendarSummary;
-                existingModel.timeZone = googleCalendarRecord.timeZone;
-                existingModel.iFrame = googleCalendarRecord.iFrame;
+                existingModel.timeZoneRegional = googleCalendarRecord.timeZoneRegional;
+                existingModel.timeZoneWord = googleCalendarRecord.timeZoneWord;
+                existingModel.timeZoneGMT = googleCalendarRecord.timeZoneGMT;
+                existingModel.iFrame = googleCalendarRecord.iFrame.ToString();
                 existingModel.googleCalendarId = googleCalendarRecord.googleCalendarId;
 
                 try
                 {
                     await _context.SaveChangesAsync();
                     GoogleCalendar gc = new GoogleCalendar();
-                    gc.UpdateCalendar(existingModel.googleCalendarId, existingModel.calendarSummary, existingModel.calendarDescription, existingModel.timeZone);
+                    gc.UpdateCalendar(existingModel.googleCalendarId, existingModel.calendarSummary, existingModel.calendarDescription, existingModel.timeZoneRegional);
                     return Ok();
                 }
                 catch (Exception ex)
@@ -175,7 +180,6 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
                 GoogleCalendar googleCalendar = new GoogleCalendar();
 
                 //DateTime conversion to users timezone
@@ -185,14 +189,24 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
                 Event newEvent = new Event
                 {
-                    Summary = "Scheduled Work Request",
-                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZone },
-                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZone },
+                    Summary = "Recurrent Scheduled Work Request",
+                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
                     Description = existingModel.description.ToString() + "/n" + existingModel.assetId + "/n" + "Updated"
                 };
 
-                googleCalendar.UpdateRecurringEvent(calInfo.googleCalendarId, existingModel.eventIdCalendar, newEvent, existingModel.frequencyDays, calInfo.timeZone);
+                googleCalendar.UpdateRecurringEvent(calInfo.googleCalendarId, existingModel.eventIdCalendar, newEvent, existingModel.frequencyDays, calInfo.timeZoneRegional);
+                //Db DateTime Work to exact same format
+                DateTime inputDateTime = scheduledWorkRequest.initialDateTime;
+                string timeZoneId = calInfo.timeZoneWord;
+                // Convert parsed datetime to universal datetime
+                DateTime universalDateTime = inputDateTime.ToUniversalTime();
 
+                // Convert universal datetime to desired timezone
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
+                existingModel.initialDateTime = convertedDateTime;
+                await _context.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception ex)
@@ -239,16 +253,28 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
                 Event newEvent = new Event
                 {
-                    Summary = "Scheduled Work Request",
-                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZone },
-                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZone },
+                    Summary = "Recurrent Scheduled Work Request",
+                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
                     Description = swr.description.ToString()+"/n"+swr.assetId
                 };
 
 
                 Console.WriteLine(newEvent);
-                var eventId = googleCalendar.InsertRecurringEvent(newEvent, swr.frequencyDays, calInfo.googleCalendarId, calInfo.timeZone );
+                var eventId = googleCalendar.InsertRecurringEvent(newEvent, swr.frequencyDays, calInfo.googleCalendarId, calInfo.timeZoneRegional );
                 Console.WriteLine(eventId);
+
+                //Db DateTime Work to exact same format
+                DateTime inputDateTime = scheduledWorkRequest.initialDateTime;
+                string timeZoneId = calInfo.timeZoneWord;
+                // Convert parsed datetime to universal datetime
+                DateTime universalDateTime = inputDateTime.ToUniversalTime();
+
+                // Convert universal datetime to desired timezone
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
+                swr.initialDateTime = convertedDateTime;
+
 
                 swr.eventIdCalendar = eventId;
                 _context.scheduledWorkRequests.Add(swr);

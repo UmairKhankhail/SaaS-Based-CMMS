@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
@@ -48,30 +50,57 @@ namespace PreventiveMaintenanceWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMeterReading(int id, MeterReading meterReading)
         {
-            if (id != meterReading.mrAutoId)
+            var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == meterReading.companyId).FirstOrDefaultAsync();
+            if (calInfo == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
 
-            _context.Entry(meterReading).State = EntityState.Modified;
+            var existingModel = await _context.meterReadings.FindAsync(meterReading.mrAutoId);
+
+            existingModel.initialDate = meterReading.initialDate;
+            existingModel.minValue = meterReading.minValue;
+            existingModel.maxValue = meterReading.maxValue;
+            existingModel.frequencyDays = meterReading.frequencyDays;
 
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MeterReadingExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                GoogleCalendar googleCalendar = new GoogleCalendar();
 
-            return NoContent();
+                //DateTime conversion to users timezone
+                var startDateTime = existingModel.initialDate;
+                var endDateTime = startDateTime.AddDays(existingModel.frequencyDays);
+                //Conversion Ends
+
+                Event newEvent = new Event
+                {
+                    Summary = "Recurrent Meter Reading",
+                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                    Description = existingModel.paramName.ToString() + "/n" + existingModel.assetId + "/n" + "Updated"
+                };
+
+                googleCalendar.UpdateRecurringEvent(calInfo.googleCalendarId, existingModel.eventIdCalendar, newEvent, existingModel.frequencyDays, calInfo.timeZoneRegional);
+
+                //Db DateTime Work to exact same format
+                DateTime inputDateTime = meterReading.initialDate;
+                string timeZoneId = calInfo.timeZoneWord;
+                // Convert parsed datetime to universal datetime
+                DateTime universalDateTime = inputDateTime.ToUniversalTime();
+
+                // Convert universal datetime to desired timezone
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
+                existingModel.initialDate = convertedDateTime;
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/MeterReadings
@@ -79,44 +108,68 @@ namespace PreventiveMaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<MeterReading>> PostMeterReading(MeterReading meterReading)
         {
-            //var getmrId = 0;
-
-            //MeterReading mr = new MeterReading();
-            //mr.assetModelId = meterReading.assetModelId;
-            //mr.assetId = meterReading.assetId;
-            //mr.minValue = meterReading.minValue;
-            //mr.maxValue = meterReading.maxValue;
-            //mr.paramType = meterReading.paramType;
-            //mr.paramName = meterReading.paramName;
-            //mr.companyId = meterReading.companyId;
-            //mr.initialDate = meterReading.initialDate;
-            //mr.frequencyDays = meterReading.frequencyDays;
+            //Getting CalendarInfo
+            var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == meterReading.companyId).FirstOrDefaultAsync();
+            if (calInfo == null)
+            {
+                return Unauthorized();
+            }
 
 
-            //GoogleCalendar googleCalendar = new GoogleCalendar();
 
-            //var startDateTime = new DateTime(2023, 6, 2, 9, 0, 0);  // Specify the start date and time in "Asia/Karachi" time zone
-            //var endDateTime = new DateTime(2023, 6, 2, 10, 0, 0);   // Specify the end date and time in "Asia/Karachi" time zone
+            var getswrId = 0;
 
-            //Event newEvent = new Event
-            //{
-            //    Summary = "Meter Reading Request",
-            //    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = "Asia/Karachi" },
-            //    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = "Asia/Karachi" },
-            //    Description = "Event description"
-            //};
+            MeterReading mr = new MeterReading();
+            mr.assetModelId = meterReading.assetModelId;
+            mr.assetId = meterReading.assetId;
+            mr.paramType = meterReading.paramType;
+            mr.paramName = meterReading.paramName;
+            mr.minValue = meterReading.minValue;
+            mr.maxValue = meterReading.maxValue;
+            mr.frequencyDays = meterReading.frequencyDays;
+            mr.initialDate = meterReading.initialDate;
+            mr.companyId = meterReading.companyId;
 
 
-            //Console.WriteLine(newEvent);
-            //var eventId = googleCalendar.InsertRecurringEvent(newEvent,10);
-            //Console.WriteLine(eventId);
+            GoogleCalendar googleCalendar = new GoogleCalendar();
 
-            //mr.eventIdCalendar = eventId;
-            //_context.meterReadings.Add(mr);
-            //await _context.SaveChangesAsync();
-            //getmrId = mr.mrAutoId;
-            //Console.WriteLine(getmrId);
+            //DateTime conversion to users timezone
+            var startDateTime = mr.initialDate;
+            var endDateTime = startDateTime.AddDays(mr.frequencyDays);
+            //Conversion Ends
+
+            Event newEvent = new Event
+            {
+                Summary = "Recurrent Meter Reading",
+                Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                Description = mr.paramName.ToString() + "/n" + mr.assetId
+            };
+
+
+            Console.WriteLine(newEvent);
+            var eventId = googleCalendar.InsertRecurringEvent(newEvent, mr.frequencyDays, calInfo.googleCalendarId, calInfo.timeZoneRegional);
+            Console.WriteLine(eventId);
+
+            //Db DateTime Work to exact same format
+            DateTime inputDateTime = meterReading.initialDate;
+            string timeZoneId = calInfo.timeZoneWord;
+            // Convert parsed datetime to universal datetime
+            DateTime universalDateTime = inputDateTime.ToUniversalTime();
+
+            // Convert universal datetime to desired timezone
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
+            mr.initialDate = convertedDateTime;
+
+
+            mr.eventIdCalendar = eventId;
+            _context.meterReadings.Add(mr);
+            await _context.SaveChangesAsync();
+            getswrId = mr.mrAutoId;
+            Console.WriteLine(getswrId);
             return Ok();
+
 
             //_context.meterReadings.Add(meterReading);
             //await _context.SaveChangesAsync();
@@ -126,8 +179,14 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // DELETE: api/MeterReadings/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMeterReading(int id)
+        public async Task<IActionResult> DeleteMeterReading(int id, string cId)
         {
+            var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == cId).FirstOrDefaultAsync();
+            if (calInfo == null)
+            {
+                return Unauthorized();
+            }
+
             var meterReading = await _context.meterReadings.FindAsync(id);
             if (meterReading == null)
             {
@@ -137,7 +196,9 @@ namespace PreventiveMaintenanceWebApi.Controllers
             _context.meterReadings.Remove(meterReading);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            GoogleCalendar gc = new GoogleCalendar();
+            gc.DeleteEvent(meterReading.eventIdCalendar, calInfo.googleCalendarId);
+            return Ok();
         }
 
         private bool MeterReadingExists(int id)
