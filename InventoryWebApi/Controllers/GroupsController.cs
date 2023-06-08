@@ -50,9 +50,9 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroup(string id,string companyId)
+        public async Task<ActionResult<Group>> GetGroup(int id,string companyId)
         {
-            var group = await _context.Inventorygroups.Where(x=>x.groupID==id && x.companyId==companyId && x.status=="Active").FirstOrDefaultAsync();
+            var group = await _context.Inventorygroups.Where(x=>x.groupAutoID ==id && x.companyId==companyId && x.status=="Active").FirstOrDefaultAsync();
             
             if (group == null)
             {
@@ -65,7 +65,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Groups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut()]
-        public async Task<IActionResult> PutGroup([FromBody] Group group,string id,string companyId)
+        public async Task<IActionResult> PutGroup([FromBody] Group group,int id,string companyId)
         {
             
             if (GroupExists(id) && CompanyExists(companyId))
@@ -89,9 +89,9 @@ namespace InventoryAPI.Controllers
         // POST: api/Groups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Group>> PostGroup(string companyId, Group @group)
+        public async Task<ActionResult<Group>> PostGroup(Group @group)
         {
-            var comId = _context.Inventorygroups.Where(g => g.companyId == companyId).Select(g=>g.groupID).ToList();
+            var comId = _context.Inventorygroups.Where(g => g.companyId == @group.companyId).Select(g=>g.groupID).ToList();
 
             var autoId = "";
             if (comId.Count > 0)
@@ -135,9 +135,9 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGroup(string id, string companyId)
+        public async Task<IActionResult> DeleteGroup(int id, string companyId)
         {
-            var @group = await _context.Inventorygroups.Where(x=>x.groupID==id && x.companyId==companyId).FirstOrDefaultAsync();
+            var @group = await _context.Inventorygroups.Where(x=>x.groupAutoID ==id && x.companyId==companyId).FirstOrDefaultAsync();
             if (@group == null)
             {
                 return NotFound();
@@ -149,9 +149,9 @@ namespace InventoryAPI.Controllers
             return NoContent();
         }
 
-        private bool GroupExists(string id)
+        private bool GroupExists(int id)
         {
-            return _context.Inventorygroups.Any(e => e.groupID == id);
+            return _context.Inventorygroups.Any(e => e.groupAutoID == id);
         }
 
         private bool CompanyExists(string id)

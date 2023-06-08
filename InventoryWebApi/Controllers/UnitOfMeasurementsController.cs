@@ -49,9 +49,9 @@ namespace InventoryAPI.Controllers
 
         // GET: api/UnitOfMeasurements/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UnitOfMeasurement>> GetUnitOfMeasurement(string id, string companyId)
+        public async Task<ActionResult<UnitOfMeasurement>> GetUnitOfMeasurement(int id, string companyId)
         {
-            var unitOfMeasurement = await _context.unitOfMeasurements.Where(x => x.uomId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
+            var unitOfMeasurement = await _context.unitOfMeasurements.Where(x => x.uomAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
 
 
             if (unitOfMeasurement == null)
@@ -65,7 +65,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/UnitOfMeasurements/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUnitOfMeasurement(string id,string companyId, UnitOfMeasurement unitOfMeasurement)
+        public async Task<IActionResult> PutUnitOfMeasurement(int id,string companyId, UnitOfMeasurement unitOfMeasurement)
         {
             if (UnitOfMeasurementExists(id) && CompanyExists(companyId))
             {
@@ -89,9 +89,9 @@ namespace InventoryAPI.Controllers
         // POST: api/UnitOfMeasurements
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UnitOfMeasurement>> PostUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement,string companyId)
+        public async Task<ActionResult<UnitOfMeasurement>> PostUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement)
         {
-            var comId = _context.unitOfMeasurements.Where(uom => uom.companyId == companyId).Select(uom => uom.uomId).ToList();
+            var comId = _context.unitOfMeasurements.Where(uom => uom.companyId == unitOfMeasurement.companyId).Select(uom => uom.uomId).ToList();
 
             Console.WriteLine(comId);
             var autoId = "";
@@ -132,9 +132,9 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/UnitOfMeasurements/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUnitOfMeasurement(string id, string companyId)
+        public async Task<IActionResult> DeleteUnitOfMeasurement(int id, string companyId)
         {
-            var uom = await _context.unitOfMeasurements.Where(x => x.uomId == id && x.companyId == companyId).FirstOrDefaultAsync();
+            var uom = await _context.unitOfMeasurements.Where(x => x.uomAutoId == id && x.companyId == companyId).FirstOrDefaultAsync();
             if (uom == null)
             {
                 return NotFound();
@@ -146,9 +146,9 @@ namespace InventoryAPI.Controllers
             return NoContent();
         }
 
-        private bool UnitOfMeasurementExists(string id)
+        private bool UnitOfMeasurementExists(int id)
         {
-            return _context.unitOfMeasurements.Any(e => e.uomId == id);
+            return _context.unitOfMeasurements.Any(e => e.uomAutoId == id);
         }
 
         private bool CompanyExists(string id)

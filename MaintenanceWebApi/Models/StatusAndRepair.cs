@@ -19,6 +19,8 @@ namespace MaintenanceWebApi.Models
 
         public string faultyNotFaulty { get; set; }
 
+        public string inhouseOrOutsource { get; set; }
+
         public string worker { get; set; }
 
         public string companyId { get; set; }

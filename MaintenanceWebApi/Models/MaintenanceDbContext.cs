@@ -24,7 +24,7 @@ namespace MaintenanceWebApi.Models
         public DbSet<WorkRequest> workRequests { get; set; }
 
         public DbSet<WorkOrder> workOrders { get; set; }
-
+        public DbSet<woAssetItem> woAssetItems { get; set; }
         public DbSet<Instruction> instructions { get; set; }
 
         public DbSet<Execution> executions { get; set; }

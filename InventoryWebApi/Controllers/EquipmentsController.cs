@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace InventoryAPI.Controllers
 {
@@ -45,9 +46,9 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Equipments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Equipment>> GetEquipment(string id,string companyId)
+        public async Task<ActionResult<Equipment>> GetEquipment(int id,string companyId)
         {
-            var equipment = await _context.equipments.Where(x => x.equipId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
+            var equipment = await _context.equipments.Where(x => x.equipAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
 
 
             if (equipment == null)
@@ -70,6 +71,7 @@ namespace InventoryAPI.Controllers
                 equip.equipId = equipment.equipId;
                 equip.equipName = equipment.equipName;
                 equip.equipCost = equipment.equipCost;
+                equip.quantity=equipment.quantity;
                 equip.equipLeadTime = equipment.equipLeadTime;
                 equip.status = equipment.status;
                 equip.catAutoId= equipment.catAutoId;
@@ -89,9 +91,9 @@ namespace InventoryAPI.Controllers
         // POST: api/Equipments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment,string companyId)
+        public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
         {
-            var comId = _context.equipments.Where(equip => equip.companyId == companyId).Select(equip => equip.equipId).ToList();
+            var comId = _context.equipments.Where(equip => equip.companyId == equipment.companyId).Select(equip => equip.equipId).ToList();
 
             Console.WriteLine(comId);
             var autoId = "";
@@ -109,6 +111,7 @@ namespace InventoryAPI.Controllers
                 equip.equipId = comid;
                 equip.equipName = equipment.equipName;
                 equip.equipCost = equipment.equipCost;
+                equip.quantity = equipment.quantity;
                 equip.equipLeadTime = equipment.equipLeadTime;
                 equip.status = equipment.status;
                 equip.catAutoId = equipment.catAutoId;
@@ -124,10 +127,11 @@ namespace InventoryAPI.Controllers
                 _context.ChangeTracker.Clear();
                 Equipment equip = new Equipment();
                 equip.equipAutoId = equipment.equipAutoId;
-                string comid = "E1" + (int.Parse(autoId) + 1);
+                string comid = "E" + (int.Parse(autoId) + 1);
                 equip.equipId = comid;
                 equip.equipName = equipment.equipName;
                 equip.equipCost = equipment.equipCost;
+                equip.quantity = equipment.quantity;
                 equip.equipLeadTime = equipment.equipLeadTime;
                 equip.status = equipment.status;
                 equip.catAutoId = equipment.catAutoId;
@@ -143,9 +147,9 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Equipments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEquipment(string id,string companyId)
+        public async Task<IActionResult> DeleteEquipment(int id,string companyId)
         {
-            var equipment = await _context.equipments.Where(x => x.equipId == id && x.companyId == companyId).FirstOrDefaultAsync();
+            var equipment = await _context.equipments.Where(x => x.equipAutoId == id ).FirstOrDefaultAsync();
 
             if (equipment == null)
             {

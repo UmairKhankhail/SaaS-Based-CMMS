@@ -95,6 +95,7 @@ namespace MaintenanceWebApi.Controllers
                 items.woItemsAutoId = wOItems.woItemsAutoId;
                 items.woItemsId = comId;
                 items.woAutoId = wOItems.woAutoId;
+                items.itemName = wOItems.itemName;
                 items.quantity = wOItems.quantity;
                 items.stock = wOItems.stock;
                 items.cost= wOItems.cost;
@@ -113,6 +114,7 @@ namespace MaintenanceWebApi.Controllers
                 items.woItemsAutoId = wOItems.woItemsAutoId;
                 items.woItemsId = comId;
                 items.woAutoId = wOItems.woAutoId;
+                items.itemName = wOItems.itemName;
                 items.quantity = wOItems.quantity;
                 items.stock = wOItems.stock;
                 items.cost = wOItems.cost;

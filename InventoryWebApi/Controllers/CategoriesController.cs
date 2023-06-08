@@ -49,9 +49,9 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(string id, string companyId)
+        public async Task<ActionResult<Category>> GetCategory(int id, string companyId)
         {
-            var category= await _context.categories.Where(x => x.catId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
+            var category= await _context.categories.Where(x => x.catAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
 
             if (category == null)
             {
@@ -64,7 +64,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory([FromBody] Category category, string id,string companyId)
+        public async Task<IActionResult> PutCategory([FromBody] Category category, int id,string companyId)
         {
             if (CategoryExists(id) && CompanyExists(companyId))
             {
@@ -87,9 +87,9 @@ namespace InventoryAPI.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(string companyId,  Category category)
+        public async Task<ActionResult<Category>> PostCategory( Category category)
         {
-            var comId = _context.categories.Where(g => g.companyId == companyId).Select(g => g.catId).ToList();
+            var comId = _context.categories.Where(g => g.companyId == category.companyId).Select(g => g.catId).ToList();
 
             var autoId = "";
             if (comId.Count > 0)
@@ -146,9 +146,9 @@ namespace InventoryAPI.Controllers
             return NoContent();
         }
 
-        private bool CategoryExists(string id)
+        private bool CategoryExists(int id)
         {
-            return _context.categories.Any(e => e.catId == id);
+            return _context.categories.Any(e => e.catAutoId == id);
         }
 
         private bool CompanyExists(string id)

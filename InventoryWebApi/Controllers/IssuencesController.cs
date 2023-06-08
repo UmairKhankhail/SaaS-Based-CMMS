@@ -9,6 +9,7 @@ using InventoryAPI.Models;
 using AccountsWebApi.Models;
 using StackExchange.Redis;
 using System.ComponentModel.Design;
+using InventoryWebApi.Models;
 
 namespace InventoryAPI.Controllers
 {
@@ -34,26 +35,35 @@ namespace InventoryAPI.Controllers
         {
             try
             {
-                return await _context.issuences.Where(x => x.companyId == companyId && x.status == "Active").ToListAsync();
-                            }
+               var result= await _context.issuences.Where(x => x.companyId == companyId ).ToListAsync();
+               if (result==null) {
+                return Unauthorized();
+                }
+
+                return result;
+            }
+            
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
+            
+
+       
         }
 
         // GET: api/Issuences/5
         [HttpGet("id")]
-        public async Task<ActionResult<Issuence>> GetIssuence(string companyId, string issueId)
+        public async Task<ActionResult<Issuence>> GetIssuence(string companyId, int issueId)
         {
             try
             {
 
                 var getIssuenceRequests = await _context.issuences
                     .Join(_context.issuenceandEquipment, i => i.issuenceAutoId, ie => ie.issuenceAutoId, (i, ie) => new { i, ie })
-                    .Where(x => x.ie.companyId == companyId && x.i.companyId == companyId && x.i.issuenceId == issueId)
+                    .Where(x => x.ie.companyId == companyId && x.i.companyId == companyId && x.i.issuenceAutoId == issueId)
                     .Select(result => new
                     {
                         result.i.issuenceAutoId,
@@ -80,157 +90,202 @@ namespace InventoryAPI.Controllers
         // POST: api/Issuences
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Issuence>> PostIssuence(int userAutoId,string companyId, Issuence issuence)
+        public async Task<ActionResult<Issuence>> PostIssuence( Issuence issuence)
         {
-            int getIssuenceId=0;
-            var compId = _context.issuences.Where(i => i.companyId == issuence.companyId).Select(d => d.issuenceId).ToList();
-            var autoId = "";
-            if (compId.Count > 0)
+            try
             {
 
-                autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
-            }
+                int getIssueAutoId = 0;
 
-            if (autoId == "")
+                if (issuence.validityCheck == 0)
+                {
+
+                    var compId = _context.issuences.Where(d => d.companyId == issuence.companyId).Select(d => d.issuenceId).ToList();
+
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
+
+                        autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Issuence issue = new Issuence();
+                        string comId = "IS1";
+                        issue.issuenceId = comId;
+                        issue.issuenceAutoId = issuence.issuenceAutoId;
+                        issue.companyId = issuence.companyId;
+                        issue.status = issuence.status;
+                        issue.issuenceDescp = issuence.issuenceDescp;
+                        issue.userAutoId = issuence.userAutoId;
+                        issue.companyId = issuence.companyId;
+                        _context.issuences.Add(issue);
+                        await _context.SaveChangesAsync();
+                        getIssueAutoId = issue.issuenceAutoId;
+                    }
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Issuence issue = new Issuence();
+                        string comId = "IS" + (int.Parse(autoId) + 1);
+                        issue.issuenceId = comId;
+                        issue.issuenceAutoId = issuence.issuenceAutoId;
+                        issue.companyId = issuence.companyId;
+                        issue.status = issuence.status;
+                        issue.issuenceDescp = issuence.issuenceDescp;
+                        issue.userAutoId = issuence.userAutoId;
+                        issue.companyId = issuence.companyId;
+                        _context.issuences.Add(issue);
+                        await _context.SaveChangesAsync();
+                        getIssueAutoId = issue.issuenceAutoId;
+                    }
+
+                    //Console.WriteLine("Id: "+ getroleautoid.ToString());
+                    //_context.roles.Add(role);
+                    //await _context.SaveChangesAsync();
+
+                    List<IssuenceList> issuenceLists = issuence.equipList;
+
+
+
+                    foreach (var items in issuenceLists)
+                    {
+                        IssuenceandEquipment issuenceandEquipment = new IssuenceandEquipment();
+                        issuenceandEquipment.equipName = items.equipName;
+                        issuenceandEquipment.quantity = items.equipQuanity;
+                        issuenceandEquipment.equipAutoId = items.equipAutoId;
+                        issuenceandEquipment.issuenceAutoId = getIssueAutoId;
+                        issuenceandEquipment.companyId = issuence.companyId;
+                        _context.issuenceandEquipment.Add(issuenceandEquipment);
+                        await _context.SaveChangesAsync();
+                    }
+                    //foreach (var items in listPermissions)
+                    //{
+                    //    RoleandPermission rolePerm = new RoleandPermission();
+                    //    rolePerm.permissionId = items.ToString();
+                    //    rolePerm.roleAutoId = getRoleAutoId;
+                    //    rolePerm.companyId = claimresponse.companyId;
+                    //    _context.roleAndPermissions.Add(rolePerm);
+                    //    await _context.SaveChangesAsync();
+                    //}
+                }
+
+                else if (issuence.validityCheck != 0 && issuence.status=="pending")
+                {
+                    var validityCheckValue = issuence.validityCheck;
+                    if (IssuenceValidityExists(validityCheckValue))
+                    {
+
+                        List<IssuenceList> issuenceLists = issuence.equipList;
+
+
+
+                        foreach (var items in issuenceLists)
+                        {
+                            IssuenceandEquipment issuenceandEquipment = new IssuenceandEquipment();
+                            issuenceandEquipment.equipName = items.equipName;
+                            issuenceandEquipment.quantity = items.equipQuanity;
+                            
+
+                            issuenceandEquipment.issuenceAutoId = issuence.issuenceAutoId;
+                            issuenceandEquipment.equipAutoId = items.equipAutoId;
+                            issuenceandEquipment.companyId = issuence.companyId;
+                            _context.issuenceandEquipment.Add(issuenceandEquipment);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+
+                    else
+                    {
+                        return Unauthorized();
+                    }
+                }
+
+
+                return Ok();
+
+                //    }
+                //    return Unauthorized();
+
+            }
+            catch (Exception ex)
             {
-                _context.ChangeTracker.Clear();
-                Issuence issue = new Issuence();
-                string comId = "IR1";
-                issue.issuenceAutoId = issuence.issuenceAutoId;
-                issue.issuenceId = comId;
-                issue.companyId = issuence.companyId;
-                issue.status = issuence.status;
-                issue.issuenceDescp = issuence.issuenceDescp;
-                issue.qty = issuence.qty;
-                issue.userAutoId = userAutoId;
-                _context.issuences.Add(issue);
-                await _context.SaveChangesAsync();
-                getIssuenceId = issue.issuenceAutoId;
+                //_logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Issuence issue = new Issuence();
-                string comId = "IR"+(int.Parse(autoId)+1);
-                issue.issuenceAutoId = issuence.issuenceAutoId;
-                issue.issuenceId = comId;
-                issue.companyId = issuence.companyId;
-                issue.status = issuence.status;
-                issue.issuenceDescp = issuence.issuenceDescp;
-                issue.qty = issuence.qty;
-                issue.userAutoId = userAutoId;
-                _context.issuences.Add(issue);
-                await _context.SaveChangesAsync();
-                getIssuenceId= issue.issuenceAutoId;
-            }
-
-
-            var listEquipments = issuence.equipList;
-            foreach(var item in listEquipments)
-            {
-                IssuenceandEquipment issuenceandEquipment= new IssuenceandEquipment();
-                issuenceandEquipment.equipAutoId = Convert.ToInt32(item);
-                issuenceandEquipment.issuenceAutoId = getIssuenceId;
-                issuenceandEquipment.companyId = issuence.companyId;
-                _context.issuenceandEquipment.Add(issuenceandEquipment);
-                await _context.SaveChangesAsync();
-            }
-
-            return Ok();
         }
 
         //// PUT: api/Issuences
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutIssuence(string id, string companyId ,int userAutoId,Issuence issuence)
+        [HttpPut]
+        public async Task<IActionResult> PutIssuence(Issuence issuence)
         {
-            if (IssuenceExists(id) && CompanyExists(companyId))
+            if (issuence.validityCheck != 0)
             {
-                Issuence issue = new Issuence();
-                issue.issuenceAutoId = issuence.issuenceAutoId;
-                issue.issuenceId = issuence.issuenceId;
-                issue.companyId = issuence.companyId;
-                issue.status = issuence.status;
-                issue.qty = issuence.qty;
-                issue.issuenceDescp = issuence.issuenceDescp;
-                issue.userAutoId = userAutoId;
+                var existingIssue = await _context.issuences.FindAsync(issuence.validityCheck);
+                existingIssue.issuenceDescp=issuence.issuenceDescp;
+                existingIssue.status = issuence.status;
 
-                var listEquipments = issuence.equipList;
-                var listDbEquipments = new List<string>();
-                var getEquipments = _context.issuenceandEquipment.Where(x => x.issuenceAutoId == issuence.issuenceAutoId && x.companyId == issuence.companyId).Select(x => x.equipAutoId);
+                List<IssuenceList> issuenceLists = issuence.equipList;
 
-                foreach (var item in getEquipments)
+
+                foreach (var items in issuenceLists)
                 {
-                    listDbEquipments.Add(item.ToString());
-                    Console.WriteLine("DB Equipments: " + item);
-                }
+                    var equipment = _context.equipments.Where(x => x.equipAutoId == items.equipAutoId && issuence.status == "completed").FirstOrDefault();
+                    //foreach( var item in equipment)
+                    //{
+                    //    item.quantity = item.quantity - items.equipQuanity;
+                    //    _context.issuenceandEquipment.Add(issuenceandEquipment);
+                    //    await _context.SaveChangesAsync();
+                    //}
+                    if (equipment.equipAutoId != null && equipment.quantity >= items.equipQuanity)
 
-                foreach (var equip in listEquipments)
-                {
-                    Console.WriteLine("New Equipments" + equip);
-
-                }
-
-                var resultListLeft = listDbEquipments.Except(listEquipments).ToList();
-                var resultListRight = listEquipments.Except(listDbEquipments).ToList();
-
-                var rll = new List<string>();
-                var rlr = new List<string>();
-                if (resultListLeft != null)
-                {
-                    foreach (var x in resultListLeft)
                     {
-                        rll.Add(x);
+                        _context.ChangeTracker.Clear();
+                        Equipment equi = new Equipment();
+                        equi.equipAutoId = equipment.equipAutoId;
+                        equi.equipId = equipment.equipId;
+                        equi.status = equipment.status;
+                        equi.catAutoId = equipment.catAutoId;
+                        equi.groupAutoId = equipment.groupAutoId;
+                        equi.companyId = equipment.companyId;
+                        equi.equipName = equipment.equipName;
+                        equi.quantity = (equipment.quantity - items.equipQuanity);
+                        equi.equipLeadTime = equipment.equipLeadTime;
+                        equi.equipCost = equipment.equipCost;
+                        _context.equipments.Update(equi);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        return NotFound();
                     }
                 }
-                if (resultListRight != null)
+                try
                 {
-                    foreach (var x in resultListRight)
-                    {
-                        rlr.Add(x);
-                    }
+                    _context.issuences.Update(existingIssue);
+                    await _context.SaveChangesAsync();
+                    return Ok();
                 }
-
-                if (rll != null)
+                catch (Exception ex)
                 {
-                    foreach (var item in rll)
-                    {
-                        var delUser = _context.issuenceandEquipment.Where(x => x.companyId == companyId && x.issuenceAutoId == issuence.issuenceAutoId && x.equipAutoId == int.Parse(item)).FirstOrDefault();
-                        if (delUser == null)
-                        {
-                            return NotFound();
-                        }
-                        _context.issuenceandEquipment.Remove(delUser);
-                    }
+                    //_logger.LogError(ex.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
-
-                if (rlr != null)
-                {
-                    foreach (var item in rlr)
-                    {
-                        IssuenceandEquipment issuenceEquipment = new IssuenceandEquipment();
-                        issuenceEquipment.issuenceAutoId = issuence.issuenceAutoId;
-                        issuenceEquipment.equipAutoId = int.Parse(item);
-                        issuenceEquipment.companyId = issuence.companyId;
-                        _context.issuenceandEquipment.Add(issuenceEquipment);
-                    }
-                }
-
-
-                _context.Entry(issue).State = EntityState.Modified;
-
-                await _context.SaveChangesAsync();
-                return Ok();
             }
 
-            return NotFound();
-        }
+            return Unauthorized();
+        
+
+    }
 
 
-        // DELETE: api/Issuences/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteIssuence(string id,string companyId)
+    // DELETE: api/Issuences/5
+    [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteIssuence(int id,string companyId)
         {
-            var issuence = await _context.issuences.Where(x => x.issuenceId== id && x.companyId == companyId).FirstOrDefaultAsync();
+            var issuence = await _context.issuences.Where(x => x.issuenceAutoId == id && x.companyId == companyId).FirstOrDefaultAsync();
 
             if (issuence == null)
             {
@@ -243,14 +298,19 @@ namespace InventoryAPI.Controllers
             return NoContent();
         }
 
-        private bool IssuenceExists(string id)
+        private bool IssuenceExists(int id)
         {
-            return _context.issuences.Any(e => e.issuenceId == id);
+            return _context.issuences.Any(e => e.issuenceAutoId == id);
         }
 
         private bool CompanyExists(string id)
         {
             return _context.issuences.Any(x => x.companyId == id);
+        }
+
+        private bool IssuenceValidityExists(int id)
+        {
+            return _context.issuences.Any(e => e.issuenceAutoId == id);
         }
     }
 }

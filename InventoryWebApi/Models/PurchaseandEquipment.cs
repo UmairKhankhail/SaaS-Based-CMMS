@@ -9,13 +9,17 @@ namespace InventoryAPI.Models
         [Key]
         public int purchaseEquipId { get; set; }
        
+        
         public int purchaseAutoId { get; set; }
         [ForeignKey("purchaseAutoId")]
         public virtual Purchase Purchase { get; set; }
 
         public int equipAutoId { get; set; }
         [ForeignKey("equipAutoId")]
-        public virtual Equipment Equipment { get; set; }    
+        public virtual Equipment Equipment { get; set; }
+
+        public string equipName { get; set; }
+        public int quantity { get; set; }
 
         public string companyId { get; set; }
     }
