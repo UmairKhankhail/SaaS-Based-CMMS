@@ -27,6 +27,39 @@ namespace PreventiveMaintenanceWebApi.Controllers
             _httpClient = httpClient;
         }
 
+
+        [HttpGet("GetInspectionEntriesByAssetId")]
+        public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetInspectionByAssetId(int assetModel, string assetId, string cId)
+        {
+            var inspections = await _context.inspectionEntries
+                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == cId)
+                .ToListAsync();
+
+            if (inspections == null)
+            {
+                return Unauthorized();
+            }
+
+            return inspections;
+        }
+
+        [HttpGet("GetInspectionEntriesByAssetIdForQuestions")]
+        public async Task<ActionResult<IEnumerable<string>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string cId, string question)
+        {
+            var inspection = await _context.inspections
+                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.question == question && x.companyId == cId)
+                .Select(x => x.options)
+                .FirstOrDefaultAsync();
+
+            if (inspection == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new List<string> { inspection });
+        }
+
+
         // GET: api/InspectionEntries
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetinspectionEntries()

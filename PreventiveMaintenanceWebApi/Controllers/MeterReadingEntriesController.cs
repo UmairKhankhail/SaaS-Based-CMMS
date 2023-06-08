@@ -55,6 +55,37 @@ namespace PreventiveMaintenanceWebApi.Controllers
             return meterReadingEntry;
         }
 
+        [HttpGet("GetMeterReadingEntriesByAssetId")]
+        public async Task<ActionResult<IEnumerable<MeterReadingEntry>>> GetMeterReadingEntriesByAssetId(int assetModel, string assetId, string cId)
+        {
+            var mre = await _context.meterReadingEntries
+                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == cId)
+                .ToListAsync();
+
+            if (mre == null)
+            {
+                return Unauthorized();
+            }
+
+            return mre;
+        }
+
+        [HttpGet("GetMeterReadingEntriesByAssetIdForParams")]
+        public async Task<ActionResult<IEnumerable<string>>> GetMeterReadingEntriesByAssetIdForParams(int assetModel, string assetId, string cId)
+        {
+            var mre = await _context.meterReadingEntries
+                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == cId)
+                .Select(x => x.paramName)
+                .FirstOrDefaultAsync();
+
+            if (mre == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new List<string> { mre });
+        }
+
         // PUT: api/MeterReadingEntries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
