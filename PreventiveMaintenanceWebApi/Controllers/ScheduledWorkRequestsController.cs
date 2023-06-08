@@ -57,6 +57,27 @@ namespace PreventiveMaintenanceWebApi.Controllers
             return await _context.scheduledWorkRequests.ToListAsync();
         }
 
+        [HttpGet("GetscheduledWorkByAssetId")]
+        public async Task<ActionResult<IEnumerable<ScheduledWorkRequest>>> GetscheduledWorkDetails(int assetModel, string assetId, string cId)
+        {
+            var scheduledWorkRequest = _context.scheduledWorkRequests.Where(x=>x.assetModelId==assetModel && x.assetId==assetId && x.companyId==cId).ToList();
+            if(scheduledWorkRequest==null)
+            {
+                return Unauthorized();
+            }
+            return scheduledWorkRequest;
+        }
+        [HttpGet("GetscheduledWorkByAssetIdForHeadOfProblem")]
+        public async Task<ActionResult<ScheduledWorkRequest>> GetscheduledWorkDetailsHOP(int assetModel, string assetId, string cId, string headOfProblems)
+        {
+            var scheduledWorkRequest = _context.scheduledWorkRequests.Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.headOfProblem== headOfProblems && x.companyId == cId).FirstOrDefault();
+            if (scheduledWorkRequest == null)
+            {
+                return Unauthorized();
+            }
+            return scheduledWorkRequest;
+        }
+
         // GET: api/ScheduledWorkRequests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ScheduledWorkRequest>> GetScheduledWorkRequest(int id)
@@ -85,6 +106,17 @@ namespace PreventiveMaintenanceWebApi.Controllers
             }
 
             return existingmodel;
+        }
+
+        [HttpGet("GetCalendarRecords")]
+        public async Task<ActionResult<GoogleCalendarRecord>> GetCalendarRecords(string cId)
+        {
+            var existingModel = _context.googleCalendarRecords.Where(x=>x.companyId==cId).FirstOrDefault();
+            if (existingModel == null)
+            {
+                return Unauthorized();
+            }
+            return existingModel;
         }
 
         [HttpPost("PostGoogleCalendarApi")]

@@ -31,6 +31,29 @@ namespace PreventiveMaintenanceWebApi.Controllers
             return await _context.meterReadings.ToListAsync();
         }
 
+        [HttpGet("GetMeterReadingsByAssetId")]
+        public async Task<ActionResult<IEnumerable<MeterReading>>> GetmeterReadingsByAssetId(int assetModel, string assetId, string cId)
+        {
+            var meterReading = _context.meterReadings.Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == cId).ToList();
+            if (meterReading == null)
+            {
+                return Unauthorized();
+            }
+            return meterReading;
+        }
+        [HttpGet("GetMeterReadingsByAssetIdForParameter")]
+        public async Task<ActionResult<MeterReading>> GetmeterReadingsByAssetIdByParams(int assetModel, string assetId, string cId, string paramName)
+        {
+            var meterReading = _context.meterReadings.Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.paramName == paramName && x.companyId == cId).FirstOrDefault();
+            if (meterReading == null)
+            {
+                return Unauthorized();
+            }
+            return meterReading;
+        }
+
+
+
         // GET: api/MeterReadings/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MeterReading>> GetMeterReading(int id)
