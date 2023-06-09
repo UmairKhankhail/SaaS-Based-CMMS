@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Reflection;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -19,6 +20,26 @@ namespace MaintenanceWebApi.Controllers
         public WorkOrdersController(MaintenanceDbContext context)
         {
             _context = context;
+        }
+
+        [HttpGet("GetControllersAndMethods")]
+        public async Task<List<string>> GetAllControllerMethods()
+        {
+            var methods = new List<string>();
+            var controllerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToList();
+
+            foreach (var controllerType in controllerTypes)
+            {
+                var controllerMethods = controllerType.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public)
+                    .Where(method => !method.IsSpecialName && !method.IsDefined(typeof(NonActionAttribute)));
+
+                foreach (var method in controllerMethods)
+                {
+                    methods.Add($"{controllerType.Name}.{method.Name}");
+                }
+            }
+
+            return methods;
         }
 
         // GET: api/WorkOrders

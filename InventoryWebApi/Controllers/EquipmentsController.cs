@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace InventoryAPI.Controllers
@@ -25,6 +26,27 @@ namespace InventoryAPI.Controllers
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
+        }
+
+
+        [HttpGet("GetControllersAndMethods")]
+        public async Task<List<string>> GetAllControllerMethods()
+        {
+            var methods = new List<string>();
+            var controllerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToList();
+
+            foreach (var controllerType in controllerTypes)
+            {
+                var controllerMethods = controllerType.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public)
+                    .Where(method => !method.IsSpecialName && !method.IsDefined(typeof(NonActionAttribute)));
+
+                foreach (var method in controllerMethods)
+                {
+                    methods.Add($"{controllerType.Name}.{method.Name}");
+                }
+            }
+
+            return methods;
         }
 
         // GET: api/Equipments

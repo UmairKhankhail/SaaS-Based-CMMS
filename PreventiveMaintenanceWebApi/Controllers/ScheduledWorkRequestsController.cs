@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
@@ -27,6 +28,8 @@ namespace PreventiveMaintenanceWebApi.Controllers
             _context = context;
             _calendar = calendar;
         }
+
+
 
         // GET: api/ScheduledWorkRequests
         [HttpGet]
@@ -56,6 +59,29 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
             return await _context.scheduledWorkRequests.ToListAsync();
         }
+
+        [HttpGet("GetControllersAndMethods")]
+        public async Task<List<string>> GetAllControllerMethods()
+        {
+            var methods = new List<string>();
+            var controllerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToList();
+
+            foreach (var controllerType in controllerTypes)
+            {
+                var controllerMethods = controllerType.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public)
+                    .Where(method => !method.IsSpecialName && !method.IsDefined(typeof(NonActionAttribute)));
+
+                foreach (var method in controllerMethods)
+                {
+                    methods.Add($"{controllerType.Name}.{method.Name}");
+                }
+            }
+
+            return methods;
+        }
+
+
+
 
         [HttpGet("GetscheduledWorkByAssetId")]
         public async Task<ActionResult<IEnumerable<ScheduledWorkRequest>>> GetscheduledWorkDetails(int assetModel, string assetId, string cId)
