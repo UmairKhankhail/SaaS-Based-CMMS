@@ -12,6 +12,8 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Text.RegularExpressions;
 using JwtAuthenticationManager.Models;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
+using System.Collections;
 
 namespace AccountsWebApi.Controllers
 {
@@ -31,7 +33,7 @@ namespace AccountsWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Permission>>> Getpermissions()
         {
-            var outputControllers=GetAllControllerMethods();
+            var outputControllers=await GetAllControllerMethods();
             
             //if (perid.Count > 0)
             //{
@@ -81,7 +83,27 @@ namespace AccountsWebApi.Controllers
             return await _context.permissions.ToListAsync();
         }
 
-        public static List<string> GetAllControllerMethods()
+        //public static List<string> GetAllControllerMethods()
+        //{
+        //    var methods = new List<string>();
+        //    var controllerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToList();
+
+        //    foreach (var controllerType in controllerTypes)
+        //    {
+        //        var controllerMethods = controllerType.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public)
+        //            .Where(method => !method.IsSpecialName && !method.IsDefined(typeof(NonActionAttribute)));
+
+        //        foreach (var method in controllerMethods)
+        //        {
+        //            methods.Add($"{controllerType.Name}.{method.Name}");
+        //        }
+        //    }
+            
+        //    return methods;
+        //}
+
+        //[HttpGet("getallcontrollerstest")]
+        public async static Task<List<string>> GetAllControllerMethods()
         {
             var methods = new List<string>();
             var controllerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToList();
@@ -96,12 +118,63 @@ namespace AccountsWebApi.Controllers
                     methods.Add($"{controllerType.Name}.{method.Name}");
                 }
             }
-            
+
+            // Call the Preventive Maintenance API to retrieve its controller and methods
+            var apiUrl = "http://localhost:5182/api/ScheduledWorkRequests/GetControllersAndMethods";
+            var client = new HttpClient();
+            var response = await client.GetAsync(apiUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var apiContent = await response.Content.ReadAsStringAsync();
+                var otherApiMethods = JsonConvert.DeserializeObject<List<string>>(apiContent);
+                methods.AddRange(otherApiMethods);
+            }
+
+            //// Call the Assets API to retrieve its controller and methods
+            var apiUrlAsset = "http://localhost:5231/api/LinearAssetModels/GetControllersAndMethods";
+            var clientAsset = new HttpClient();
+            var responseAsset = await clientAsset.GetAsync(apiUrlAsset);
+
+            if (responseAsset.IsSuccessStatusCode)
+            {
+                var apiContentAsset = await responseAsset.Content.ReadAsStringAsync();
+                var otherApiMethodsAsset = JsonConvert.DeserializeObject<List<string>>(apiContentAsset);
+                methods.AddRange(otherApiMethodsAsset);
+            }
+
+            //// Call the Inventory API to retrieve its controller and methods
+            var apiUrlEquipments = "http://localhost:5269/api/Equipments/GetControllersAndMethods";
+            var clientEquipments = new HttpClient();
+            var responseEquipments = await clientEquipments.GetAsync(apiUrlEquipments);
+
+            if (responseEquipments.IsSuccessStatusCode)
+            {
+                var apiContentEquipments = await responseEquipments.Content.ReadAsStringAsync();
+                var otherApiMethodsEquipments = JsonConvert.DeserializeObject<List<string>>(apiContentEquipments);
+                methods.AddRange(otherApiMethodsEquipments);
+            }
+
+
+            // Call the WO API to retrieve its controller and methods
+            var apiUrlWO = "http://localhost:5145/api/WorkOrders/GetControllersAndMethods";
+            var clientWO = new HttpClient();
+            var responseWO = await clientWO.GetAsync(apiUrlWO);
+
+            if (responseWO.IsSuccessStatusCode)
+            {
+                var apiContentWO = await responseWO.Content.ReadAsStringAsync();
+                var otherApiMethodsWO = JsonConvert.DeserializeObject<List<string>>(apiContentWO);
+                methods.AddRange(otherApiMethodsWO);
+            }
+
+
             return methods;
         }
-    
 
-    // GET: api/Permissions/5
+
+
+        // GET: api/Permissions/5
         [HttpGet("{uId, uAutoId, cId}")]
         public async Task<IActionResult> GetPermission(string uId, string uAutoId, string cId)
         {
