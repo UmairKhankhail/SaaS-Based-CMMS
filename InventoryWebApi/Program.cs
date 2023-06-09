@@ -1,14 +1,13 @@
 using RedisCachingService;
 using JwtAuthenticationManager;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System.Text.Json;
-using Microsoft.OpenApi.Models;
 
+using Microsoft.OpenApi.Models;
+using System.Text.Json;
 using InventoryAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.AddLog4Net();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -17,7 +16,7 @@ builder.Services.AddCustomAuthentication();
 
 var dbHost = "127.0.0.1";
 var dbName = "inventorytestdb";
-var dbPassword = "Mysql123$";
+var dbPassword = "umair_471";
 string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}; user=root; password={dbPassword};";
 //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
 //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));
@@ -27,7 +26,6 @@ builder.Services.AddDbContext<InventoryDbContext>(options => options.UseMySql(co
 //builder.Services.AddSingleton<RedisCachingService>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AccountsWebApi.Models;
+using InventoryWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryAPI.Models
@@ -13,8 +14,6 @@ namespace InventoryAPI.Models
 
         public string issuenceId { get; set; }
 
-        public int qty { get; set; }
-
         public string status { get; set; }
         
         public string issuenceDescp { get; set; }
@@ -23,8 +22,14 @@ namespace InventoryAPI.Models
 
         public string companyId { get; set; }
 
+
         [NotMapped]
-        public List<string> equipList { get; set; }
+        public int validityCheck { get; set; }
+
+        [NotMapped]
+        public List<IssuenceList> equipList { get; set; }
+
+
       
     }
 }

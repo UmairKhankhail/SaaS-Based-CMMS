@@ -15,7 +15,9 @@ namespace InventoryAPI.Models
         public int equipAutoId { get; set; }
         [ForeignKey("equipAutoId")]
         public virtual Equipment Equipment{ get; set; }
-             
+        
+        public string equipName { get; set; }
+        public int quantity { get; set; }
         public string companyId { get; set; }
     }
 }

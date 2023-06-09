@@ -95,6 +95,7 @@ namespace MaintenanceWebApi.Controllers
                 sr.username=statusAndRepair.username;
                 sr.itemName=statusAndRepair.itemName;
                 sr.faultyNotFaulty = statusAndRepair.faultyNotFaulty;
+                sr.inhouseOrOutsource = statusAndRepair.inhouseOrOutsource;
                 sr.worker = statusAndRepair.worker;
                 sr.woAutoId = statusAndRepair.woAutoId;
                 sr.companyId = statusAndRepair.companyId;
@@ -112,6 +113,7 @@ namespace MaintenanceWebApi.Controllers
                 sr.username = statusAndRepair.username;
                 sr.itemName = statusAndRepair.itemName;
                 sr.faultyNotFaulty = statusAndRepair.faultyNotFaulty;
+                sr.inhouseOrOutsource = statusAndRepair.inhouseOrOutsource;
                 sr.worker = statusAndRepair.worker;
                 sr.woAutoId = statusAndRepair.woAutoId;
                 sr.companyId = statusAndRepair.companyId;

@@ -43,13 +43,15 @@ namespace InventoryAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
+            return NotFound();
+
         }
 
         // GET: api/Brands/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Brand>> GetBrand(string id, string companyId)
+        public async Task<ActionResult<Brand>> GetBrand(int id, string companyId)
         {
-            var brand = await _context.brands.Where(x => x.brandId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
+            var brand = await _context.brands.Where(x => x.brandAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
 
             if (brand == null)
             {
@@ -63,7 +65,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Brands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBrand(string id,string companyId, Brand brand)
+        public async Task<IActionResult> PutBrand(int id,string companyId, Brand brand)
         {
             if (BrandExists(id) && CompanyExists(companyId))
             {
@@ -86,9 +88,9 @@ namespace InventoryAPI.Controllers
         // POST: api/Brands
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Brand>> PostBrand(Brand brand,string companyId)
+        public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
-            var comId = _context.brands.Where(b => b.companyId == companyId).Select(b => b.brandId).ToList();
+            var comId = _context.brands.Where(b => b.companyId == brand.companyId).Select(b => b.brandId).ToList();
 
             var autoId = "";
             if (comId.Count > 0)
@@ -142,9 +144,9 @@ namespace InventoryAPI.Controllers
             return NoContent();
         }
 
-        private bool BrandExists(string id)
+        private bool BrandExists(int id)
         {
-            return _context.brands.Any(e => e.brandId == id);
+            return _context.brands.Any(e => e.brandAutoId == id);
         }
 
         private bool CompanyExists(string id)

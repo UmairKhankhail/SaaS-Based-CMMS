@@ -1,4 +1,5 @@
 ﻿using AccountsWebApi.Models;
+using InventoryWebApi.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,8 +12,6 @@ namespace InventoryAPI.Models
 
         public string purchaseId { get; set; }
 
-        public int qty { get; set; }
-
         public int userAutoId { get; set; }
 
         public string status { get; set; }
@@ -22,6 +21,9 @@ namespace InventoryAPI.Models
         public string companyId { get; set; }
 
         [NotMapped]
-        public List<string> equipList { get; set; }
+        public int validityCheck { get; set; }
+
+        [NotMapped]
+        public List<PurchaseList> equipList { get; set; }
     }
 }

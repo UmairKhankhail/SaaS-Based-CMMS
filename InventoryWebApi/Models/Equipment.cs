@@ -15,6 +15,9 @@ namespace InventoryAPI.Models
 
         public string equipCost { get; set; }
 
+        public int quantity { get; set; }
+
+
         public string equipLeadTime { get; set; }
 
         public string status { get; set;}

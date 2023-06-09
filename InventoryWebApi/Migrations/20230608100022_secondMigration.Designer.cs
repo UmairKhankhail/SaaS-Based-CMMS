@@ -2,6 +2,7 @@
 using InventoryAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryAPI.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230608100022_secondMigration")]
+    partial class secondMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,9 +178,6 @@ namespace InventoryAPI.Migrations
                     b.Property<int>("equipAutoId")
                         .HasColumnType("int");
 
-                    b.Property<string>("equipName")
-                        .HasColumnType("longtext");
-
                     b.Property<int>("issuenceAutoId")
                         .HasColumnType("int");
 
@@ -231,9 +230,6 @@ namespace InventoryAPI.Migrations
 
                     b.Property<int>("equipAutoId")
                         .HasColumnType("int");
-
-                    b.Property<string>("equipName")
-                        .HasColumnType("longtext");
 
                     b.Property<int>("purchaseAutoId")
                         .HasColumnType("int");
