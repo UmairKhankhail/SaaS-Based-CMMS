@@ -154,7 +154,7 @@ namespace InventoryAPI.Controllers
                     {
                         IssuenceandEquipment issuenceandEquipment = new IssuenceandEquipment();
                         issuenceandEquipment.equipName = items.equipName;
-                        issuenceandEquipment.quantity = items.equipQuanity;
+                        issuenceandEquipment.quantity = items.equipQuantity;
                         issuenceandEquipment.equipAutoId = items.equipAutoId;
                         issuenceandEquipment.issuenceAutoId = getIssueAutoId;
                         issuenceandEquipment.companyId = issuence.companyId;
@@ -186,7 +186,7 @@ namespace InventoryAPI.Controllers
                         {
                             IssuenceandEquipment issuenceandEquipment = new IssuenceandEquipment();
                             issuenceandEquipment.equipName = items.equipName;
-                            issuenceandEquipment.quantity = items.equipQuanity;
+                            issuenceandEquipment.quantity = items.equipQuantity;
                             
 
                             issuenceandEquipment.issuenceAutoId = issuence.issuenceAutoId;
@@ -239,7 +239,7 @@ namespace InventoryAPI.Controllers
                     //    _context.issuenceandEquipment.Add(issuenceandEquipment);
                     //    await _context.SaveChangesAsync();
                     //}
-                    if (equipment.equipAutoId != null && equipment.quantity >= items.equipQuanity)
+                    if (equipment.equipAutoId != null && equipment.quantity >= items.equipQuantity)
 
                     {
                         _context.ChangeTracker.Clear();
@@ -251,7 +251,7 @@ namespace InventoryAPI.Controllers
                         equi.groupAutoId = equipment.groupAutoId;
                         equi.companyId = equipment.companyId;
                         equi.equipName = equipment.equipName;
-                        equi.quantity = (equipment.quantity - items.equipQuanity);
+                        equi.quantity = (equipment.quantity - items.equipQuantity);
                         equi.equipLeadTime = equipment.equipLeadTime;
                         equi.equipCost = equipment.equipCost;
                         _context.equipments.Update(equi);

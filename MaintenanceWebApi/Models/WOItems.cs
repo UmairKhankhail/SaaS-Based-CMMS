@@ -14,14 +14,17 @@ namespace MaintenanceWebApi.Models
         [ForeignKey("woAutoId")]
         public virtual WorkOrder WorkOrder { get; set; }
 
+        public int itemAutoId { get; set; }
         public string itemName { get; set; }
-        public string quantity { get; set; }
+        public int quantity { get; set; }
 
-        public string stock { get; set; }
+        public int stock { get; set; }
 
-        public string cost { get; set; }
+        public int userAutoId { get; set; }
+        public int cost { get; set; }
         public string requestStatus { get; set; }
 
+        public string itemDescp { get; set; }
         public string companyId { get; set; }
     }
 }

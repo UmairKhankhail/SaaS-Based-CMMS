@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryAPI.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20230608164720_fourthMigration")]
+    [Migration("20230609062456_fourthMigration")]
     partial class fourthMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

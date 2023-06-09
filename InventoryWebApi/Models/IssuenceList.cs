@@ -4,7 +4,7 @@
     {
         public string equipName { get; set; }
 
-        public int equipQuanity{ get; set;}
+        public int equipQuantity{ get; set;}
 
         public int equipAutoId { get; set;}
     }

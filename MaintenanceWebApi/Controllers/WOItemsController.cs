@@ -6,6 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NuGet.Common;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -14,10 +19,11 @@ namespace MaintenanceWebApi.Controllers
     public class WOItemsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
-
-        public WOItemsController(MaintenanceDbContext context)
+        private readonly HttpClient _httpClient;
+        public WOItemsController(MaintenanceDbContext context,HttpClient httpClient)
         {
             _context = context;
+            _httpClient = httpClient;
         }
 
         // GET: api/WOItems
@@ -92,13 +98,100 @@ namespace MaintenanceWebApi.Controllers
                 _context.ChangeTracker.Clear();
                 WOItems items = new WOItems();
                 string comId = "I1";
-                items.woItemsAutoId = wOItems.woItemsAutoId;
+                items.itemAutoId = wOItems.itemAutoId;
                 items.woItemsId = comId;
                 items.woAutoId = wOItems.woAutoId;
                 items.itemName = wOItems.itemName;
+
+
+                var url = $"https://localhost:7160/api/Equipments/{wOItems.itemAutoId}?companyId={wOItems.companyId}";
+
+                var response = await _httpClient.GetAsync(url);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseContent);
+                JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
+                var stockItems = (int)dataObject["quantity"];
+
+                items.stock = stockItems;
+
+
+                if (stockItems < wOItems.quantity)
+                {
+                    var urlPurchase = "https://localhost:7160/api/Purchases";
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "userAutoId", wOItems.userAutoId },
+                        { "status", "pending" },
+                        { "purchasesDescp", "Purchase request generated for "+wOItems.itemName },
+                        { "companyId", wOItems.companyId },
+                        { "validityCheck", 0 },
+                        {
+                            "equipList", new List<Dictionary<string, object>>
+                            {
+                                new Dictionary<string, object>
+                                {
+                                    { "equipName", wOItems.itemName },
+                                    { "equipQuantity", (wOItems.quantity -stockItems) },
+                                    { "equipAutoId", wOItems.itemAutoId }
+                                }
+                            }
+                        }
+                    };
+
+                    var json = JsonConvert.SerializeObject(parameters);
+                    var contentPurchase = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var responsePurchase = await _httpClient.PostAsync(urlPurchase, contentPurchase);
+                    var responsePurchaseContent = await responsePurchase.Content.ReadAsStringAsync();
+
+                    Console.WriteLine(responsePurchaseContent);
+
+
+                }
+
+
+                else if (stockItems >= wOItems.quantity)
+                {
+                    var urlIssuence = "https://localhost:7160/api/Issuences";
+                    var parametersIssuence = new Dictionary<string, object>
+                    {
+                        { "userAutoId", wOItems.userAutoId },
+                        { "status", "pending" },
+                        { "issuenceDescp", "Issuence request generated for "+wOItems.itemName },
+                        { "companyId", wOItems.companyId },
+                        { "validityCheck", 0 },
+                        {
+                            "equipList", new List<Dictionary<string, object>>
+                            {
+                                new Dictionary<string, object>
+                                {
+                                    { "equipName", wOItems.itemName },
+                                    { "equipQuantity", wOItems.quantity},
+                                    { "equipAutoId", wOItems.itemAutoId }
+                                }
+                            }
+                        }
+                    };
+
+                    var json = JsonConvert.SerializeObject(parametersIssuence);
+                    var contentIssuence = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var responseIssuence = await _httpClient.PostAsync(urlIssuence, contentIssuence);
+                    var responseIssuenceContent = await responseIssuence.Content.ReadAsStringAsync();
+
+                    Console.WriteLine(responseIssuenceContent);
+
+
+                }
+
+
+
+
                 items.quantity = wOItems.quantity;
-                items.stock = wOItems.stock;
-                items.cost= wOItems.cost;
+                items.cost = (int)dataObject["equipCost"];
+                items.userAutoId = wOItems.userAutoId;
+                items.itemDescp = wOItems.itemDescp;
+
                 items.requestStatus = wOItems.requestStatus;
                 items.companyId = wOItems.companyId;
                 _context.wOItems.Add(items);
@@ -111,13 +204,97 @@ namespace MaintenanceWebApi.Controllers
                 _context.ChangeTracker.Clear();
                 WOItems items = new WOItems();
                 string comId = "I" + (int.Parse(autoId) + 1);
-                items.woItemsAutoId = wOItems.woItemsAutoId;
+                items.itemAutoId = wOItems.itemAutoId;
                 items.woItemsId = comId;
                 items.woAutoId = wOItems.woAutoId;
                 items.itemName = wOItems.itemName;
+                
+
+                var url = $"https://localhost:7160/api/Equipments/{wOItems.itemAutoId}?companyId={wOItems.companyId}";
+               
+                var response = await _httpClient.GetAsync(url);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseContent);
+                JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
+                var stockItems = (int)dataObject["quantity"];
+                
+                items.stock = stockItems;
+               
+                
+                if (stockItems < wOItems.quantity)
+                {
+                    var urlPurchase = "https://localhost:7160/api/Purchases";
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "userAutoId", wOItems.userAutoId },
+                        { "status", "pending" },
+                        { "purchasesDescp", "Purchase request generated for "+wOItems.itemName },
+                        { "companyId", wOItems.companyId },
+                        { "validityCheck", 0 },
+                        {
+                            "equipList", new List<Dictionary<string, object>>
+                            {
+                                new Dictionary<string, object>
+                                {
+                                    { "equipName", wOItems.itemName },
+                                    { "equipQuantity", (wOItems.quantity -stockItems) },
+                                    { "equipAutoId", wOItems.itemAutoId }
+                                }
+                            }
+                        }
+                    };
+
+                    var json = JsonConvert.SerializeObject(parameters);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var responsePurchase = await _httpClient.PostAsync(url, content);
+                    var responsePurchaseContent = await response.Content.ReadAsStringAsync();
+
+                    Console.WriteLine(responsePurchaseContent);
+
+
+                }
+
+                else if (stockItems >= wOItems.quantity)
+                {
+                    var urlIssuence = "https://localhost:7160/api/Issuences";
+                    var parametersIssuence = new Dictionary<string, object>
+                    {
+                        { "userAutoId", wOItems.userAutoId },
+                        { "status", "pending" },
+                        { "issuenceDescp", "Issuence request generated for "+wOItems.itemName },
+                        { "companyId", wOItems.companyId },
+                        { "validityCheck", 0 },
+                        {
+                            "equipList", new List<Dictionary<string, object>>
+                            {
+                                new Dictionary<string, object>
+                                {
+                                    { "equipName", wOItems.itemName },
+                                    { "equipQuantity", wOItems.quantity},
+                                    { "equipAutoId", wOItems.itemAutoId }
+                                }
+                            }
+                        }
+                    };
+
+                    Console.WriteLine(parametersIssuence);
+                    var json = JsonConvert.SerializeObject(parametersIssuence);
+                    var contentIssuence = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var responseIssuence = await _httpClient.PostAsync(urlIssuence, contentIssuence);
+                    var responseIssuenceContent = await responseIssuence.Content.ReadAsStringAsync();
+
+                    Console.WriteLine(responseIssuenceContent);
+
+
+                }
+
+
                 items.quantity = wOItems.quantity;
-                items.stock = wOItems.stock;
-                items.cost = wOItems.cost;
+                items.cost = (int)dataObject["equipCost"] ;
+                items.userAutoId = wOItems.userAutoId;
+                items.itemDescp = wOItems.itemDescp;
                 items.requestStatus = wOItems.requestStatus;
                 items.companyId = wOItems.companyId;
                 _context.wOItems.Add(items);
