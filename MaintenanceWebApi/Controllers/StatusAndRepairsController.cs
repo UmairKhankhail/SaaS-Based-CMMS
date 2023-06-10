@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -14,61 +16,108 @@ namespace MaintenanceWebApi.Controllers
     public class StatusAndRepairsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly ILogger<StatusAndRepairsController> _logger;
 
-        public StatusAndRepairsController(MaintenanceDbContext context)
+
+        public StatusAndRepairsController(MaintenanceDbContext context, JwtTokenHandler jwtTokenHandler, ILogger<StatusAndRepairsController> logger)
         {
             _context = context;
+            _JwtTokenHandler= jwtTokenHandler;
+            _logger= logger;
         }
 
         // GET: api/StatusAndRepairs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StatusAndRepair>>> GetstatusAndRepairs(string companyId)
+        public async Task<ActionResult<IEnumerable<StatusAndRepair>>> GetstatusAndRepairs()
         {
-            return await _context.statusAndRepairs.Where(x=>x.companyId==companyId).ToListAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.statusAndRepairs.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET: api/StatusAndRepairs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<StatusAndRepair>> GetStatusAndRepair(int id,string companyId)
+        public async Task<ActionResult<StatusAndRepair>> GetStatusAndRepair(int id)
         {
-            var statusAndRepair = await _context.statusAndRepairs.Where(x=>x.srAutoId==id && x.companyId==companyId).ToListAsync();
-
-            if (statusAndRepair == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var statusAndRepair = await _context.statusAndRepairs.Where(x => x.srAutoId == id && x.companyId == claimresponse.companyId).ToListAsync();
 
-            return Ok(statusAndRepair);
+                    if (statusAndRepair == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(statusAndRepair);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/StatusAndRepairs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutStatusAndRepair(int id, string companyId,StatusAndRepair statusAndRepair)
         {
-            if (statusAndRepair.srAutoId==id && statusAndRepair.companyId==companyId)
-            {
-
-                _context.Entry(statusAndRepair).State = EntityState.Modified;
-            }
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StatusAndRepairExists(id))
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    if (statusAndRepair.srAutoId == id && statusAndRepair.companyId == claimresponse.companyId)
+                    {
 
-            return NoContent();
+                        _context.Entry(statusAndRepair).State = EntityState.Modified;
+                    }
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!StatusAndRepairExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/StatusAndRepairs
@@ -76,53 +125,68 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<StatusAndRepair>> PostStatusAndRepair(StatusAndRepair statusAndRepair)
         {
-            var compId = _context.statusAndRepairs.Where(i => i.companyId == statusAndRepair.companyId).Select(d => d.srId).ToList();
-            var autoId = "";
-            if (compId.Count > 0)
+            try
             {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
+                    var compId = _context.statusAndRepairs.Where(i => i.companyId == claimresponse.companyId).Select(d => d.srId).ToList();
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
+
+                        autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+
+                        _context.ChangeTracker.Clear();
+                        StatusAndRepair sr = new StatusAndRepair();
+                        string comId = "SR1";
+                        sr.srAutoId = statusAndRepair.srAutoId;
+                        sr.srId = comId;
+                        sr.username = statusAndRepair.username;
+                        sr.itemName = statusAndRepair.itemName;
+                        sr.faultyNotFaulty = statusAndRepair.faultyNotFaulty;
+                        sr.inhouseOrOutsource = statusAndRepair.inhouseOrOutsource;
+                        sr.worker = statusAndRepair.worker;
+                        sr.woAutoId = statusAndRepair.woAutoId;
+                        sr.companyId = claimresponse.companyId;
+                        _context.statusAndRepairs.Add(sr);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        StatusAndRepair sr = new StatusAndRepair();
+                        string comId = "SR" + (int.Parse(autoId) + 1);
+                        sr.srAutoId = statusAndRepair.srAutoId;
+                        sr.srId = comId;
+                        sr.username = statusAndRepair.username;
+                        sr.itemName = statusAndRepair.itemName;
+                        sr.faultyNotFaulty = statusAndRepair.faultyNotFaulty;
+                        sr.inhouseOrOutsource = statusAndRepair.inhouseOrOutsource;
+                        sr.worker = statusAndRepair.worker;
+                        sr.woAutoId = statusAndRepair.woAutoId;
+                        sr.companyId = claimresponse.companyId;
+                        _context.statusAndRepairs.Add(sr);
+                        await _context.SaveChangesAsync();
+
+                    }
+
+                    return Ok();
+                }
+                return Unauthorized();
             }
-
-            if (autoId == "")
+            catch (Exception ex)
             {
-
-                _context.ChangeTracker.Clear();
-                StatusAndRepair sr = new StatusAndRepair();
-                string comId = "SR1";
-                sr.srAutoId=statusAndRepair.srAutoId;
-                sr.srId = comId;
-                sr.username=statusAndRepair.username;
-                sr.itemName=statusAndRepair.itemName;
-                sr.faultyNotFaulty = statusAndRepair.faultyNotFaulty;
-                sr.inhouseOrOutsource = statusAndRepair.inhouseOrOutsource;
-                sr.worker = statusAndRepair.worker;
-                sr.woAutoId = statusAndRepair.woAutoId;
-                sr.companyId = statusAndRepair.companyId;
-                _context.statusAndRepairs.Add(sr);
-                await _context.SaveChangesAsync();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                StatusAndRepair sr = new StatusAndRepair();
-                string comId = "SR" + (int.Parse(autoId) + 1);
-                sr.srAutoId = statusAndRepair.srAutoId;
-                sr.srId = comId;
-                sr.username = statusAndRepair.username;
-                sr.itemName = statusAndRepair.itemName;
-                sr.faultyNotFaulty = statusAndRepair.faultyNotFaulty;
-                sr.inhouseOrOutsource = statusAndRepair.inhouseOrOutsource;
-                sr.worker = statusAndRepair.worker;
-                sr.woAutoId = statusAndRepair.woAutoId;
-                sr.companyId = statusAndRepair.companyId;
-                _context.statusAndRepairs.Add(sr);
-                await _context.SaveChangesAsync();
-
-            }
-
-            return Ok();
 
         }
 
@@ -130,16 +194,31 @@ namespace MaintenanceWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStatusAndRepair(int id)
         {
-            var statusAndRepair = await _context.statusAndRepairs.FindAsync(id);
-            if (statusAndRepair == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var statusAndRepair = await _context.statusAndRepairs.FindAsync(id);
+                    if (statusAndRepair == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.statusAndRepairs.Remove(statusAndRepair);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.statusAndRepairs.Remove(statusAndRepair);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool StatusAndRepairExists(int id)

@@ -20,10 +20,10 @@ namespace InventoryAPI.Controllers
         private readonly InventoryDbContext _context;
         private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
-        private readonly ILogger<CategoriesController> _logger;
+        private readonly ILogger<UnitOfMeasurementsController> _logger;
 
 
-        public UnitOfMeasurementsController(InventoryDbContext context, HttpClient httpClient, ILogger<CategoriesController> logger)
+        public UnitOfMeasurementsController(InventoryDbContext context, HttpClient httpClient, ILogger<UnitOfMeasurementsController> logger)
         {
             _context = context;
             _httpClient = httpClient;

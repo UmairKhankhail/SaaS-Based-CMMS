@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -14,62 +16,107 @@ namespace MaintenanceWebApi.Controllers
     public class ExecutionsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
-
-        public ExecutionsController(MaintenanceDbContext context)
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly ILogger<ExecutionsController> _logger;
+        public ExecutionsController(MaintenanceDbContext context, HttpClient httpClient, ILogger<ExecutionsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Executions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Execution>>> Getexecutions(string companyId)
+        public async Task<ActionResult<IEnumerable<Execution>>> Getexecutions()
         {
-            return await _context.executions.Where(x=>x.companyId==companyId).ToListAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.executions.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET: api/Executions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Execution>> GetExecution(int id,string companyId)
+        public async Task<ActionResult<Execution>> GetExecution(int id)
         {
-            var execution = await _context.executions.Where(x=>x.executionAutoId==id && x.companyId==companyId).ToListAsync();
-
-            if (execution == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var execution = await _context.executions.Where(x => x.executionAutoId == id && x.companyId == claimresponse.companyId).ToListAsync();
 
-            return Ok(execution);
+                    if (execution == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(execution);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/Executions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutExecution(int id,string companyId,Execution execution)
+        [HttpPut]
+        public async Task<IActionResult> PutExecution(int id,Execution execution)
         {
-            if (execution.executionAutoId==id && execution.companyId==companyId)
-            {
-
-                _context.Entry(execution).State = EntityState.Modified; 
-            }
-
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExecutionExists(id))
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                    if (execution.executionAutoId == id && execution.companyId == claimresponse.companyId)
+                    {
+
+                        _context.Entry(execution).State = EntityState.Modified;
+                    }
+
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!ExecutionExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/Executions
@@ -77,66 +124,97 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Execution>> PostExecution(Execution execution)
         {
-            var compId = _context.executions.Where(exe=> exe.companyId == execution.companyId && exe.woAutoId == execution.woAutoId).Select(d => d.executionId).ToList();
-            var autoId = "";
-            if (compId.Count > 0)
+            try
             {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
+                    var compId = _context.executions.Where(exe => exe.companyId == claimresponse.companyId && exe.woAutoId == execution.woAutoId).Select(d => d.executionId).ToList();
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
+
+                        autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Execution exe = new Execution();
+                        string comId = "EXE1";
+                        exe.executionAutoId = execution.executionAutoId;
+                        exe.executionId = comId;
+                        exe.woAutoId = execution.woAutoId;
+                        exe.userName = execution.userName;
+                        exe.topName = execution.topName;
+                        exe.startTime = execution.startTime;
+                        exe.endTime = execution.endTime;
+                        exe.remarks = execution.remarks;
+                        exe.companyId = claimresponse.companyId;
+                        _context.executions.Add(exe);
+                        await _context.SaveChangesAsync();
+                    }
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Execution exe = new Execution();
+                        string comId = "EXE" + (int.Parse(autoId) + 1);
+                        exe.executionAutoId = execution.executionAutoId;
+                        exe.executionId = comId;
+                        exe.woAutoId = execution.woAutoId;
+                        exe.userName = execution.userName;
+                        exe.topName = execution.topName;
+                        exe.startTime = execution.startTime;
+                        exe.endTime = execution.endTime;
+                        exe.remarks = execution.remarks;
+                        exe.companyId = claimresponse.companyId;
+                        _context.executions.Add(exe);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                return Unauthorized();
             }
-
-            if (autoId == "")
+            catch (Exception ex)
             {
-                _context.ChangeTracker.Clear();
-                Execution exe = new Execution();
-                string comId = "EXE1";
-                exe.executionAutoId = execution.executionAutoId;
-                exe.executionId = comId;
-                exe.woAutoId = execution.woAutoId;
-                exe.userName = execution.userName;
-                exe.topName = execution.topName;
-                exe.startTime = execution.startTime;
-                exe.endTime = execution.endTime;
-                exe.remarks = execution.remarks;
-                exe.companyId = execution.companyId;
-                _context.executions.Add(exe);
-                await _context.SaveChangesAsync();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Execution exe = new Execution();
-                string comId = "EXE" + (int.Parse(autoId) + 1);
-                exe.executionAutoId = execution.executionAutoId;
-                exe.executionId = comId;
-                exe.woAutoId = execution.woAutoId;
-                exe.userName = execution.userName;
-                exe.topName = execution.topName;
-                exe.startTime = execution.startTime;
-                exe.endTime = execution.endTime;
-                exe.remarks = execution.remarks;
-                exe.companyId = execution.companyId;
-                _context.executions.Add(exe);
-                await _context.SaveChangesAsync();
-            }
-
-            return Ok();
         }
 
         // DELETE: api/Executions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExecution(int id)
         {
-            var execution = await _context.executions.FindAsync(id);
-            if (execution == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+
+                    var execution = await _context.executions.FindAsync(id);
+                    if (execution == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.executions.Remove(execution);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.executions.Remove(execution);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool ExecutionExists(int id)

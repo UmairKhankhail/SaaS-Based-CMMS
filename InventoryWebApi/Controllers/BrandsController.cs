@@ -19,10 +19,10 @@ namespace InventoryAPI.Controllers
         private readonly InventoryDbContext _context;
         private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
-        private readonly ILogger<CategoriesController> _logger;
+        private readonly ILogger<BrandsController> _logger;
 
 
-        public BrandsController(InventoryDbContext context, HttpClient httpClient, ILogger<CategoriesController> logger)
+        public BrandsController(InventoryDbContext context, HttpClient httpClient, ILogger<BrandsController> logger)
         {
             _context = context;
             _httpClient = httpClient;

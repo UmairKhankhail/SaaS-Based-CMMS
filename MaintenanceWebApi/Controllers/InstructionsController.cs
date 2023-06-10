@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -14,61 +16,108 @@ namespace MaintenanceWebApi.Controllers
     public class InstructionsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
-
-        public InstructionsController(MaintenanceDbContext context)
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly ILogger<InstructionsController> _logger;
+        public InstructionsController(MaintenanceDbContext context, JwtTokenHandler jwtTokenHandler, ILogger<InstructionsController> logger)
         {
             _context = context;
+            _JwtTokenHandler = jwtTokenHandler;
+            _logger = logger;
         }
 
         // GET: api/Instructions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Instruction>>> Getinstructions(string companyId)
+        public async Task<ActionResult<IEnumerable<Instruction>>> Getinstructions()
         {
-            return await _context.instructions.Where(x=>x.companyId==companyId).ToListAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    return await _context.instructions.Where(x => x.companyId ==claimresponse.companyId).ToListAsync();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET: api/Instructions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Instruction>> GetInstruction(int id,string companyId)
+        public async Task<ActionResult<Instruction>> GetInstruction(int id)
         {
-            var instruction = await _context.instructions.Where(x=>x.insAutoId==id && x.companyId==companyId).ToListAsync();
-
-            if (instruction == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var instruction = await _context.instructions.Where(x => x.insAutoId == id && x.companyId == claimresponse.companyId).ToListAsync();
+
+                    if (instruction == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(instruction);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return Ok(instruction);
         }
 
         // PUT: api/Instructions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        public async Task<IActionResult> PutInstruction(int id, string companyId,Instruction instruction)
+        public async Task<IActionResult> PutInstruction(int id,Instruction instruction)
         {
-            if (instruction.insAutoId==id && instruction.companyId==companyId)
-            { 
-                _context.Entry(instruction).State = EntityState.Modified;
-            }
-
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!InstructionExists(id))
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    if (instruction.insAutoId == id && instruction.companyId == claimresponse.companyId)
+                    {
+                        _context.Entry(instruction).State = EntityState.Modified;
+                    }
 
-            return NoContent();
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!InstructionExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/Instructions
@@ -76,26 +125,55 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Instruction>> PostInstruction(Instruction instruction)
         {
-            _context.instructions.Add(instruction);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            return Ok();
+                    _context.instructions.Add(instruction);
+                    await _context.SaveChangesAsync();
+
+                    return Ok();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // DELETE: api/Instructions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInstruction(int id)
         {
-            var instruction = await _context.instructions.FindAsync(id);
-            if (instruction == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var instruction = await _context.instructions.FindAsync(id);
+                    if (instruction == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.instructions.Remove(instruction);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.instructions.Remove(instruction);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool InstructionExists(int id)

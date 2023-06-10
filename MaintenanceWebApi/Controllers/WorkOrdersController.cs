@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -16,10 +18,15 @@ namespace MaintenanceWebApi.Controllers
     public class WorkOrdersController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly ILogger<WorkOrdersController> _logger;
 
-        public WorkOrdersController(MaintenanceDbContext context)
+
+        public WorkOrdersController(MaintenanceDbContext context, JwtTokenHandler jwtTokenHandler, ILogger<WorkOrdersController> logger)
         {
             _context = context;
+            _JwtTokenHandler= jwtTokenHandler;
+            _logger = logger;
         }
 
         [HttpGet("GetControllersAndMethods")]
@@ -44,54 +51,100 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/WorkOrders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkOrder>>> GetworkOrders(string companyId)
+        public async Task<ActionResult<IEnumerable<WorkOrder>>> GetworkOrders()
         {
-            return await _context.workOrders.Where(x=>x.companyId==companyId).ToListAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    return await _context.workOrders.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET: api/WorkOrders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<WorkOrder>> GetWorkOrder(int id,string companyId)
+        public async Task<ActionResult<WorkOrder>> GetWorkOrder(int id)
         {
-            var workOrder = await _context.workOrders.Where(x=>x.woAutoId==id && x.companyId==companyId).ToListAsync();
-
-            if (workOrder == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            return Ok(workOrder);
+                    var workOrder = await _context.workOrders.Where(x => x.woAutoId == id && x.companyId == claimresponse.companyId).ToListAsync();
+
+                    if (workOrder == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(workOrder);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/WorkOrders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        public async Task<IActionResult> PutWorkOrder(int id,string companyId, WorkOrder workOrder)
+        public async Task<IActionResult> PutWorkOrder(int id,WorkOrder workOrder)
         {
-            if (workOrder.woAutoId == id && workOrder.companyId==companyId)
-            {
-                _context.Entry(workOrder).State = EntityState.Modified;
-            }
-
-           
-
             try
             {
-                await _context.SaveChangesAsync();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    if (workOrder.woAutoId == id && workOrder.companyId == claimresponse.companyId)
+                    {
+                        _context.Entry(workOrder).State = EntityState.Modified;
+                    }
+
+
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!WorkOrderExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!WorkOrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return NoContent();
         }
 
         // POST: api/WorkOrders
@@ -99,61 +152,90 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<WorkOrder>> PostWorkOrder(WorkOrder workOrder)
         {
-            var comId = _context.workOrders.Where(wo => wo.companyId == workOrder.companyId).Select(wo => wo.woId).ToList();
-
-            var autoId = "";
-            if (comId.Count > 0)
+            try
             {
-                autoId = comId.Max(x => int.Parse(x.Substring(2))).ToString();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var comId = _context.workOrders.Where(wo => wo.companyId ==claimresponse.companyId).Select(wo => wo.woId).ToList();
+
+                    var autoId = "";
+                    if (comId.Count > 0)
+                    {
+                        autoId = comId.Max(x => int.Parse(x.Substring(2))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        WorkOrder wo = new WorkOrder();
+                        string comid = "WO1";
+                        wo.woId = comid;
+                        wo.woType = workOrder.woType;
+                        wo.topName = workOrder.topName;
+                        wo.requestId = workOrder.requestId;
+                        wo.assetDetials = workOrder.assetDetials;
+                        wo.companyId = claimresponse.companyId;
+                        _context.workOrders.Add(wo);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        WorkOrder wo = new WorkOrder();
+                        string comid = "WO" + (int.Parse(autoId) + 1);
+                        wo.woId = comid;
+                        wo.woType = workOrder.woType;
+                        wo.topName = workOrder.topName; 
+                        wo.requestId = workOrder.requestId;
+                        wo.assetDetials = workOrder.assetDetials;
+                        wo.companyId = claimresponse.companyId;
+                        _context.workOrders.Add(wo);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            if (autoId == "")
-            {
-                _context.ChangeTracker.Clear();
-                WorkOrder wo = new WorkOrder();
-                string comid = "WO1";
-                wo.woId = comid;
-                wo.woType = workOrder.woType;
-                wo.topName = workOrder.topName;
-                wo.requestId = workOrder.requestId;
-                wo.assetDetials = workOrder.assetDetials;
-                wo.companyId = workOrder.companyId;
-                _context.workOrders.Add(wo);
-                await _context.SaveChangesAsync();
-            }
-
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                WorkOrder wo = new WorkOrder();
-                string comid = "WO" + (int.Parse(autoId) + 1);
-                wo.woId = comid;
-                wo.woType = workOrder.woType;
-                wo.topName = workOrder.topName;
-                wo.requestId = workOrder.requestId;
-                wo.assetDetials = workOrder.assetDetials;
-                wo.companyId = workOrder.companyId;
-                _context.workOrders.Add(wo);
-                await _context.SaveChangesAsync();
-            }
-
-            return Ok();
         }
 
         // DELETE: api/WorkOrders/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWorkOrder(int id)
         {
-            var workOrder = await _context.workOrders.FindAsync(id);
-            if (workOrder == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var workOrder = await _context.workOrders.FindAsync(id);
+                    if (workOrder == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.workOrders.Remove(workOrder);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.workOrders.Remove(workOrder);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool WorkOrderExists(int id)

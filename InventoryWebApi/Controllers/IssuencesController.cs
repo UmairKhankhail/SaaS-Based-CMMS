@@ -22,9 +22,9 @@ namespace InventoryAPI.Controllers
         private readonly InventoryDbContext _context;
         private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
-        private readonly ILogger<EquipmentsController> _logger;
+        private readonly ILogger<IssuencesController> _logger;
 
-        public IssuencesController(InventoryDbContext context, HttpClient httpClient, ILogger<EquipmentsController> logger)
+        public IssuencesController(InventoryDbContext context, HttpClient httpClient, ILogger<IssuencesController> logger)
         {
             _context = context;
             _httpClient = httpClient;
