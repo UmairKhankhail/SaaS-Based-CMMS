@@ -6,6 +6,8 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,38 +20,75 @@ namespace PreventiveMaintenanceWebApi.Controllers
     public class MeterReadingsController : ControllerBase
     {
         private readonly PreventiveMaintenanceDbContext _context;
-
-        public MeterReadingsController(PreventiveMaintenanceDbContext context)
+        private readonly ILogger<MeterReadingsController> _logger;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public MeterReadingsController(PreventiveMaintenanceDbContext context, ILogger<MeterReadingsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
+            _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/MeterReadings
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MeterReading>>> GetmeterReadings()
-        {
-            return await _context.meterReadings.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<MeterReading>>> GetmeterReadings()
+        //{
+        //    return await _context.meterReadings.ToListAsync();
+        //}
 
         [HttpGet("GetMeterReadingsByAssetId")]
-        public async Task<ActionResult<IEnumerable<MeterReading>>> GetmeterReadingsByAssetId(int assetModel, string assetId, string cId)
+        public async Task<ActionResult<IEnumerable<MeterReading>>> GetmeterReadingsByAssetId(int assetModel, string assetId)
         {
-            var meterReading = _context.meterReadings.Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == cId).ToList();
-            if (meterReading == null)
+            try
             {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var meterReading = _context.meterReadings.Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == claimresponse.companyId).ToList();
+                    if (meterReading == null)
+                    {
+                        return Unauthorized();
+                    }
+                    return meterReading;
+                }
                 return Unauthorized();
+
             }
-            return meterReading;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
         [HttpGet("GetMeterReadingsByAssetIdForParameter")]
-        public async Task<ActionResult<MeterReading>> GetmeterReadingsByAssetIdByParams(int assetModel, string assetId, string cId, string paramName)
+        public async Task<ActionResult<MeterReading>> GetmeterReadingsByAssetIdByParams(int assetModel, string assetId, string paramName)
         {
-            var meterReading = _context.meterReadings.Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.paramName == paramName && x.companyId == cId).FirstOrDefault();
-            if (meterReading == null)
+            try
             {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var meterReading = _context.meterReadings.Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.paramName == paramName && x.companyId == claimresponse.companyId).FirstOrDefault();
+                    if (meterReading == null)
+                    {
+                        return Unauthorized();
+                    }
+                    return meterReading;
+                }
                 return Unauthorized();
+
             }
-            return meterReading;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
 
 
@@ -58,72 +97,106 @@ namespace PreventiveMaintenanceWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MeterReading>> GetMeterReading(int id)
         {
-            var meterReading = await _context.meterReadings.FindAsync(id);
-
-            if (meterReading == null)
+            try
             {
-                return NotFound();
-            }
 
-            return meterReading;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var meterReading = await _context.meterReadings.FindAsync(id);
+
+                    if (meterReading == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return meterReading;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
 
         // PUT: api/MeterReadings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMeterReading(int id, MeterReading meterReading)
+        public async Task<IActionResult> PutMeterReading(MeterReading meterReading)
         {
-            var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == meterReading.companyId).FirstOrDefaultAsync();
-            if (calInfo == null)
-            {
-                return Unauthorized();
-            }
-
-            var existingModel = await _context.meterReadings.FindAsync(meterReading.mrAutoId);
-
-            existingModel.initialDate = meterReading.initialDate;
-            existingModel.minValue = meterReading.minValue;
-            existingModel.maxValue = meterReading.maxValue;
-            existingModel.frequencyDays = meterReading.frequencyDays;
-
             try
             {
-                GoogleCalendar googleCalendar = new GoogleCalendar();
 
-                //DateTime conversion to users timezone
-                var startDateTime = existingModel.initialDate;
-                var endDateTime = startDateTime.AddDays(existingModel.frequencyDays);
-                //Conversion Ends
-
-                Event newEvent = new Event
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    Summary = "Recurrent Meter Reading",
-                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
-                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
-                    Description = existingModel.paramName.ToString() + "/n" + existingModel.assetId + "/n" + "Updated"
-                };
+                    var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    if (calInfo == null)
+                    {
+                        return Unauthorized();
+                    }
 
-                googleCalendar.UpdateRecurringEvent(calInfo.googleCalendarId, existingModel.eventIdCalendar, newEvent, existingModel.frequencyDays, calInfo.timeZoneRegional);
+                    var existingModel = await _context.meterReadings.FindAsync(meterReading.mrAutoId);
 
-                //Db DateTime Work to exact same format
-                DateTime inputDateTime = meterReading.initialDate;
-                string timeZoneId = calInfo.timeZoneWord;
-                // Convert parsed datetime to universal datetime
-                DateTime universalDateTime = inputDateTime.ToUniversalTime();
+                    existingModel.initialDate = meterReading.initialDate;
+                    existingModel.minValue = meterReading.minValue;
+                    existingModel.maxValue = meterReading.maxValue;
+                    existingModel.frequencyDays = meterReading.frequencyDays;
 
-                // Convert universal datetime to desired timezone
-                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-                DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
-                existingModel.initialDate = convertedDateTime;
-                await _context.SaveChangesAsync();
+                    try
+                    {
+                        GoogleCalendar googleCalendar = new GoogleCalendar();
 
-                return Ok();
+                        //DateTime conversion to users timezone
+                        var startDateTime = existingModel.initialDate;
+                        var endDateTime = startDateTime.AddDays(existingModel.frequencyDays);
+                        //Conversion Ends
+
+                        Event newEvent = new Event
+                        {
+                            Summary = "Recurrent Meter Reading",
+                            Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                            End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                            Description = existingModel.paramName.ToString() + "/n" + existingModel.assetId + "/n" + "Updated"
+                        };
+
+                        googleCalendar.UpdateRecurringEvent(calInfo.googleCalendarId, existingModel.eventIdCalendar, newEvent, existingModel.frequencyDays, calInfo.timeZoneRegional);
+
+                        //Db DateTime Work to exact same format
+                        DateTime inputDateTime = meterReading.initialDate;
+                        string timeZoneId = calInfo.timeZoneWord;
+                        // Convert parsed datetime to universal datetime
+                        DateTime universalDateTime = inputDateTime.ToUniversalTime();
+
+                        // Convert universal datetime to desired timezone
+                        TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                        DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
+                        existingModel.initialDate = convertedDateTime;
+                        await _context.SaveChangesAsync();
+
+                        return Ok();
+                    }
+                    catch (Exception ex)
+                    {
+                        //_logger.LogError(ex.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    }
+                }
+                return Unauthorized();
+
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex.Message);
+                _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            
         }
 
         // POST: api/MeterReadings
@@ -131,67 +204,84 @@ namespace PreventiveMaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<MeterReading>> PostMeterReading(MeterReading meterReading)
         {
-            //Getting CalendarInfo
-            var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == meterReading.companyId).FirstOrDefaultAsync();
-            if (calInfo == null)
+            try
             {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    //Getting CalendarInfo
+                    var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    if (calInfo == null)
+                    {
+                        return Unauthorized();
+                    }
+
+
+
+                    var getswrId = 0;
+
+                    MeterReading mr = new MeterReading();
+                    mr.assetModelId = meterReading.assetModelId;
+                    mr.assetId = meterReading.assetId;
+                    mr.paramType = meterReading.paramType;
+                    mr.paramName = meterReading.paramName;
+                    mr.minValue = meterReading.minValue;
+                    mr.maxValue = meterReading.maxValue;
+                    mr.frequencyDays = meterReading.frequencyDays;
+                    mr.initialDate = meterReading.initialDate;
+                    mr.companyId = claimresponse.companyId;
+
+
+                    GoogleCalendar googleCalendar = new GoogleCalendar();
+
+                    //DateTime conversion to users timezone
+                    var startDateTime = mr.initialDate;
+                    var endDateTime = startDateTime.AddDays(mr.frequencyDays);
+                    //Conversion Ends
+
+                    Event newEvent = new Event
+                    {
+                        Summary = "Recurrent Meter Reading",
+                        Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                        End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
+                        Description = mr.paramName.ToString() + "/n" + mr.assetId
+                    };
+
+
+                    Console.WriteLine(newEvent);
+                    var eventId = googleCalendar.InsertRecurringEvent(newEvent, mr.frequencyDays, calInfo.googleCalendarId, calInfo.timeZoneRegional);
+                    Console.WriteLine(eventId);
+
+                    //Db DateTime Work to exact same format
+                    DateTime inputDateTime = meterReading.initialDate;
+                    string timeZoneId = calInfo.timeZoneWord;
+                    // Convert parsed datetime to universal datetime
+                    DateTime universalDateTime = inputDateTime.ToUniversalTime();
+
+                    // Convert universal datetime to desired timezone
+                    TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                    DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
+                    mr.initialDate = convertedDateTime;
+
+
+                    mr.eventIdCalendar = eventId;
+                    _context.meterReadings.Add(mr);
+                    await _context.SaveChangesAsync();
+                    getswrId = mr.mrAutoId;
+                    Console.WriteLine(getswrId);
+                    return Ok();
+                }
                 return Unauthorized();
+
             }
-
-
-
-            var getswrId = 0;
-
-            MeterReading mr = new MeterReading();
-            mr.assetModelId = meterReading.assetModelId;
-            mr.assetId = meterReading.assetId;
-            mr.paramType = meterReading.paramType;
-            mr.paramName = meterReading.paramName;
-            mr.minValue = meterReading.minValue;
-            mr.maxValue = meterReading.maxValue;
-            mr.frequencyDays = meterReading.frequencyDays;
-            mr.initialDate = meterReading.initialDate;
-            mr.companyId = meterReading.companyId;
-
-
-            GoogleCalendar googleCalendar = new GoogleCalendar();
-
-            //DateTime conversion to users timezone
-            var startDateTime = mr.initialDate;
-            var endDateTime = startDateTime.AddDays(mr.frequencyDays);
-            //Conversion Ends
-
-            Event newEvent = new Event
+            catch (Exception ex)
             {
-                Summary = "Recurrent Meter Reading",
-                Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
-                End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = calInfo.timeZoneRegional },
-                Description = mr.paramName.ToString() + "/n" + mr.assetId
-            };
-
-
-            Console.WriteLine(newEvent);
-            var eventId = googleCalendar.InsertRecurringEvent(newEvent, mr.frequencyDays, calInfo.googleCalendarId, calInfo.timeZoneRegional);
-            Console.WriteLine(eventId);
-
-            //Db DateTime Work to exact same format
-            DateTime inputDateTime = meterReading.initialDate;
-            string timeZoneId = calInfo.timeZoneWord;
-            // Convert parsed datetime to universal datetime
-            DateTime universalDateTime = inputDateTime.ToUniversalTime();
-
-            // Convert universal datetime to desired timezone
-            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-            DateTime convertedDateTime = TimeZoneInfo.ConvertTimeFromUtc(universalDateTime, timeZone);
-            mr.initialDate = convertedDateTime;
-
-
-            mr.eventIdCalendar = eventId;
-            _context.meterReadings.Add(mr);
-            await _context.SaveChangesAsync();
-            getswrId = mr.mrAutoId;
-            Console.WriteLine(getswrId);
-            return Ok();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
 
 
             //_context.meterReadings.Add(meterReading);
@@ -202,26 +292,43 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // DELETE: api/MeterReadings/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMeterReading(int id, string cId)
+        public async Task<IActionResult> DeleteMeterReading(int id)
         {
-            var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == cId).FirstOrDefaultAsync();
-            if (calInfo == null)
+            try
             {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var calInfo = await _context.googleCalendarRecords.Where(x => x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    if (calInfo == null)
+                    {
+                        return Unauthorized();
+                    }
+
+                    var meterReading = await _context.meterReadings.FindAsync(id);
+                    if (meterReading == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.meterReadings.Remove(meterReading);
+                    await _context.SaveChangesAsync();
+
+                    GoogleCalendar gc = new GoogleCalendar();
+                    gc.DeleteEvent(meterReading.eventIdCalendar, calInfo.googleCalendarId);
+                    return Ok();
+                }
                 return Unauthorized();
-            }
 
-            var meterReading = await _context.meterReadings.FindAsync(id);
-            if (meterReading == null)
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            _context.meterReadings.Remove(meterReading);
-            await _context.SaveChangesAsync();
-
-            GoogleCalendar gc = new GoogleCalendar();
-            gc.DeleteEvent(meterReading.eventIdCalendar, calInfo.googleCalendarId);
-            return Ok();
+            
         }
 
         private bool MeterReadingExists(int id)

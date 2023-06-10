@@ -25,6 +25,8 @@ namespace MaintenanceWebApi.Models
 
         public string remarks { get; set; }
 
+        public string eventId { get; set; }
+
         public string companyId { get; set; }
     }
 }

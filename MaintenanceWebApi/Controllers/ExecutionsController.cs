@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
+using Google.Apis.Calendar.v3.Data;
+using GoogleCalendarService;
+using Newtonsoft.Json.Linq;
+using System.Security.Cryptography;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -14,10 +18,11 @@ namespace MaintenanceWebApi.Controllers
     public class ExecutionsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
-
-        public ExecutionsController(MaintenanceDbContext context)
+        private readonly HttpClient _httpClient;
+        public ExecutionsController(MaintenanceDbContext context, HttpClient httpClient)
         {
             _context = context;
+            _httpClient = httpClient;
         }
 
         // GET: api/Executions
@@ -77,6 +82,20 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Execution>> PostExecution(Execution execution)
         {
+            var url = $"http://localhost:5182/api/ScheduledWorkRequests/GetCalendarRecords?cId={execution.companyId}";
+            var response = await _httpClient.GetAsync(url);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseContent);
+
+            JObject jsonResponse = JObject.Parse(responseContent);
+
+            var googleCalendarId = (string)jsonResponse["googleCalendarId"];
+            var timeZoneRegional = (string)jsonResponse["timeZoneRegional"];
+            var timeZoneWord = (string)jsonResponse["timeZoneWord"];
+
+            Console.WriteLine(googleCalendarId);
+            Console.WriteLine(timeZoneRegional);
+
             var compId = _context.executions.Where(exe=> exe.companyId == execution.companyId && exe.woAutoId == execution.woAutoId).Select(d => d.executionId).ToList();
             var autoId = "";
             if (compId.Count > 0)
@@ -99,6 +118,39 @@ namespace MaintenanceWebApi.Controllers
                 exe.endTime = execution.endTime;
                 exe.remarks = execution.remarks;
                 exe.companyId = execution.companyId;
+                
+
+                GoogleCalendar googleCalendar = new GoogleCalendar();
+
+                //DateTime conversion to users timezone
+                var startDateTime = exe.startTime;
+                var endDateTime = exe.endTime;
+                //Conversion Ends
+
+                Event newEvent = new Event
+                {
+                    Summary = "Work Order - Execution",
+                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                    Description = exe.userName.ToString() + " " + exe.topName
+                };
+
+                var eventId = googleCalendar.InsertEvent(newEvent, googleCalendarId, timeZoneRegional);
+
+                //Db DateTime Work to exact same format
+                DateTime inputDateTimeStart = exe.startTime;
+                DateTime inputDateTimeEnd = exe.endTime;
+                string timeZoneId = timeZoneWord;
+                // Convert parsed datetime to universal datetime
+                DateTime universalDateTimeStart = inputDateTimeStart.ToUniversalTime();
+                DateTime universalDateTimeEnd = inputDateTimeEnd.ToUniversalTime();
+                // Convert universal datetime to desired timezone
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                DateTime convertedDateTimeStart = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeStart, timeZone);
+                DateTime convertedDateTimeEnd = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeEnd, timeZone);
+                exe.startTime = convertedDateTimeStart;
+                exe.endTime = convertedDateTimeEnd;
+                exe.eventId = eventId;
                 _context.executions.Add(exe);
                 await _context.SaveChangesAsync();
             }
@@ -116,6 +168,38 @@ namespace MaintenanceWebApi.Controllers
                 exe.endTime = execution.endTime;
                 exe.remarks = execution.remarks;
                 exe.companyId = execution.companyId;
+
+                GoogleCalendar googleCalendar = new GoogleCalendar();
+
+                //DateTime conversion to users timezone
+                var startDateTime = exe.startTime;
+                var endDateTime = exe.endTime;
+                //Conversion Ends
+
+                Event newEvent = new Event
+                {
+                    Summary = "Work Order - Execution",
+                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                    Description = exe.userName.ToString() + " " + exe.topName
+                };
+
+                var eventId = googleCalendar.InsertEvent(newEvent, googleCalendarId, timeZoneRegional);
+
+                //Db DateTime Work to exact same format
+                DateTime inputDateTimeStart = exe.startTime;
+                DateTime inputDateTimeEnd = exe.endTime;
+                string timeZoneId = timeZoneWord;
+                // Convert parsed datetime to universal datetime
+                DateTime universalDateTimeStart = inputDateTimeStart.ToUniversalTime();
+                DateTime universalDateTimeEnd = inputDateTimeEnd.ToUniversalTime();
+                // Convert universal datetime to desired timezone
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                DateTime convertedDateTimeStart = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeStart, timeZone);
+                DateTime convertedDateTimeEnd = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeEnd, timeZone);
+                exe.startTime = convertedDateTimeStart;
+                exe.endTime = convertedDateTimeEnd;
+                exe.eventId = eventId;
                 _context.executions.Add(exe);
                 await _context.SaveChangesAsync();
             }
@@ -125,18 +209,38 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/Executions/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteExecution(int id)
+        public async Task<IActionResult> DeleteExecution(int id, string cId)
         {
-            var execution = await _context.executions.FindAsync(id);
+            var url = $"http://localhost:5182/api/ScheduledWorkRequests/GetCalendarRecords?cId={cId}";
+            var response = await _httpClient.GetAsync(url);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseContent);
+
+            JObject jsonResponse = JObject.Parse(responseContent);
+
+            var googleCalendarId = (string)jsonResponse["googleCalendarId"];
+            var timeZoneRegional = (string)jsonResponse["timeZoneRegional"];
+            var timeZoneWord = (string)jsonResponse["timeZoneWord"];
+
+            Console.WriteLine(googleCalendarId);
+            Console.WriteLine(timeZoneRegional);
+
+
+            var execution = await _context.executions.Where(x => x.executionAutoId == id).FirstAsync();
             if (execution == null)
             {
                 return NotFound();
             }
 
+
             _context.executions.Remove(execution);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            GoogleCalendar gc = new GoogleCalendar();
+            gc.DeleteEvent(execution.eventId, googleCalendarId);
+
+            return Ok();
+           
         }
 
         private bool ExecutionExists(int id)

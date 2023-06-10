@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AssetWebApi.Models;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace AssetWebApi.Controllers
 {
@@ -14,62 +16,115 @@ namespace AssetWebApi.Controllers
     public class LinearAssetsController : ControllerBase
     {
         private readonly AssetDbContext _context;
+        private readonly ILogger<LinearAssetsController> _logger;
+        private readonly JwtTokenHandler _JwtTokenHandler;
 
-        public LinearAssetsController(AssetDbContext context)
+        public LinearAssetsController(AssetDbContext context, ILogger<LinearAssetsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
+            _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/LinearAssets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LinearAsset>>> GetlinearAssets(string companyId)
+        public async Task<ActionResult<IEnumerable<LinearAsset>>> GetlinearAssets()
         {
-            return await _context.linearAssets.Where(x => x.companyId == companyId ).ToListAsync();
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    return await _context.linearAssets.Where(x => x.companyId == claimresponse.companyId ).ToListAsync();
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
         }
 
         // GET: api/LinearAssets/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<LinearAsset>> GetLinearAsset(int id, string companyId)
+        public async Task<ActionResult<LinearAsset>> GetLinearAsset(int id)
         {
-            var linearAsset = await _context.linearAssets.Where(x => x.companyId == companyId && x.lAssetAuotId==id).ToListAsync();
-            if (linearAsset == null)
+            try
             {
-                return NotFound();
-            }
 
-            return Ok(linearAsset);
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var linearAsset = await _context.linearAssets.Where(x => x.companyId == claimresponse.companyId  && x.lAssetAuotId==id).ToListAsync();
+                    if (linearAsset == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(linearAsset);
+
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/LinearAssets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLinearAsset(int id, LinearAsset linearAsset)
+        [HttpPut]
+        public async Task<IActionResult> PutLinearAsset(LinearAsset linearAsset)
         {
-            if (id != linearAsset.lAssetAuotId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(linearAsset).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    linearAsset.companyId = claimresponse.companyId;
+                    _context.Entry(linearAsset).State = EntityState.Modified;
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!LinearAssetExists(linearAsset.lAssetAuotId))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!LinearAssetExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return NoContent();
+            
         }
 
         // POST: api/LinearAssets
@@ -79,74 +134,91 @@ namespace AssetWebApi.Controllers
         {
             try
             {
-                
-                    int getlaAutoId = 0;
-                    var compId = _context.linearAssets.Where(d => d.companyId == linearAsset.companyId).Select(d => d.lAssetId).ToList();
 
-                    var autoId = "";
-                    if (compId.Count > 0)
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    try
                     {
-                        autoId = compId.Max(x => {
-                            int startIndex = x.IndexOf("ALL") + 3;
-                            string numbers = x.Substring(startIndex).TrimStart('0');
-                            return int.Parse(numbers);
-                        }).ToString();
+
+                        int getlaAutoId = 0;
+                        var compId = _context.linearAssets.Where(d => d.companyId == claimresponse.companyId).Select(d => d.lAssetId).ToList();
+
+                        var autoId = "";
+                        if (compId.Count > 0)
+                        {
+                            autoId = compId.Max(x => {
+                                int startIndex = x.IndexOf("ALL") + 3;
+                                string numbers = x.Substring(startIndex).TrimStart('0');
+                                return int.Parse(numbers);
+                            }).ToString();
+
+                        }
+
+                        if (autoId == "")
+                        {
+                            _context.ChangeTracker.Clear();
+                            LinearAsset la = new LinearAsset();
+                            string comId = linearAsset.flId + "ALL1";
+                            la.lAssetId = comId;
+                            la.laAssetName = linearAsset.laAssetName;
+                            la.companyId = claimresponse.companyId;
+                            la.code = linearAsset.code;
+                            la.description = linearAsset.description;
+                            la.deptId = linearAsset.deptId;
+                            la.subDeptId = linearAsset.subDeptId;
+                            la.flId = linearAsset.flId;
+                            la.laAutoId = linearAsset.laAutoId;
+                            _context.linearAssets.Add(la);
+                            await _context.SaveChangesAsync();
+
+                        }
+                        if (autoId != "")
+                        {
+                            _context.ChangeTracker.Clear();
+                            LinearAsset la = new LinearAsset();
+                            string comId = linearAsset.flId + "ALL" + (int.Parse(autoId) + 1);
+                            la.lAssetId = comId;
+                            la.laAssetName = linearAsset.laAssetName;
+                            la.companyId = claimresponse.companyId;
+                            la.code = linearAsset.code;
+                            la.deptId = linearAsset.deptId;
+                            la.description = linearAsset.description;
+                            la.subDeptId = linearAsset.subDeptId;
+                            la.flId = linearAsset.flId;
+                            la.laAutoId = linearAsset.laAutoId;
+                            _context.linearAssets.Add(la);
+                            await _context.SaveChangesAsync();
+
+                        }
+
+                        //Console.WriteLine("Id: "+ getroleautoid.ToString());
+                        //_context.roles.Add(role);
+                        //await _context.SaveChangesAsync()
+
+
+                        return Ok();
+
+                        //    }
+                        //    return Unauthorized();
 
                     }
-
-                    if (autoId == "")
+                    catch (Exception ex)
                     {
-                        _context.ChangeTracker.Clear();
-                        LinearAsset la = new LinearAsset();
-                        string comId = linearAsset.flId+"ALL1";
-                        la.lAssetId = comId;
-                        la.laAssetName = linearAsset.laAssetName;
-                        la.companyId = linearAsset.companyId;
-                        la.code = linearAsset.code;
-                        la.description= linearAsset.description;
-                        la.deptId = linearAsset.deptId;
-                        la.subDeptId = linearAsset.subDeptId;
-                        la.flId = linearAsset.flId;
-                        la.laAutoId= linearAsset.laAutoId;
-                        _context.linearAssets.Add(la);
-                        await _context.SaveChangesAsync();
-
+                        //_logger.LogError(ex.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
                     }
-                    if (autoId != "")
-                    {
-                        _context.ChangeTracker.Clear();
-                        LinearAsset la = new LinearAsset();
-                        string comId =linearAsset.flId+"ALL" + (int.Parse(autoId) + 1);
-                        la.lAssetId = comId;
-                        la.laAssetName = linearAsset.laAssetName;
-                        la.companyId = linearAsset.companyId;
-                        la.code = linearAsset.code;
-                        la.deptId = linearAsset.deptId;
-                        la.description = linearAsset.description;
-                        la.subDeptId = linearAsset.subDeptId;
-                        la.flId = linearAsset.flId;
-                        la.laAutoId = linearAsset.laAutoId;
-                    _context.linearAssets.Add(la);
-                        await _context.SaveChangesAsync();
-                        
                 }
-
-                    //Console.WriteLine("Id: "+ getroleautoid.ToString());
-                    //_context.roles.Add(role);
-                    //await _context.SaveChangesAsync()
-
-
-                return Ok();
-
-                //    }
-                //    return Unauthorized();
+                return Unauthorized();
 
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex.Message);
+                _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+            
             //_context.equipmentModels.Add(equipmentModel);
             //await _context.SaveChangesAsync();
         }
@@ -155,16 +227,33 @@ namespace AssetWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLinearAsset(int id)
         {
-            var linearAsset = await _context.linearAssets.FindAsync(id);
-            if (linearAsset == null)
+            try
             {
-                return NotFound();
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var linearAsset = await _context.linearAssets.FindAsync(id);
+                    if (linearAsset == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.linearAssets.Remove(linearAsset);
+                    await _context.SaveChangesAsync();
+
+                    return Ok();
+                }
+                return Unauthorized();
+
             }
-
-            _context.linearAssets.Remove(linearAsset);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
 
         private bool LinearAssetExists(int id)

@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,65 +22,120 @@ namespace PreventiveMaintenanceWebApi.Controllers
     {
         private readonly PreventiveMaintenanceDbContext _context;
         private readonly HttpClient _httpClient;
-
-        public InspectionEntriesController(PreventiveMaintenanceDbContext context, HttpClient httpClient)
+        private readonly ILogger<InspectionEntriesController> _logger;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public InspectionEntriesController(PreventiveMaintenanceDbContext context, HttpClient httpClient, ILogger<InspectionEntriesController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _httpClient = httpClient;
+            _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
 
         [HttpGet("GetInspectionEntriesByAssetId")]
-        public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetInspectionByAssetId(int assetModel, string assetId, string cId)
+        public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetInspectionByAssetId(int assetModel, string assetId)
         {
-            var inspections = await _context.inspectionEntries
-                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == cId)
-                .ToListAsync();
-
-            if (inspections == null)
+            try
             {
-                return Unauthorized();
-            }
 
-            return inspections;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var inspections = await _context.inspectionEntries
+                    .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == claimresponse.companyId)
+                    .ToListAsync();
+
+                    if (inspections == null)
+                    {
+                        return Unauthorized();
+                    }
+
+                    return inspections;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
 
         [HttpGet("GetInspectionEntriesByAssetIdForQuestions")]
-        public async Task<ActionResult<IEnumerable<string>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string cId, string question)
+        public async Task<ActionResult<IEnumerable<string>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string question)
         {
-            var inspection = await _context.inspections
-                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.question == question && x.companyId == cId)
-                .Select(x => x.options)
-                .FirstOrDefaultAsync();
-
-            if (inspection == null)
+            try
             {
-                return Unauthorized();
-            }
 
-            return Ok(new List<string> { inspection });
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var inspection = await _context.inspections
+                    .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.question == question && x.companyId == claimresponse.companyId)
+                    .Select(x => x.options)
+                    .FirstOrDefaultAsync();
+
+                    if (inspection == null)
+                    {
+                        return Unauthorized();
+                    }
+
+                    return Ok(new List<string> { inspection });
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
 
 
         // GET: api/InspectionEntries
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetinspectionEntries()
-        {
-            return await _context.inspectionEntries.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetinspectionEntries()
+        //{
+
+        //    return await _context.inspectionEntries.ToListAsync();
+        //}
 
         // GET: api/InspectionEntries/5
         [HttpGet("{id}")]
         public async Task<ActionResult<InspectionEntry>> GetInspectionEntry(int id)
         {
-            var inspectionEntry = await _context.inspectionEntries.FindAsync(id);
-
-            if (inspectionEntry == null)
+            try
             {
-                return NotFound();
-            }
 
-            return inspectionEntry;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var inspectionEntry = await _context.inspectionEntries.FindAsync(id);
+
+                    if (inspectionEntry == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return inspectionEntry;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
 
         // PUT: api/InspectionEntries/5
@@ -86,30 +143,45 @@ namespace PreventiveMaintenanceWebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInspectionEntry(int id, InspectionEntry inspectionEntry)
         {
-            if (id != inspectionEntry.inspectionEntryAutoId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(inspectionEntry).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!InspectionEntryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    inspectionEntry.companyId = claimresponse.companyId;
+                    _context.Entry(inspectionEntry).State = EntityState.Modified;
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!InspectionEntryExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
+           
         }
 
         // POST: api/InspectionEntries
@@ -117,75 +189,79 @@ namespace PreventiveMaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<InspectionEntry>> PostInspectionEntry(InspectionEntry inspectionEntry)
         {
-        //    var getinsId = 0;
 
-        //    InspectionEntry inse = new InspectionEntry();
-        //    inse.assetModelId = inspectionEntry.assetModelId;
-        //    inse.assetId = inspectionEntry.assetId;
-        //    inse.question = inspectionEntry.question;
-        //    inse.selectedOption = inspectionEntry.selectedOption;
-        //    inse.companyId = inspectionEntry.companyId;
-        //    inse.remarks = inspectionEntry.remarks;
-        //    _context.inspectionEntries.Add(inse);
-        //    await _context.SaveChangesAsync();
-        //    getinsId = inse.inspectionEntryAutoId;
-        //    Console.WriteLine(getinsId);
-        //    return Ok();
-
-            var getmrId = 0;
-
-            InspectionEntry inse = new InspectionEntry();
-            inse.assetModelId = inspectionEntry.assetModelId;
-            inse.assetId = inspectionEntry.assetId;
-            inse.question = inspectionEntry.question;
-            inse.selectedOption = inspectionEntry.selectedOption;
-            inse.companyId = inspectionEntry.companyId;
-            inse.remarks = inspectionEntry.remarks;
-
-
-            var inspection = _context.inspections.Where(x => x.question == inse.question && x.companyId == inse.companyId && x.assetId == inse.assetId).FirstOrDefault();
-            if (inspection == null)
+            try
             {
-                return NotFound();
-            }
 
-            string listOptions = inspection.options;
-            string listWorkRequests = inspection.workRequestOfOptions;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var getmrId = 0;
 
-            // Convert the strings to lists
-            List<string> options = JsonConvert.DeserializeObject<List<string>>(listOptions);
-            List<int> workRequests = JsonConvert.DeserializeObject<List<int>>(listWorkRequests);
+                    InspectionEntry inse = new InspectionEntry();
+                    inse.assetModelId = inspectionEntry.assetModelId;
+                    inse.assetId = inspectionEntry.assetId;
+                    inse.question = inspectionEntry.question;
+                    inse.selectedOption = inspectionEntry.selectedOption;
+                    inse.companyId = claimresponse.companyId;
+                    inse.remarks = inspectionEntry.remarks;
 
 
-            int index = options.FindIndex(item => item == inse.selectedOption);
-            if (workRequests[index]==1)
-            {
-                Console.WriteLine("Generate Work Request");
-                var url = "http://localhost:5145/api/WorkRequests";
-                var parameters = new Dictionary<string, string>
+                    var inspection = _context.inspections.Where(x => x.question == inse.question && x.companyId == claimresponse.companyId && x.assetId == inse.assetId).FirstOrDefault();
+                    if (inspection == null)
+                    {
+                        return NotFound();
+                    }
+
+                    string listOptions = inspection.options;
+                    string listWorkRequests = inspection.workRequestOfOptions;
+
+                    // Convert the strings to lists
+                    List<string> options = JsonConvert.DeserializeObject<List<string>>(listOptions);
+                    List<int> workRequests = JsonConvert.DeserializeObject<List<int>>(listWorkRequests);
+
+
+                    int index = options.FindIndex(item => item == inse.selectedOption);
+                    if (workRequests[index] == 1)
+                    {
+                        Console.WriteLine("Generate Work Request");
+                        var url = "http://localhost:5145/api/WorkRequests";
+                        var parameters = new Dictionary<string, string>
                     {
                         { "topName", inse.question + " " + inse.selectedOption },
                     { "description", inse.remarks  },
                     { "approve", "Y" },
-                    { "companyId", inse.companyId }
+                    { "companyId", claimresponse.companyId }
                     };
 
 
-                var json = JsonConvert.SerializeObject(parameters);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                        var json = JsonConvert.SerializeObject(parameters);
+                        var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync(url, content);
-                var responseContent = await response.Content.ReadAsStringAsync();
+                        var response = await _httpClient.PostAsync(url, content);
+                        var responseContent = await response.Content.ReadAsStringAsync();
 
-                Console.WriteLine(responseContent);
+                        Console.WriteLine(responseContent);
+                    }
+
+                    _context.inspectionEntries.Add(inse);
+                    await _context.SaveChangesAsync();
+                    getmrId = inse.inspectionEntryAutoId;
+                    Console.WriteLine(getmrId);
+
+                    return Ok();
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            _context.inspectionEntries.Add(inse);
-            await _context.SaveChangesAsync();
-            getmrId = inse.inspectionEntryAutoId;
-            Console.WriteLine(getmrId);
-
-            return Ok();
+            
             //_context.inspectionEntries.Add(inspectionEntry);
             //await _context.SaveChangesAsync();
 
@@ -196,16 +272,33 @@ namespace PreventiveMaintenanceWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInspectionEntry(int id)
         {
-            var inspectionEntry = await _context.inspectionEntries.FindAsync(id);
-            if (inspectionEntry == null)
+            try
             {
-                return NotFound();
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var inspectionEntry = await _context.inspectionEntries.FindAsync(id);
+                    if (inspectionEntry == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.inspectionEntries.Remove(inspectionEntry);
+                    await _context.SaveChangesAsync();
+
+                    return Ok();
+                }
+                return Unauthorized();
+
             }
-
-            _context.inspectionEntries.Remove(inspectionEntry);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+           
         }
 
         private bool InspectionEntryExists(int id)

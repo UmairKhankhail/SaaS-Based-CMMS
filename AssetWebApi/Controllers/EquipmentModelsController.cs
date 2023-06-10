@@ -17,31 +17,50 @@ namespace AssetWebApi.Controllers
     public class EquipmentModelsController : ControllerBase
     {
         private readonly AssetDbContext _context;
-
-        public EquipmentModelsController(AssetDbContext context)
+        private readonly ILogger<EquipmentModelsController> _logger;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        public EquipmentModelsController(AssetDbContext context, ILogger<EquipmentModelsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
+            _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/EquipmentModels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipmentSubItem>>> GetequipmentModels(int id)
         {
+            try
+            {
 
-            var equipmentSubItems = _context.equipmentSubItems
-    .Where(x => x.eAutoId == id)
-    .Select(x => new
-    {
-        esName = x.esName,
-        esParentId = string.IsNullOrEmpty(x.esParentId.ToString())
-            ? "No Parent"
-            : _context.equipmentSubItems.Any(s => s.esAutoId.ToString() == x.esParentId.ToString())
-                ? _context.equipmentSubItems.FirstOrDefault(s => s.esAutoId.ToString() == x.esParentId.ToString()).esName
-                : "No Parent"
-    })
-    .ToList();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var equipmentSubItems = _context.equipmentSubItems
+                    .Where(x => x.eAutoId == id && x.companyId==claimresponse.companyId)
+                    .Select(x => new
+                    {
+                        esName = x.esName,
+                        esParentId = string.IsNullOrEmpty(x.esParentId.ToString())
+                            ? "No Parent"
+                            : _context.equipmentSubItems.Any(s => s.esAutoId.ToString() == x.esParentId.ToString())
+                                ? _context.equipmentSubItems.FirstOrDefault(s => s.esAutoId.ToString() == x.esParentId.ToString()).esName
+                                : "No Parent"
+                    })
+                    .ToList();
 
-            return Ok(equipmentSubItems);
+                    return Ok(equipmentSubItems);
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
 
 
 
@@ -51,14 +70,31 @@ namespace AssetWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentModel>> GetEquipmentModel(int id)
         {
-            var equipmentModel = await _context.equipmentModels.FindAsync(id);
-
-            if (equipmentModel == null)
+            try
             {
-                return NotFound();
-            }
 
-            return equipmentModel;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var equipmentModel = await _context.equipmentModels.FindAsync(id);
+
+                    if (equipmentModel == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return equipmentModel;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
         }
 
         // PUT: api/EquipmentModels/5
@@ -66,26 +102,43 @@ namespace AssetWebApi.Controllers
         [HttpPut]
         public async Task<IActionResult> PutEquipmentModel(EquipmentModel equipmentModel)
         {
-
-            if (equipmentModel.validityCheck != 0)
+            try
             {
-                var existingModel = await _context.equipmentModels.FindAsync(equipmentModel.validityCheck);
-                existingModel.eName = equipmentModel.eName;
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    if (equipmentModel.validityCheck != 0)
+                    {
+                        var existingModel = await _context.equipmentModels.FindAsync(equipmentModel.validityCheck);
+                        existingModel.eName = equipmentModel.eName;
 
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return Ok();
+                        try
+                        {
+                            await _context.SaveChangesAsync();
+                            return Ok();
+                        }
+                        catch (Exception ex)
+                        {
+                            //_logger.LogError(ex.Message);
+                            return StatusCode(StatusCodes.Status500InternalServerError);
+                        }
+                    }
+
+                    return Unauthorized();
                 }
-                catch (Exception ex)
-                {
-                    //_logger.LogError(ex.Message);
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return Unauthorized();
+            
         }
 
         // POST: api/EquipmentModels
@@ -93,120 +146,138 @@ namespace AssetWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<EquipmentModel>> PostEquipmentModel(EquipmentModel equipmentModel)
         {
-
             try
             {
-                if (equipmentModel.validityCheck == 0)
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-
-                    int getEquipmentAutoId = 0;
-                    var compId = _context.equipmentModels.Where(d => d.companyId == equipmentModel.companyId).Select(d => d.eId).ToList();
-
-                    var autoId = "";
-                    if (compId.Count > 0)
+                    try
                     {
-
-                        autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
-                    }
-
-                    if (autoId == "")
-                    {
-                        _context.ChangeTracker.Clear();
-                        EquipmentModel e = new EquipmentModel();
-                        string comId = "EM1";
-                        e.eId = comId;
-                        e.eName = equipmentModel.eName;
-                        e.companyId = equipmentModel.companyId;
-                        e.status = equipmentModel.status;
-                        _context.equipmentModels.Add(e);
-                        await _context.SaveChangesAsync();
-                        getEquipmentAutoId = e.eAutoId;
-                    }
-                    if (autoId != "")
-                    {
-                        _context.ChangeTracker.Clear();
-                        EquipmentModel e = new EquipmentModel();
-                        string comId = "EM" + (int.Parse(autoId) + 1);
-                        e.eId = comId;
-                        e.eName = equipmentModel.eName;
-                        e.companyId = equipmentModel.companyId;
-                        e.status = equipmentModel.status;
-                        _context.equipmentModels.Add(e);
-                        await _context.SaveChangesAsync();
-                        getEquipmentAutoId = e.eAutoId;
-                    }
-
-                    //Console.WriteLine("Id: "+ getroleautoid.ToString());
-                    //_context.roles.Add(role);
-                    //await _context.SaveChangesAsync();
-
-                    List<EquipmentSubItemsList> equipmentSubItemsLists = equipmentModel.listSubItems;
-
-
-
-                    foreach (var items in equipmentSubItemsLists)
-                    {
-                        EquipmentSubItem eSubItem = new EquipmentSubItem();
-                        eSubItem.eAutoId = getEquipmentAutoId;
-                        eSubItem.esName = items.esName;
-                        eSubItem.esDescription = items.esDescription;
-                        eSubItem.esPosition = items.esPosition;
-                        eSubItem.esParentId = items.esParentId;
-                        eSubItem.companyId = equipmentModel.companyId;
-                        _context.equipmentSubItems.Add(eSubItem);
-                        await _context.SaveChangesAsync();
-                    }
-                    //foreach (var items in listPermissions)
-                    //{
-                    //    RoleandPermission rolePerm = new RoleandPermission();
-                    //    rolePerm.permissionId = items.ToString();
-                    //    rolePerm.roleAutoId = getRoleAutoId;
-                    //    rolePerm.companyId = claimresponse.companyId;
-                    //    _context.roleAndPermissions.Add(rolePerm);
-                    //    await _context.SaveChangesAsync();
-                    //}
-                }
-                else if(equipmentModel.validityCheck!=0)
-                {
-                   var validityCheckValue=equipmentModel.validityCheck;
-                    if (EquipmentModelValidityExists(validityCheckValue))
-                    {
-
-                        List<EquipmentSubItemsList> equipmentSubItemsLists = equipmentModel.listSubItems;
-
-
-
-                        foreach (var items in equipmentSubItemsLists)
+                        if (equipmentModel.validityCheck == 0)
                         {
-                            EquipmentSubItem eSubItem = new EquipmentSubItem();
-                            eSubItem.eAutoId = validityCheckValue;
-                            eSubItem.esName = items.esName;
-                            eSubItem.esDescription = items.esDescription;
-                            eSubItem.esPosition = items.esPosition;
-                            eSubItem.esParentId = items.esParentId;
-                            eSubItem.companyId = equipmentModel.companyId;
-                            _context.equipmentSubItems.Add(eSubItem);
-                            await _context.SaveChangesAsync();
+
+                            int getEquipmentAutoId = 0;
+                            var compId = _context.equipmentModels.Where(d => d.companyId == claimresponse.companyId).Select(d => d.eId).ToList();
+
+                            var autoId = "";
+                            if (compId.Count > 0)
+                            {
+
+                                autoId = compId.Max(x => int.Parse(x.Substring(2))).ToString();
+                            }
+
+                            if (autoId == "")
+                            {
+                                _context.ChangeTracker.Clear();
+                                EquipmentModel e = new EquipmentModel();
+                                string comId = "EM1";
+                                e.eId = comId;
+                                e.eName = equipmentModel.eName;
+                                e.companyId = claimresponse.companyId;
+                                e.status = equipmentModel.status;
+                                _context.equipmentModels.Add(e);
+                                await _context.SaveChangesAsync();
+                                getEquipmentAutoId = e.eAutoId;
+                            }
+                            if (autoId != "")
+                            {
+                                _context.ChangeTracker.Clear();
+                                EquipmentModel e = new EquipmentModel();
+                                string comId = "EM" + (int.Parse(autoId) + 1);
+                                e.eId = comId;
+                                e.eName = equipmentModel.eName;
+                                e.companyId = claimresponse.companyId;
+                                e.status = equipmentModel.status;
+                                _context.equipmentModels.Add(e);
+                                await _context.SaveChangesAsync();
+                                getEquipmentAutoId = e.eAutoId;
+                            }
+
+                            //Console.WriteLine("Id: "+ getroleautoid.ToString());
+                            //_context.roles.Add(role);
+                            //await _context.SaveChangesAsync();
+
+                            List<EquipmentSubItemsList> equipmentSubItemsLists = equipmentModel.listSubItems;
+
+
+
+                            foreach (var items in equipmentSubItemsLists)
+                            {
+                                EquipmentSubItem eSubItem = new EquipmentSubItem();
+                                eSubItem.eAutoId = getEquipmentAutoId;
+                                eSubItem.esName = items.esName;
+                                eSubItem.esDescription = items.esDescription;
+                                eSubItem.esPosition = items.esPosition;
+                                eSubItem.esParentId = items.esParentId;
+                                eSubItem.companyId = claimresponse.companyId;
+                                _context.equipmentSubItems.Add(eSubItem);
+                                await _context.SaveChangesAsync();
+                            }
+                            //foreach (var items in listPermissions)
+                            //{
+                            //    RoleandPermission rolePerm = new RoleandPermission();
+                            //    rolePerm.permissionId = items.ToString();
+                            //    rolePerm.roleAutoId = getRoleAutoId;
+                            //    rolePerm.companyId = claimresponse.companyId;
+                            //    _context.roleAndPermissions.Add(rolePerm);
+                            //    await _context.SaveChangesAsync();
+                            //}
                         }
+                        else if (equipmentModel.validityCheck != 0)
+                        {
+                            var validityCheckValue = equipmentModel.validityCheck;
+                            if (EquipmentModelValidityExists(validityCheckValue))
+                            {
+
+                                List<EquipmentSubItemsList> equipmentSubItemsLists = equipmentModel.listSubItems;
+
+
+
+                                foreach (var items in equipmentSubItemsLists)
+                                {
+                                    EquipmentSubItem eSubItem = new EquipmentSubItem();
+                                    eSubItem.eAutoId = validityCheckValue;
+                                    eSubItem.esName = items.esName;
+                                    eSubItem.esDescription = items.esDescription;
+                                    eSubItem.esPosition = items.esPosition;
+                                    eSubItem.esParentId = items.esParentId;
+                                    eSubItem.companyId = claimresponse.companyId;
+                                    _context.equipmentSubItems.Add(eSubItem);
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                return Unauthorized();
+                            }
+                        }
+
+
+                        return Ok();
+
+                        //    }
+                        //    return Unauthorized();
+
                     }
-                    else 
+                    catch (Exception ex)
                     {
-                        return Unauthorized();
+                        //_logger.LogError(ex.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
                     }
+
                 }
-
-
-                    return Ok();
-
-                //    }
-                //    return Unauthorized();
+                return Unauthorized();
 
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex.Message);
+                _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+
+            
             //_context.equipmentModels.Add(equipmentModel);
             //await _context.SaveChangesAsync();
 
@@ -217,19 +288,71 @@ namespace AssetWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipmentModel(int id)
         {
-            if (id != null)
+            try
             {
-                var equipmentSubItemModel = await _context.equipmentSubItems.FindAsync(id);
-                if (equipmentSubItemModel == null)
-                {
-                    return NotFound();
-                }
 
-                _context.equipmentSubItems.Remove(equipmentSubItemModel);
-                await _context.SaveChangesAsync();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    if (id != null)
+                    {
+                        var equipmentSubItemModel = await _context.equipmentSubItems.Where(x=>x.esAutoId==id && x.companyId==claimresponse.companyId).FirstOrDefaultAsync();
+                        if (equipmentSubItemModel == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.equipmentSubItems.Remove(equipmentSubItemModel);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            
+        }
+
+        [HttpDelete("DeleteFullEquipmentModel")]
+        public async Task<IActionResult> DeleteFullEquipmentModel(int id)
+        {
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    if (id != null)
+                    {
+                        var equipmentModel = await _context.equipmentModels.Where(x => x.eAutoId == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                        if (equipmentModel == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.equipmentModels.Remove(equipmentModel);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return NoContent();
         }
 
         private bool EquipmentModelExists(int id)

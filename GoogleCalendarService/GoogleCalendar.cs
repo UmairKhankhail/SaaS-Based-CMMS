@@ -65,6 +65,20 @@ namespace GoogleCalendarService
             return createdEvent.Id;
         }
 
+        public string InsertEvent(Event newEvent, string calendardbId, string timeZone)
+        {
+            // Set timezone to Pakistan Standard Time
+            newEvent.Start.TimeZone = timeZone;
+            newEvent.End.TimeZone = timeZone;
+
+            // Insert the recurring event into the primary calendar
+            var calendarId = calendardbId;
+            var createdEvent = _calendarService.Events.Insert(newEvent, calendarId).Execute();
+
+            // Return the created event ID
+            return createdEvent.Id;
+        }
+
         //public string InsertRecurringEvent(Event newEvent, int recurrenceCount)
         //{
         //    // Set timezone to Pakistan Standard Time
