@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -14,62 +16,110 @@ namespace MaintenanceWebApi.Controllers
     public class woAssetItemsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly ILogger<woAssetItemsController> _logger;
 
-        public woAssetItemsController(MaintenanceDbContext context)
+
+        public woAssetItemsController(MaintenanceDbContext context,JwtTokenHandler jwtTokenHandler, ILogger<woAssetItemsController> logger)
         {
             _context = context;
+            _JwtTokenHandler = jwtTokenHandler;
+            _logger= logger;
         }
 
         // GET: api/woAssetItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<woAssetItem>>> GetwoAssetItems(string companyId)
+        public async Task<ActionResult<IEnumerable<woAssetItem>>> GetwoAssetItems()
         {
-            return await _context.woAssetItems.Where(x=>x.companyId==companyId).ToListAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.woAssetItems.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET: api/woAssetItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<woAssetItem>> GetwoAssetItem(int id,string companyId)
+        public async Task<ActionResult<woAssetItem>> GetwoAssetItem(int id)
         {
-            var woAssetItem = await _context.woAssetItems.Where(x=>x.woAssetItemAutoId==id && x.companyId==companyId).ToListAsync();
-
-            if (woAssetItem == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var woAssetItem = await _context.woAssetItems.Where(x => x.woAssetItemAutoId == id && x.companyId == claimresponse.companyId).ToListAsync();
 
-            return Ok(woAssetItem);
+                    if (woAssetItem == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(woAssetItem);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/woAssetItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutwoAssetItem(int id,string companyId, woAssetItem woAssetItem)
+        public async Task<IActionResult> PutwoAssetItem(int id,woAssetItem woAssetItem)
         {
-            if (woAssetItem.woAssetItemAutoId==id && woAssetItem.companyId==companyId)
-            {
-                _context.Entry(woAssetItem).State = EntityState.Modified;
-
-            }
-
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!woAssetItemExists(id))
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                    if (woAssetItem.woAssetItemAutoId == id && woAssetItem.companyId == claimresponse.companyId)
+                    {
+                        _context.Entry(woAssetItem).State = EntityState.Modified;
+
+                    }
+
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!woAssetItemExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/woAssetItems
@@ -77,26 +127,55 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<woAssetItem>> PostwoAssetItem(woAssetItem woAssetItem)
         {
-            _context.woAssetItems.Add(woAssetItem);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    _context.woAssetItems.Add(woAssetItem);
+                    await _context.SaveChangesAsync();
 
-            return Ok();
+                    return Ok();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // DELETE: api/woAssetItems/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletewoAssetItem(int id)
         {
-            var woAssetItem = await _context.woAssetItems.FindAsync(id);
-            if (woAssetItem == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var woAssetItem = await _context.woAssetItems.FindAsync(id);
+                    if (woAssetItem == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.woAssetItems.Remove(woAssetItem);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.woAssetItems.Remove(woAssetItem);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool woAssetItemExists(int id)

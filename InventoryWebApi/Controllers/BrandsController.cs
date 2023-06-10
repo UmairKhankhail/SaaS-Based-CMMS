@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
 
 namespace InventoryAPI.Controllers
 {
@@ -15,12 +17,12 @@ namespace InventoryAPI.Controllers
     {
 
         private readonly InventoryDbContext _context;
-        //private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
-        private readonly ILogger<CategoriesController> _logger;
+        private readonly ILogger<BrandsController> _logger;
 
 
-        public BrandsController(InventoryDbContext context, HttpClient httpClient, ILogger<CategoriesController> logger)
+        public BrandsController(InventoryDbContext context, HttpClient httpClient, ILogger<BrandsController> logger)
         {
             _context = context;
             _httpClient = httpClient;
@@ -29,13 +31,20 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Brands
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> Getbrands(string companyId)
+        public async Task<ActionResult<IEnumerable<Brand>>> Getbrands()
         {
             try
             {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                return await _context.brands.Where(x => x.companyId == companyId && x.status == "Active").ToListAsync();
+                    return await _context.brands.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
 
+                }
+
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -43,46 +52,79 @@ namespace InventoryAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return NotFound();
 
         }
 
         // GET: api/Brands/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Brand>> GetBrand(int id, string companyId)
+        public async Task<ActionResult<Brand>> GetBrand(int id)
         {
-            var brand = await _context.brands.Where(x => x.brandAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
-
-            if (brand == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            return Ok();
+                    var brand = await _context.brands.Where(x => x.brandAutoId == id && x.companyId == claimresponse.companyId && x.status == "Active").FirstOrDefaultAsync();
+
+                    if (brand == null)
+                    {
+                        return NotFound();
+                    }
+                    return Ok();
+
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
         }
 
         // PUT: api/Brands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBrand(int id,string companyId, Brand brand)
+        [HttpPut]
+        public async Task<IActionResult> PutBrand(int id, Brand brand)
         {
-            if (BrandExists(id) && CompanyExists(companyId))
+            try
             {
-                Brand b = new Brand();
-                b.brandAutoId = brand.brandAutoId;
-                b.brandId = brand.brandId;
-                b.brandName = brand.brandName;
-                b.status = brand.status;
-                b.companyId = brand.companyId;
-            
-                _context.Entry(b).State = EntityState.Modified;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                await _context.SaveChangesAsync();
-                return Ok();
+                    if (BrandExists(id) && CompanyExists(claimresponse.companyId))
+                    {
+                        Brand b = new Brand();
+                        b.brandAutoId = brand.brandAutoId;
+                        b.brandId = brand.brandId;
+                        b.brandName = brand.brandName;
+                        b.status = brand.status;
+                        b.companyId = claimresponse.companyId;
+
+                        _context.Entry(b).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+
+
+                    return NotFound();
+                }
+                return Unauthorized();
+
             }
 
-            return NotFound();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
         // POST: api/Brands
@@ -90,58 +132,94 @@ namespace InventoryAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
-            var comId = _context.brands.Where(b => b.companyId == brand.companyId).Select(b => b.brandId).ToList();
-
-            var autoId = "";
-            if (comId.Count > 0)
+            try
             {
-                autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+
+                    var comId = _context.brands.Where(b => b.companyId == claimresponse.companyId).Select(b => b.brandId).ToList();
+
+                    var autoId = "";
+                    if (comId.Count > 0)
+                    {
+                        autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Brand b = new Brand();
+                        string comid = "B1";
+                        b.brandId = comid;
+                        b.brandName = brand.brandName;
+                        b.status = brand.status;
+                        b.companyId = claimresponse.companyId;
+                        _context.brands.Add(b);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Brand b = new Brand();
+                        string comid = "B" + (int.Parse(autoId) + 1);
+                        b.brandId = comid;
+                        b.brandName = brand.brandName;
+                        b.status = brand.status;
+                        b.companyId = claimresponse.companyId;
+                        _context.brands.Add(b);
+                        await _context.SaveChangesAsync();
+
+                    }
+
+                    return Ok();
+
+                }
+
+                return Unauthorized();
+
             }
 
-            if (autoId == "")
+            catch (Exception ex)
             {
-                _context.ChangeTracker.Clear();
-                Brand b = new Brand();
-                string comid = "B1";
-                b.brandId = comid;
-                b.brandName = brand.brandName;
-                b.status = brand.status;
-                b.companyId = brand.companyId;
-                _context.brands.Add(b);
-                await _context.SaveChangesAsync();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Brand b = new Brand();
-                string comid = "B" + (int.Parse(autoId) + 1);
-                b.brandId = comid;
-                b.brandName = brand.brandName;
-                b.status = brand.status;
-                b.companyId = brand.companyId;
-                _context.brands.Add(b);
-                await _context.SaveChangesAsync();
-
-            }
-
-            return Ok();
         }
 
         // DELETE: api/Brands/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBrand(string id, string companyId)
+        public async Task<IActionResult> DeleteBrand(string id)
         {
-            var brand = await _context.brands.Where(x => x.brandId == id && x.companyId == companyId).FirstOrDefaultAsync();
-            if (brand == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var brand = await _context.brands.Where(x => x.brandId == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    if (brand == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.brands.Remove(brand);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+
+                }
+                return Unauthorized();
             }
 
-            _context.brands.Remove(brand);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool BrandExists(int id)

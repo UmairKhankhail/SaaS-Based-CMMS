@@ -10,6 +10,8 @@ using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -18,63 +20,105 @@ namespace MaintenanceWebApi.Controllers
     public class ExecutionsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
-        private readonly HttpClient _httpClient;
-        public ExecutionsController(MaintenanceDbContext context, HttpClient httpClient)
+
+        public ExecutionsController(MaintenanceDbContext context)
         {
             _context = context;
-            _httpClient = httpClient;
         }
 
         // GET: api/Executions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Execution>>> Getexecutions(string companyId)
+        public async Task<ActionResult<IEnumerable<Execution>>> Getexecutions()
         {
-            return await _context.executions.Where(x=>x.companyId==companyId).ToListAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.executions.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET: api/Executions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Execution>> GetExecution(int id,string companyId)
+        public async Task<ActionResult<Execution>> GetExecution(int id)
         {
-            var execution = await _context.executions.Where(x=>x.executionAutoId==id && x.companyId==companyId).ToListAsync();
-
-            if (execution == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var execution = await _context.executions.Where(x => x.executionAutoId == id && x.companyId == claimresponse.companyId).ToListAsync();
 
-            return Ok(execution);
+                    if (execution == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(execution);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/Executions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutExecution(int id,string companyId,Execution execution)
+        [HttpPut]
+        public async Task<IActionResult> PutExecution(int id,Execution execution)
         {
-            if (execution.executionAutoId==id && execution.companyId==companyId)
-            {
-
-                _context.Entry(execution).State = EntityState.Modified; 
-            }
-
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExecutionExists(id))
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                    if (execution.executionAutoId == id && execution.companyId == claimresponse.companyId)
+                    {
+
+                        _context.Entry(execution).State = EntityState.Modified;
+                    }
+
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!ExecutionExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/Executions
@@ -82,27 +126,13 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Execution>> PostExecution(Execution execution)
         {
-            var url = $"http://localhost:5182/api/ScheduledWorkRequests/GetCalendarRecords?cId={execution.companyId}";
-            var response = await _httpClient.GetAsync(url);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseContent);
-
-            JObject jsonResponse = JObject.Parse(responseContent);
-
-            var googleCalendarId = (string)jsonResponse["googleCalendarId"];
-            var timeZoneRegional = (string)jsonResponse["timeZoneRegional"];
-            var timeZoneWord = (string)jsonResponse["timeZoneWord"];
-
-            Console.WriteLine(googleCalendarId);
-            Console.WriteLine(timeZoneRegional);
-
             var compId = _context.executions.Where(exe=> exe.companyId == execution.companyId && exe.woAutoId == execution.woAutoId).Select(d => d.executionId).ToList();
             var autoId = "";
             if (compId.Count > 0)
             {
 
-                autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
-            }
+                        autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
+                    }
 
             if (autoId == "")
             {
@@ -118,39 +148,6 @@ namespace MaintenanceWebApi.Controllers
                 exe.endTime = execution.endTime;
                 exe.remarks = execution.remarks;
                 exe.companyId = execution.companyId;
-                
-
-                GoogleCalendar googleCalendar = new GoogleCalendar();
-
-                //DateTime conversion to users timezone
-                var startDateTime = exe.startTime;
-                var endDateTime = exe.endTime;
-                //Conversion Ends
-
-                Event newEvent = new Event
-                {
-                    Summary = "Work Order - Execution",
-                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
-                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
-                    Description = exe.userName.ToString() + " " + exe.topName
-                };
-
-                var eventId = googleCalendar.InsertEvent(newEvent, googleCalendarId, timeZoneRegional);
-
-                //Db DateTime Work to exact same format
-                DateTime inputDateTimeStart = exe.startTime;
-                DateTime inputDateTimeEnd = exe.endTime;
-                string timeZoneId = timeZoneWord;
-                // Convert parsed datetime to universal datetime
-                DateTime universalDateTimeStart = inputDateTimeStart.ToUniversalTime();
-                DateTime universalDateTimeEnd = inputDateTimeEnd.ToUniversalTime();
-                // Convert universal datetime to desired timezone
-                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-                DateTime convertedDateTimeStart = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeStart, timeZone);
-                DateTime convertedDateTimeEnd = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeEnd, timeZone);
-                exe.startTime = convertedDateTimeStart;
-                exe.endTime = convertedDateTimeEnd;
-                exe.eventId = eventId;
                 _context.executions.Add(exe);
                 await _context.SaveChangesAsync();
             }
@@ -168,79 +165,35 @@ namespace MaintenanceWebApi.Controllers
                 exe.endTime = execution.endTime;
                 exe.remarks = execution.remarks;
                 exe.companyId = execution.companyId;
-
-                GoogleCalendar googleCalendar = new GoogleCalendar();
-
-                //DateTime conversion to users timezone
-                var startDateTime = exe.startTime;
-                var endDateTime = exe.endTime;
-                //Conversion Ends
-
-                Event newEvent = new Event
-                {
-                    Summary = "Work Order - Execution",
-                    Start = new EventDateTime { DateTime = startDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
-                    End = new EventDateTime { DateTime = endDateTime.ToUniversalTime(), TimeZone = timeZoneRegional },
-                    Description = exe.userName.ToString() + " " + exe.topName
-                };
-
-                var eventId = googleCalendar.InsertEvent(newEvent, googleCalendarId, timeZoneRegional);
-
-                //Db DateTime Work to exact same format
-                DateTime inputDateTimeStart = exe.startTime;
-                DateTime inputDateTimeEnd = exe.endTime;
-                string timeZoneId = timeZoneWord;
-                // Convert parsed datetime to universal datetime
-                DateTime universalDateTimeStart = inputDateTimeStart.ToUniversalTime();
-                DateTime universalDateTimeEnd = inputDateTimeEnd.ToUniversalTime();
-                // Convert universal datetime to desired timezone
-                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-                DateTime convertedDateTimeStart = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeStart, timeZone);
-                DateTime convertedDateTimeEnd = TimeZoneInfo.ConvertTimeFromUtc(universalDateTimeEnd, timeZone);
-                exe.startTime = convertedDateTimeStart;
-                exe.endTime = convertedDateTimeEnd;
-                exe.eventId = eventId;
                 _context.executions.Add(exe);
                 await _context.SaveChangesAsync();
             }
 
-            return Ok();
+                    return Ok();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // DELETE: api/Executions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExecution(int id, string cId)
         {
-            var url = $"http://localhost:5182/api/ScheduledWorkRequests/GetCalendarRecords?cId={cId}";
-            var response = await _httpClient.GetAsync(url);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseContent);
-
-            JObject jsonResponse = JObject.Parse(responseContent);
-
-            var googleCalendarId = (string)jsonResponse["googleCalendarId"];
-            var timeZoneRegional = (string)jsonResponse["timeZoneRegional"];
-            var timeZoneWord = (string)jsonResponse["timeZoneWord"];
-
-            Console.WriteLine(googleCalendarId);
-            Console.WriteLine(timeZoneRegional);
-
-
-            var execution = await _context.executions.Where(x => x.executionAutoId == id).FirstAsync();
+            var execution = await _context.executions.FindAsync(id);
             if (execution == null)
             {
                 return NotFound();
             }
 
-
             _context.executions.Remove(execution);
             await _context.SaveChangesAsync();
 
-            GoogleCalendar gc = new GoogleCalendar();
-            gc.DeleteEvent(execution.eventId, googleCalendarId);
-
-            return Ok();
-           
+            return NoContent();
         }
 
         private bool ExecutionExists(int id)

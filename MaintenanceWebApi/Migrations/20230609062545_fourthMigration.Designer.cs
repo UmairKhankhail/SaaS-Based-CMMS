@@ -3,6 +3,7 @@ using System;
 using MaintenanceWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaintenanceWebApi.Migrations
 {
     [DbContext(typeof(MaintenanceDbContext))]
-    partial class MaintenanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230609062545_fourthMigration")]
+    partial class fourthMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,9 +34,6 @@ namespace MaintenanceWebApi.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("evaluationId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("eventId")
                         .HasColumnType("longtext");
 
                     b.Property<string>("remarks")
@@ -70,9 +69,6 @@ namespace MaintenanceWebApi.Migrations
 
                     b.Property<DateTime>("endTime")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("eventId")
-                        .HasColumnType("longtext");
 
                     b.Property<string>("executionId")
                         .HasColumnType("longtext");

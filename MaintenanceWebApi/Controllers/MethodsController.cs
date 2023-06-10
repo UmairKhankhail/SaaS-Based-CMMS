@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using System.Drawing.Imaging;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -15,62 +17,112 @@ namespace MaintenanceWebApi.Controllers
     public class MethodsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly ILogger<MethodsController> _logger;
 
-        public MethodsController(MaintenanceDbContext context)
+        public MethodsController(MaintenanceDbContext context, JwtTokenHandler jwtTokenHandler, ILogger<MethodsController> logger)
         {
+
             _context = context;
+            _JwtTokenHandler = jwtTokenHandler;
+            _logger = logger;
         }
 
         // GET: api/Methods
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Method>>> Getmethods(string companyId)
+        public async Task<ActionResult<IEnumerable<Method>>> Getmethods()
         {
-            return await _context.methods.Where(x=>x.companyId==companyId).ToListAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    return await _context.methods.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // GET: api/Methods/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Method>> GetMethod(int id, string companyId)
+        public async Task<ActionResult<Method>> GetMethod(int id)
         {
-            var @method = await _context.methods.Where(x=>x.mtAutoId==id && x.companyId==companyId).ToListAsync();
-
-            if (@method == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            return Ok(@method);
+                    var @method = await _context.methods.Where(x => x.mtAutoId == id && x.companyId == claimresponse.companyId).ToListAsync();
+
+                    if (@method == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(@method);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/Methods/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        public async Task<IActionResult> PutMethod(int id,string companyId, Method @method)
+        public async Task<IActionResult> PutMethod(int id,Method @method)
         {
-            if (@method.mtAutoId==id && @method.companyId==companyId)
-            {
-
-                _context.Entry(@method).State = EntityState.Modified;
-            }
-
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MethodExists(id))
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                    if (@method.mtAutoId == id && @method.companyId == claimresponse.companyId)
+                    {
+
+                        _context.Entry(@method).State = EntityState.Modified;
+                    }
+
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!MethodExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            } 
         }
 
         // POST: api/Methods
@@ -78,26 +130,58 @@ namespace MaintenanceWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Method>> PostMethod(Method @method)
         {
-            _context.methods.Add(@method);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            return Ok();
+
+                    _context.methods.Add(@method);
+                    await _context.SaveChangesAsync();
+
+                    return Ok();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // DELETE: api/Methods/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMethod(int id)
         {
-            var @method = await _context.methods.FindAsync(id);
-            if (@method == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+
+                    var @method = await _context.methods.FindAsync(id);
+                    if (@method == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.methods.Remove(@method);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.methods.Remove(@method);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool MethodExists(int id)
