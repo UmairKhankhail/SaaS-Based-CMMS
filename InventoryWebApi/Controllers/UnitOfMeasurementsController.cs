@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
 using System.Drawing.Drawing2D;
+using JwtAuthenticationManager.Models;
+using JwtAuthenticationManager;
 
 namespace InventoryAPI.Controllers
 {
@@ -16,7 +18,7 @@ namespace InventoryAPI.Controllers
     {
 
         private readonly InventoryDbContext _context;
-        //private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
         private readonly ILogger<CategoriesController> _logger;
 
@@ -31,13 +33,19 @@ namespace InventoryAPI.Controllers
 
         // GET: api/UnitOfMeasurements
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UnitOfMeasurement>>> GetunitOfMeasurements(string companyId)
+        public async Task<ActionResult<IEnumerable<UnitOfMeasurement>>> GetunitOfMeasurements()
         {
             try
             {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                return await _context.unitOfMeasurements.Where(x => x.companyId == companyId && x.status == "Active").ToListAsync();
+                    return await _context.unitOfMeasurements.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
 
+                }
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -49,40 +57,70 @@ namespace InventoryAPI.Controllers
 
         // GET: api/UnitOfMeasurements/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UnitOfMeasurement>> GetUnitOfMeasurement(int id, string companyId)
+        public async Task<ActionResult<UnitOfMeasurement>> GetUnitOfMeasurement(int id)
         {
-            var unitOfMeasurement = await _context.unitOfMeasurements.Where(x => x.uomAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
-
-
-            if (unitOfMeasurement == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var unitOfMeasurement = await _context.unitOfMeasurements.Where(x => x.uomAutoId == id && x.companyId == claimresponse.companyId && x.status == "Active").FirstOrDefaultAsync();
+
+
+                    if (unitOfMeasurement == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return unitOfMeasurement;
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return unitOfMeasurement;
         }
 
         // PUT: api/UnitOfMeasurements/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUnitOfMeasurement(int id,string companyId, UnitOfMeasurement unitOfMeasurement)
+        [HttpPut]
+        public async Task<IActionResult> PutUnitOfMeasurement(int id, UnitOfMeasurement unitOfMeasurement)
         {
-            if (UnitOfMeasurementExists(id) && CompanyExists(companyId))
+            try
             {
-                UnitOfMeasurement uom = new UnitOfMeasurement();
-                uom.uomAutoId = unitOfMeasurement.uomAutoId;
-                uom.uomId = unitOfMeasurement.uomId;
-                uom.uomName = unitOfMeasurement.uomName;
-                uom.status = unitOfMeasurement.status;
-                uom.companyId = unitOfMeasurement.companyId;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                _context.Entry(uom).State = EntityState.Modified;
+                    if (UnitOfMeasurementExists(id) && CompanyExists(claimresponse.companyId))
+                    {
+                        UnitOfMeasurement uom = new UnitOfMeasurement();
+                        uom.uomAutoId = unitOfMeasurement.uomAutoId;
+                        uom.uomId = unitOfMeasurement.uomId;
+                        uom.uomName = unitOfMeasurement.uomName;
+                        uom.status = unitOfMeasurement.status;
+                        uom.companyId = claimresponse.companyId;
 
-                await _context.SaveChangesAsync();
-                return Ok();
+                        _context.Entry(uom).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+
+                    return NotFound();
+                }
+                return Unauthorized();
             }
-
-            return NotFound();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
         }
 
@@ -91,59 +129,89 @@ namespace InventoryAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<UnitOfMeasurement>> PostUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement)
         {
-            var comId = _context.unitOfMeasurements.Where(uom => uom.companyId == unitOfMeasurement.companyId).Select(uom => uom.uomId).ToList();
-
-            Console.WriteLine(comId);
-            var autoId = "";
-            if (comId.Count > 0)
+            try
             {
-                autoId = comId.Max(x => int.Parse(x.Substring(3))).ToString();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            if (autoId == "")
+
+                    var comId = _context.unitOfMeasurements.Where(uom => uom.companyId == claimresponse.companyId).Select(uom => uom.uomId).ToList();
+
+                    Console.WriteLine(comId);
+                    var autoId = "";
+                    if (comId.Count > 0)
+                    {
+                        autoId = comId.Max(x => int.Parse(x.Substring(3))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        UnitOfMeasurement uom = new UnitOfMeasurement();
+                        string comid = "uom1";
+                        uom.uomId = comid;
+                        uom.uomName = unitOfMeasurement.uomName;
+                        uom.status = unitOfMeasurement.status;
+                        uom.companyId = claimresponse.companyId;
+                        _context.unitOfMeasurements.Add(uom);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        UnitOfMeasurement uom = new UnitOfMeasurement();
+                        string comid = "uom" + (int.Parse(autoId) + 1);
+                        uom.uomId = comid;
+                        uom.uomName = unitOfMeasurement.uomName;
+                        uom.status = unitOfMeasurement.status;
+                        uom.companyId = claimresponse.companyId;
+                        _context.unitOfMeasurements.Add(uom);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
             {
-                _context.ChangeTracker.Clear();
-                UnitOfMeasurement uom = new UnitOfMeasurement();
-                string comid = "uom1";
-                uom.uomId = comid;
-                uom.uomName = unitOfMeasurement.uomName;
-                uom.status = unitOfMeasurement.status;
-                uom.companyId = unitOfMeasurement.companyId;
-                _context.unitOfMeasurements.Add(uom);
-                await _context.SaveChangesAsync();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                UnitOfMeasurement uom = new UnitOfMeasurement();
-                string comid = "uom" + (int.Parse(autoId) + 1);
-                uom.uomId = comid;
-                uom.uomName = unitOfMeasurement.uomName;
-                uom.status = unitOfMeasurement.status;
-                uom.companyId = unitOfMeasurement.companyId;
-                _context.unitOfMeasurements.Add(uom);
-                await _context.SaveChangesAsync();
-            }
-
-            return Ok();
-
         }
 
         // DELETE: api/UnitOfMeasurements/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUnitOfMeasurement(int id, string companyId)
+        public async Task<IActionResult> DeleteUnitOfMeasurement(int id)
         {
-            var uom = await _context.unitOfMeasurements.Where(x => x.uomAutoId == id && x.companyId == companyId).FirstOrDefaultAsync();
-            if (uom == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var uom = await _context.unitOfMeasurements.Where(x => x.uomAutoId == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    if (uom == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.unitOfMeasurements.Remove(uom);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.unitOfMeasurements.Remove(uom);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool UnitOfMeasurementExists(int id)

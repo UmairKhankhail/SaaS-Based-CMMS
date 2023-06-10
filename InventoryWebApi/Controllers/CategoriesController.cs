@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
 using JwtAuthenticationManager;
 using System.Net.Http;
+using JwtAuthenticationManager.Models;
 
 namespace InventoryAPI.Controllers
 {
@@ -17,7 +18,7 @@ namespace InventoryAPI.Controllers
     {
 
         private readonly InventoryDbContext _context;
-        //private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
         private readonly ILogger<CategoriesController> _logger;
 
@@ -31,14 +32,21 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> Getcategories(string companyId)
+        public async Task<ActionResult<IEnumerable<Category>>> Getcategories()
         {
             try
             {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                return await _context.categories.Where(x => x.companyId == companyId && x.status == "Active").ToListAsync();
+                    return await _context.categories.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
+                }
 
+                return Unauthorized();
             }
+
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
@@ -49,39 +57,71 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id, string companyId)
+        public async Task<ActionResult<Category>> GetCategory(int id)
         {
-            var category= await _context.categories.Where(x => x.catAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
-
-            if (category == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var category = await _context.categories.Where(x => x.catAutoId == id && x.companyId == claimresponse.companyId && x.status == "Active").FirstOrDefaultAsync();
+
+                    if (category == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return category;
+                }
+                return Unauthorized();
             }
 
-            return category;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory([FromBody] Category category, int id,string companyId)
+        [HttpPut]
+        public async Task<IActionResult> PutCategory(Category category, int id)
         {
-            if (CategoryExists(id) && CompanyExists(companyId))
+            try
             {
-                Category c = new Category();
-                 c.catAutoId = category.catAutoId;
-                c.catId = category.catId;
-                c.catName = category.catName;
-                c.status = category.status;
-                c.companyId = category.companyId;
-                c.groupAutoId = category.groupAutoId;
-                _context.Entry(c).State = EntityState.Modified;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                await _context.SaveChangesAsync();
-                return Ok();
+                    if (CategoryExists(id) && CompanyExists(claimresponse.companyId))
+                    {
+                        Category c = new Category();
+                        c.catAutoId = category.catAutoId;
+                        c.catId = category.catId;
+                        c.catName = category.catName;
+                        c.status = category.status;
+                        c.companyId = claimresponse.companyId;
+                        c.groupAutoId = category.groupAutoId;
+                        _context.Entry(c).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+
+                    return NotFound();
+                }
+                return Unauthorized();
             }
 
-            return NotFound();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/Categories
@@ -89,61 +129,93 @@ namespace InventoryAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory( Category category)
         {
-            var comId = _context.categories.Where(g => g.companyId == category.companyId).Select(g => g.catId).ToList();
-
-            var autoId = "";
-            if (comId.Count > 0)
+            try
             {
-                autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var comId = _context.categories.Where(g => g.companyId == claimresponse.companyId).Select(g => g.catId).ToList();
+
+                    var autoId = "";
+                    if (comId.Count > 0)
+                    {
+                        autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Category c = new Category();
+                        string comid = "C1";
+                        c.catId = comid;
+                        c.catName = category.catName;
+                        c.status = category.status;
+                        c.companyId = claimresponse.companyId;
+                        c.groupAutoId = category.groupAutoId;
+                        _context.categories.Add(c);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Category c = new Category();
+                        string comid = "C" + (int.Parse(autoId) + 1);
+                        c.catId = comid;
+                        c.catName = category.catName;
+                        c.status = category.status;
+                        c.companyId = claimresponse.companyId;
+                        c.groupAutoId = category.groupAutoId;
+                        _context.categories.Add(c);
+                        await _context.SaveChangesAsync();
+
+                    }
+
+                    return Ok();
+                }
+                return Unauthorized();
             }
 
-            if (autoId == "")
+            catch (Exception ex)
             {
-                _context.ChangeTracker.Clear();
-                Category c = new Category();
-                string comid = "C1";
-                c.catId = comid;
-                c.catName = category.catName;
-                c.status = category.status;
-                c.companyId = category.companyId;
-                c.groupAutoId = category.groupAutoId;
-                _context.categories.Add(c);
-                await _context.SaveChangesAsync();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Category c = new Category();
-                string comid = "C" + (int.Parse(autoId) + 1);
-                c.catId = comid;
-                c.catName = category.catName;
-                c.status = category.status;
-                c.companyId = category.companyId;
-                c.groupAutoId=category.groupAutoId;
-                _context.categories.Add(c);
-                await _context.SaveChangesAsync();
-
-            }
-
-            return Ok();
         }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(string id,string companyId)
+        public async Task<IActionResult> DeleteCategory(string id)
         {
-            var category = await _context.categories.Where(x => x.catId == id && x.companyId == companyId).FirstOrDefaultAsync();
-
-            if (category == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var category = await _context.categories.Where(x => x.catId == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+
+                    if (category == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.categories.Remove(category);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
 
-            _context.categories.Remove(category);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool CategoryExists(int id)

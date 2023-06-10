@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using JwtAuthenticationManager;
+using JwtAuthenticationManager.Models;
 
 namespace InventoryAPI.Controllers
 {
@@ -16,7 +18,7 @@ namespace InventoryAPI.Controllers
     public class EquipmentsController : ControllerBase
     {
         private readonly InventoryDbContext _context;
-        //private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
         private readonly ILogger<EquipmentsController> _logger;
 
@@ -51,14 +53,21 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Equipments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Equipment>>> Getequipments(string companyId)
+        public async Task<ActionResult<IEnumerable<Equipment>>> Getequipments()
         {
             try
             {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                return await _context.equipments.Where(x => x.companyId == companyId && x.status == "Active").ToListAsync();
+                    return await _context.equipments.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
 
+                }
+                return Unauthorized();
             }
+
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
@@ -68,45 +77,74 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Equipments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Equipment>> GetEquipment(int id,string companyId)
+        public async Task<ActionResult<Equipment>> GetEquipment(int id)
         {
-            var equipment = await _context.equipments.Where(x => x.equipAutoId == id && x.companyId == companyId && x.status == "Active").FirstOrDefaultAsync();
-
-
-            if (equipment == null)
+            try
             {
-                return NotFound();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            return equipment;
+                    var equipment = await _context.equipments.Where(x => x.equipAutoId == id && x.companyId == claimresponse.companyId && x.status == "Active").FirstOrDefaultAsync();
+
+                    if (equipment == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return equipment;
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // PUT: api/Equipments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEquipment(string id, string companyId, Equipment equipment)
+        [HttpPut]
+        public async Task<IActionResult> PutEquipment(string id,Equipment equipment)
         {
-            if (EquipmentExists(id) && CompanyExists(companyId))
+            try
             {
-                Equipment equip = new Equipment();
-                equip.equipAutoId = equipment.equipAutoId;
-                equip.equipId = equipment.equipId;
-                equip.equipName = equipment.equipName;
-                equip.equipCost = equipment.equipCost;
-                equip.quantity=equipment.quantity;
-                equip.equipLeadTime = equipment.equipLeadTime;
-                equip.status = equipment.status;
-                equip.catAutoId= equipment.catAutoId;
-                equip.groupAutoId = equipment.groupAutoId;
-                equip.companyId = equipment.companyId;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                _context.Entry(equip).State = EntityState.Modified;
+                    if (EquipmentExists(id) && CompanyExists(claimresponse.companyId))
+                    {
+                        Equipment equip = new Equipment();
+                        equip.equipAutoId = equipment.equipAutoId;
+                        equip.equipId = equipment.equipId;
+                        equip.equipName = equipment.equipName;
+                        equip.equipCost = equipment.equipCost;
+                        equip.quantity = equipment.quantity;
+                        equip.equipLeadTime = equipment.equipLeadTime;
+                        equip.status = equipment.status;
+                        equip.catAutoId = equipment.catAutoId;
+                        equip.groupAutoId = equipment.groupAutoId;
+                        equip.companyId = claimresponse.companyId;
 
-                await _context.SaveChangesAsync();
-                return Ok();
-            }
+                        _context.Entry(equip).State = EntityState.Modified;
 
-            return NotFound();
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+
+                        return NotFound();
+                    }
+                    return Unauthorized();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
 
         }
 
@@ -115,73 +153,103 @@ namespace InventoryAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
         {
-            var comId = _context.equipments.Where(equip => equip.companyId == equipment.companyId).Select(equip => equip.equipId).ToList();
-
-            Console.WriteLine(comId);
-            var autoId = "";
-            if (comId.Count > 0)
+            try
             {
-                autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var comId = _context.equipments.Where(equip => equip.companyId == claimresponse.companyId).Select(equip => equip.equipId).ToList();
+                    var autoId = "";
+                    if (comId.Count > 0)
+                    {
+                        autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Equipment equip = new Equipment();
+                        equip.equipAutoId = equipment.equipAutoId;
+                        string comid = "E1";
+                        equip.equipId = comid;
+                        equip.equipName = equipment.equipName;
+                        equip.equipCost = equipment.equipCost;
+                        equip.quantity = equipment.quantity;
+                        equip.equipLeadTime = equipment.equipLeadTime;
+                        equip.status = equipment.status;
+                        equip.catAutoId = equipment.catAutoId;
+                        equip.groupAutoId = equipment.groupAutoId;
+                        equip.companyId = claimresponse.companyId;
+
+                        _context.equipments.Add(equip);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Equipment equip = new Equipment();
+                        equip.equipAutoId = equipment.equipAutoId;
+                        string comid = "E" + (int.Parse(autoId) + 1);
+                        equip.equipId = comid;
+                        equip.equipName = equipment.equipName;
+                        equip.equipCost = equipment.equipCost;
+                        equip.quantity = equipment.quantity;
+                        equip.equipLeadTime = equipment.equipLeadTime;
+                        equip.status = equipment.status;
+                        equip.catAutoId = equipment.catAutoId;
+                        equip.groupAutoId = equipment.groupAutoId;
+                        equip.companyId = claimresponse.companyId;
+
+                        _context.equipments.Add(equip);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            if (autoId == "")
-            {
-                _context.ChangeTracker.Clear();
-                Equipment equip = new Equipment();
-                equip.equipAutoId = equipment.equipAutoId;
-                string comid = "E1";
-                equip.equipId = comid;
-                equip.equipName = equipment.equipName;
-                equip.equipCost = equipment.equipCost;
-                equip.quantity = equipment.quantity;
-                equip.equipLeadTime = equipment.equipLeadTime;
-                equip.status = equipment.status;
-                equip.catAutoId = equipment.catAutoId;
-                equip.groupAutoId = equipment.groupAutoId;
-                equip.companyId = equipment.companyId;
 
-                _context.equipments.Add(equip);
-                await _context.SaveChangesAsync();
-            }
-
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Equipment equip = new Equipment();
-                equip.equipAutoId = equipment.equipAutoId;
-                string comid = "E" + (int.Parse(autoId) + 1);
-                equip.equipId = comid;
-                equip.equipName = equipment.equipName;
-                equip.equipCost = equipment.equipCost;
-                equip.quantity = equipment.quantity;
-                equip.equipLeadTime = equipment.equipLeadTime;
-                equip.status = equipment.status;
-                equip.catAutoId = equipment.catAutoId;
-                equip.groupAutoId = equipment.groupAutoId;
-                equip.companyId = equipment.companyId;
-
-                _context.equipments.Add(equip);
-                await _context.SaveChangesAsync();
-            }
-
-            return Ok();
         }
 
         // DELETE: api/Equipments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEquipment(int id,string companyId)
+        public async Task<IActionResult> DeleteEquipment(int id)
         {
-            var equipment = await _context.equipments.Where(x => x.equipAutoId == id ).FirstOrDefaultAsync();
-
-            if (equipment == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var equipment = await _context.equipments.Where(x => x.equipAutoId == id).FirstOrDefaultAsync();
+
+                    if (equipment == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.equipments.Remove(equipment);
+                    await _context.SaveChangesAsync();
+
+                    return Ok();
+                }
+                return Unauthorized();
             }
-
-            _context.equipments.Remove(equipment);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool EquipmentExists(string id)

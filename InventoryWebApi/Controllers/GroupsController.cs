@@ -17,7 +17,7 @@ namespace InventoryAPI.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly InventoryDbContext _context;
-        //private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly JwtTokenHandler _JwtTokenHandler;
         private readonly HttpClient _httpClient;
         private readonly ILogger<GroupsController> _logger;
 
@@ -30,60 +30,93 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Groups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> Getgroups(string companyId)
+        public async Task<ActionResult<IEnumerable<Group>>> Getgroups()
         {
             try
             {
-                
-                    return await _context.Inventorygroups.Where(x => x.companyId ==companyId && x.status == "Active").ToListAsync();
-               
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    return await _context.Inventorygroups.Where(x => x.companyId == claimresponse.companyId && x.status == "Active").ToListAsync();
+                }
+
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-           
-        
 
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroup(int id,string companyId)
+        public async Task<ActionResult<Group>> GetGroup(int id)
         {
-            var group = await _context.Inventorygroups.Where(x=>x.groupAutoID ==id && x.companyId==companyId && x.status=="Active").FirstOrDefaultAsync();
-            
-            if (group == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var group = await _context.Inventorygroups.Where(x => x.groupAutoID == id && x.companyId == claimresponse.companyId && x.status == "Active").FirstOrDefaultAsync();
+
+                    if (group == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return group;
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return group;
         }
 
         // PUT: api/Groups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut()]
-        public async Task<IActionResult> PutGroup([FromBody] Group group,int id,string companyId)
+        [HttpPut]
+        public async Task<IActionResult> PutGroup([FromBody] Group group,int id)
         {
-            
-            if (GroupExists(id) && CompanyExists(companyId))
+            try
             {
-                Group g = new Group();
-                g.groupAutoID = group.groupAutoID;
-                g.groupID = group.groupID;
-                g.groupName = group.groupName;
-                g.status = group.status;
-                g.companyId = group.companyId;
-                _context.Entry(g).State = EntityState.Modified;
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-                await _context.SaveChangesAsync();
-                return Ok();
+                    if (GroupExists(id) && CompanyExists(claimresponse.companyId))
+                    {
+                        Group g = new Group();
+                        g.groupAutoID = group.groupAutoID;
+                        g.groupID = group.groupID;
+                        g.groupName = group.groupName;
+                        g.status = group.status;
+                        g.companyId = claimresponse.companyId;
+                        _context.Entry(g).State = EntityState.Modified;
+
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+
+                    return NotFound();
+                }
+                return Unauthorized();
             }
 
-            return NotFound();
-
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         // POST: api/Groups
@@ -91,42 +124,59 @@ namespace InventoryAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Group>> PostGroup(Group @group)
         {
-            var comId = _context.Inventorygroups.Where(g => g.companyId == @group.companyId).Select(g=>g.groupID).ToList();
-
-            var autoId = "";
-            if (comId.Count > 0)
+            try
             {
-                autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
-            }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            if (autoId == "")
+                    var comId = _context.Inventorygroups.Where(g => g.companyId == claimresponse.companyId).Select(g => g.groupID).ToList();
+
+                    var autoId = "";
+                    if (comId.Count > 0)
+                    {
+                        autoId = comId.Max(x => int.Parse(x.Substring(1))).ToString();
+                    }
+
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Group g = new Group();
+                        string comid = "G1";
+                        g.groupID = comid;
+                        g.groupName = group.groupName;
+                        g.status = group.status;
+                        g.companyId = claimresponse.companyId;
+                        _context.Inventorygroups.Add(g);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Group g = new Group();
+                        string comid = "G" + (int.Parse(autoId) + 1);
+                        g.groupID = comid;
+                        g.groupName = group.groupName;
+                        g.status = group.status;
+                        g.companyId = claimresponse.companyId;
+                        _context.Inventorygroups.Add(g);
+                        await _context.SaveChangesAsync();
+
+                    }
+
+                    return Ok();
+                }
+
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
             {
-                _context.ChangeTracker.Clear();
-                Group g = new Group();
-                string comid = "G1";
-                g.groupID = comid;
-                g.groupName = group.groupName;
-                g.status = group.status;
-                g.companyId = group.companyId;
-                _context.Inventorygroups.Add(g);
-                await _context.SaveChangesAsync();
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Group g = new Group();
-                string comid = "G"+ (int.Parse(autoId)+1);
-                g.groupID = comid;
-                g.groupName = group.groupName;
-                g.status = group.status;
-                g.companyId = group.companyId;
-                _context.Inventorygroups.Add(g);
-                await _context.SaveChangesAsync();
-
-            }
-
-            return Ok();
         }
 
 
@@ -135,18 +185,33 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGroup(int id, string companyId)
+        public async Task<IActionResult> DeleteGroup(int id)
         {
-            var @group = await _context.Inventorygroups.Where(x=>x.groupAutoID ==id && x.companyId==companyId).FirstOrDefaultAsync();
-            if (@group == null)
+            try
             {
-                return NotFound();
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var @group = await _context.Inventorygroups.Where(x => x.groupAutoID == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    if (@group == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.Inventorygroups.Remove(@group);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
             }
-
-            _context.Inventorygroups.Remove(@group);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         private bool GroupExists(int id)
