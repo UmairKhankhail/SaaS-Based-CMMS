@@ -23,11 +23,12 @@ namespace InventoryAPI.Controllers
         private readonly ILogger<CategoriesController> _logger;
 
 
-        public CategoriesController(InventoryDbContext context, HttpClient httpClient, ILogger<CategoriesController> logger)
+        public CategoriesController(InventoryDbContext context, HttpClient httpClient, ILogger<CategoriesController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Categories

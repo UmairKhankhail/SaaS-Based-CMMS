@@ -24,11 +24,12 @@ namespace InventoryAPI.Controllers
         private readonly HttpClient _httpClient;
         private readonly ILogger<IssuencesController> _logger;
 
-        public IssuencesController(InventoryDbContext context, HttpClient httpClient, ILogger<IssuencesController> logger)
+        public IssuencesController(InventoryDbContext context, HttpClient httpClient, ILogger<IssuencesController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Issuences

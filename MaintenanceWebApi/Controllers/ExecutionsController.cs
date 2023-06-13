@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using System.Net.Http;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -20,10 +21,17 @@ namespace MaintenanceWebApi.Controllers
     public class ExecutionsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<ExecutionsController> _logger;
 
-        public ExecutionsController(MaintenanceDbContext context)
+        public ExecutionsController(MaintenanceDbContext context, HttpClient httpClient, ILogger<ExecutionsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
+            _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
+            _httpClient = httpClient;
+
         }
 
         // GET: api/Executions
@@ -170,14 +178,8 @@ namespace MaintenanceWebApi.Controllers
             }
 
                     return Ok();
-                }
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+                
+            
         }
 
         // DELETE: api/Executions/5

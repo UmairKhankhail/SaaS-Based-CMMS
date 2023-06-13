@@ -24,10 +24,17 @@ namespace MaintenanceWebApi.Controllers
     public class EvaluationsController : ControllerBase
     {
         private readonly MaintenanceDbContext _context;
-
-        public EvaluationsController(MaintenanceDbContext context)
+        private readonly JwtTokenHandler _JwtTokenHandler;
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<EvaluationsController> _logger;
+        public EvaluationsController(MaintenanceDbContext context, HttpClient httpClient, ILogger<EvaluationsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
+            _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
+            _httpClient=httpClient;
+
+
         }
 
         // GET: api/Evaluations
@@ -175,15 +182,10 @@ namespace MaintenanceWebApi.Controllers
             }
 
                     return Ok();
-                }
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-
+                
+               
+            
+            
         }
 
 

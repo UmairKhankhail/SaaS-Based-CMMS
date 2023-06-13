@@ -1,0 +1,43 @@
+version: '3.4'
+
+networks:
+  backend:
+
+services:
+
+
+  accountsdb:
+    container_name: Accounts-Database
+    image: mysql:8.0.33-oracle
+    environment:
+     - MYSQL_ROOT_PASSWORD=cmms2022
+    ports:
+     - 8008:3306
+    networks:
+      - backend
+
+  accountswebapi:
+    container_name: Accounts-Microservice
+    image: ${DOCKER_REGISTRY-}accountswebapi
+    build:
+      context: .
+      dockerfile: AccountsWebApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=accountsdb
+      - DB_NAME=accounts
+      - DB_ROOT_PASSWORD=cmms2022
+
+
+  apigateway:
+    container_name: api-gateway
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8007:80
+

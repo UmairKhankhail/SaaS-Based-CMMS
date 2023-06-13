@@ -21,11 +21,12 @@ namespace InventoryAPI.Controllers
         private readonly HttpClient _httpClient;
         private readonly ILogger<GroupsController> _logger;
 
-        public GroupsController(InventoryDbContext context, HttpClient httpClient, ILogger<GroupsController> logger)
+        public GroupsController(InventoryDbContext context, HttpClient httpClient, ILogger<GroupsController> logger, JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Groups

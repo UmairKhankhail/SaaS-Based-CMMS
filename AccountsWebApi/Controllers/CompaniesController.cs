@@ -54,21 +54,21 @@ namespace AccountsWebApi.Controllers
         }
 
 
-        [HttpGet("com")]
-        public async Task<ActionResult<IEnumerable<Company>>> GetCaheData()
-        {
-            //var newcache = _cacheService.RemoveData("1");
+        //[HttpGet("com")]
+        //public async Task<ActionResult<IEnumerable<Company>>> GetCaheData()
+        //{
+        //    //var newcache = _cacheService.RemoveData("1");
             
-            var newCache = _cacheService.GetData<IEnumerable<string>>("1");
-            var newCache1 = _cacheService.GetData<string>("1Param");
-            //if (cacheData != null && cacheData.Count()>0)
-            //    return Ok(cacheData);
-            //cacheData= await _context.companies.ToListAsync();
+        //    var newCache = _cacheService.GetData<IEnumerable<string>>("1");
+        //    var newCache1 = _cacheService.GetData<string>("1Param");
+        //    //if (cacheData != null && cacheData.Count()>0)
+        //    //    return Ok(cacheData);
+        //    //cacheData= await _context.companies.ToListAsync();
 
-            //var expiryTime = DateTimeOffset.Now.AddSeconds(30);
-            //_cacheService.SetData<IEnumerable<Company>>("com", cacheData, expiryTime);
-            return Ok(newCache);
-        }
+        //    //var expiryTime = DateTimeOffset.Now.AddSeconds(30);
+        //    //_cacheService.SetData<IEnumerable<Company>>("com", cacheData, expiryTime);
+        //    return Ok(newCache);
+        //}
 
         //[HttpPost("adddrivers")]
         //public async Task<ActionResult> PostCache()
@@ -76,7 +76,7 @@ namespace AccountsWebApi.Controllers
         //    var addedObject=
         //}
             // GET: api/Companies/5
-            [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Company>> GetCompany(string id)
         {
             try
@@ -113,6 +113,7 @@ namespace AccountsWebApi.Controllers
 
 
                 await _context.SaveChangesAsync();
+                return Ok();
             }
 
             catch (Exception ex)
@@ -121,7 +122,7 @@ namespace AccountsWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return NoContent();
+            
         }
 
         // POST: api/Companies
@@ -178,7 +179,7 @@ namespace AccountsWebApi.Controllers
                     //return Ok(c);
                 }
 
-                return await _context.companies.ToListAsync();
+                return Ok();
             }
             catch(Exception ex)
             {
@@ -202,7 +203,7 @@ namespace AccountsWebApi.Controllers
                 _context.companies.Remove(company);
                 await _context.SaveChangesAsync();
 
-                return NoContent();
+                return Ok();
             }
             catch(Exception ex)
             {

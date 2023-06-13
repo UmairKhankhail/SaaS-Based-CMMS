@@ -10,7 +10,19 @@ namespace AccountsWebApi.Models
     {
         public UserDbContext(DbContextOptions options) : base(options)
         {
-            
+            try
+            {
+                var dbcreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+                if (dbcreator != null)
+                {
+                    if (!dbcreator.CanConnect()) dbcreator.Create();
+                    if (!dbcreator.HasTables()) dbcreator.CreateTables();
+                }
+            }
+            catch (Exception er)
+            {
+                Console.WriteLine(er.Message);
+            }
         }
         public DbSet<Department> departments { get; set; }
         public DbSet<SubDepartment> subDepartments { get; set; }

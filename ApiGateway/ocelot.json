@@ -1,0 +1,34 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/Companies",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Companies"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Companies/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete", "Put" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Companies/{id}"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:800"
+  }
+
+}

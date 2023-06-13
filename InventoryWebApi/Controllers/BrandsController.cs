@@ -22,11 +22,12 @@ namespace InventoryAPI.Controllers
         private readonly ILogger<BrandsController> _logger;
 
 
-        public BrandsController(InventoryDbContext context, HttpClient httpClient, ILogger<BrandsController> logger)
+        public BrandsController(InventoryDbContext context, HttpClient httpClient, ILogger<BrandsController> logger , JwtTokenHandler jwtTokenHandler)
         {
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
+            _JwtTokenHandler = jwtTokenHandler;
         }
 
         // GET: api/Brands
