@@ -104,7 +104,7 @@ namespace AccountsWebApi.Controllers
 
         // PUT: api/addusers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> PutUser(string id, User user)
         {
@@ -273,7 +273,7 @@ namespace AccountsWebApi.Controllers
         }
 
         // DELETE: api/addusers/5
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteUser(int id)
         {

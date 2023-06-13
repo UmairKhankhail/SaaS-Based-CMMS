@@ -1,5 +1,8 @@
 {
   "Routes": [
+    //AccountsWebApi
+
+    //AccountsController
     {
       "UpstreamPathTemplate": "/api/Companies",
       "UpstreamHttpMethod": [ "Get", "Post" ],
@@ -25,7 +28,218 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Companies/{id}"
+    },
+
+    //AddUsersController
+
+    {
+      "UpstreamPathTemplate": "/api/addusers",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/addusers"
+    },
+    {
+      "UpstreamPathTemplate": "/api/addusers/{id}",
+      "UpstreamHttpMethod": [ "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/addusers/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/addusers/getUser",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/addusers"
+    },
+
+    //DepartmentsController
+
+    {
+      "UpstreamPathTemplate": "/api/Departments",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Departments"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Departments/getDepartment",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Departments"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Departments/{id}",
+      "UpstreamHttpMethod": [ "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Departments/{id}"
+    },
+
+    //EmployeesController
+
+    {
+      "UpstreamPathTemplate": "/api/Employees",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Employees"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Employees/getEmployee",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Employees"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Employees/{id}",
+      "UpstreamHttpMethod": [ "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Employees/{id}"
+    },
+
+    //FaciliteisController
+
+    {
+      "UpstreamPathTemplate": "/api/Facilities",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Facilities"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Facilities/getFacility",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Facilities"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Facilities/{id}",
+      "UpstreamHttpMethod": [ "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Facilities/{id}"
+    },
+
+    //FloorsController
+
+    {
+      "UpstreamPathTemplate": "/api/Floors",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Floors"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Floors/getFloor",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Floors"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Floors/{id}",
+      "UpstreamHttpMethod": [ "Put","Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "accountswebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Floors/{id}"
     }
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:800"
