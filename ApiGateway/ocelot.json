@@ -242,7 +242,7 @@
 
     //Functional Location Controller
     {
-      "UpstreamPathTemplate": "api/Functionallocations",
+      "UpstreamPathTemplate": "/api/Functionallocations",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -252,10 +252,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Functionallocations"
+      "DownstreamPathTemplate": "/api/Functionallocations"
     },
     {
-      "UpstreamPathTemplate": "api/Functionallocations/{id}",
+      "UpstreamPathTemplate": "/api/Functionallocations/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -265,10 +265,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Functionallocations/{id}"
+      "DownstreamPathTemplate": "/api/Functionallocations/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Functionallocations/getFunctionalLocation",
+      "UpstreamPathTemplate": "/api/Functionallocations/getFunctionalLocation",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -278,13 +278,13 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Functionallocations"
+      "DownstreamPathTemplate": "/api/Functionallocations"
     },
 
     //Method Types Controller
 
     {
-      "UpstreamPathTemplate": "api/Methodtypes",
+      "UpstreamPathTemplate": "/api/Methodtypes",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -294,10 +294,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Methodtypes"
+      "DownstreamPathTemplate": "/api/Methodtypes"
     },
     {
-      "UpstreamPathTemplate": "api/Methodtypes/getMethodType",
+      "UpstreamPathTemplate": "/api/Methodtypes/getMethodType",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -307,10 +307,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Methodtypes"
+      "DownstreamPathTemplate": "/api/Methodtypes"
     },
     {
-      "UpstreamPathTemplate": "api/Methodtypes/{id}",
+      "UpstreamPathTemplate": "/api/Methodtypes/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -320,11 +320,11 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Methodtypes/{id}"
+      "DownstreamPathTemplate": "/api/Methodtypes/{id}"
     },
     //Permissions Controller
     {
-      "UpstreamPathTemplate": "api/Permissions",
+      "UpstreamPathTemplate": "/api/Permissions",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -334,10 +334,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Permissions"
+      "DownstreamPathTemplate": "/api/Permissions"
     },
     {
-      "UpstreamPathTemplate": "api/Permissions/{id}",
+      "UpstreamPathTemplate": "/api/Permissions/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -347,10 +347,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Permissions/{id}"
+      "DownstreamPathTemplate": "/api/Permissions/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Permissions/{uId, uAutoId, cId}",
+      "UpstreamPathTemplate": "/api/Permissions/{uId, uAutoId, cId}",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -360,14 +360,14 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Permissions/{uId, uAutoId, cId}"
+      "DownstreamPathTemplate": "/api/Permissions/{uId, uAutoId, cId}"
     },
 
 
     //Positions Controller
 
     {
-      "UpstreamPathTemplate": "api/Positions",
+      "UpstreamPathTemplate": "/api/Positions",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -377,10 +377,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Positions"
+      "DownstreamPathTemplate": "/api/Positions"
     },
     {
-      "UpstreamPathTemplate": "api/Positions/{id}",
+      "UpstreamPathTemplate": "/api/Positions/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -390,10 +390,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Positions/{id}"
+      "DownstreamPathTemplate": "/api/Positions/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Positions/getPosition",
+      "UpstreamPathTemplate": "/api/Positions/getPosition",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -403,12 +403,12 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Positions"
+      "DownstreamPathTemplate": "/api/Positions"
     },
 
     //Priorities Controller
     {
-      "UpstreamPathTemplate": "api/Priorities",
+      "UpstreamPathTemplate": "/api/Priorities",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -418,10 +418,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Priorities"
+      "DownstreamPathTemplate": "/api/Priorities"
     },
     {
-      "UpstreamPathTemplate": "api/Priorities/{id}",
+      "UpstreamPathTemplate": "/api/Priorities/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -431,10 +431,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Priorities/{id}"
+      "DownstreamPathTemplate": "/api/Priorities/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Priorities/getPriority",
+      "UpstreamPathTemplate": "/api/Priorities/getPriority",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -444,12 +444,12 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Priorities"
+      "DownstreamPathTemplate": "/api/Priorities"
     },
     //Profiles Controller
 
     {
-      "UpstreamPathTemplate": "api/Profiles",
+      "UpstreamPathTemplate": "/api/Profiles",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -459,10 +459,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Profiles"
+      "DownstreamPathTemplate": "/api/Profiles"
     },
     {
-      "UpstreamPathTemplate": "api/Profiles/{id}",
+      "UpstreamPathTemplate": "/api/Profiles/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -472,10 +472,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Profiles/{id}"
+      "DownstreamPathTemplate": "/api/Profiles/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Profiles/getProfile",
+      "UpstreamPathTemplate": "/api/Profiles/getProfile",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -485,12 +485,12 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Profiles"
+      "DownstreamPathTemplate": "/api/Profiles"
     },
     //Roles Controller
 
     {
-      "UpstreamPathTemplate": "api/Roles",
+      "UpstreamPathTemplate": "/api/Roles",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -500,10 +500,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Roles"
+      "DownstreamPathTemplate": "/api/Roles"
     },
     {
-      "UpstreamPathTemplate": "api/Roles/{id}",
+      "UpstreamPathTemplate": "/api/Roles/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -513,10 +513,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Roles/{id}"
+      "DownstreamPathTemplate": "/api/Roles/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Roles/getRole",
+      "UpstreamPathTemplate": "/api/Roles/getRole",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -526,11 +526,11 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Roles"
+      "DownstreamPathTemplate": "/api/Roles"
     },
     //Sub Department Controller
     {
-      "UpstreamPathTemplate": "api/SubDepartments",
+      "UpstreamPathTemplate": "/api/SubDepartments",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -540,10 +540,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/SubDepartments"
+      "DownstreamPathTemplate": "/api/SubDepartments"
     },
     {
-      "UpstreamPathTemplate": "api/SubDepartments/{id}",
+      "UpstreamPathTemplate": "/api/SubDepartments/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -553,10 +553,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/SubDepartments/{id}"
+      "DownstreamPathTemplate": "/api/SubDepartments/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/SubDepartments/getSubDepartment",
+      "UpstreamPathTemplate": "/api/SubDepartments/getSubDepartment",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -566,13 +566,13 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/SubDepartments"
+      "DownstreamPathTemplate": "/api/SubDepartments"
     },
 
     //Tools Controller
 
     {
-      "UpstreamPathTemplate": "api/Tools",
+      "UpstreamPathTemplate": "/api/Tools",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -582,10 +582,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Tools"
+      "DownstreamPathTemplate": "/api/Tools"
     },
     {
-      "UpstreamPathTemplate": "api/Tools/{id}",
+      "UpstreamPathTemplate": "/api/Tools/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -595,10 +595,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Tools/{id}"
+      "DownstreamPathTemplate": "/api/Tools/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Tools/getTool",
+      "UpstreamPathTemplate": "/api/Tools/getTool",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -608,13 +608,13 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Tools"
+      "DownstreamPathTemplate": "/api/Tools"
     },
 
     //Types of Maintenance Controller
 
     {
-      "UpstreamPathTemplate": "api/Typeofmaintenances",
+      "UpstreamPathTemplate": "/api/Typeofmaintenances",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -624,10 +624,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Typeofmaintenances"
+      "DownstreamPathTemplate": "/api/Typeofmaintenances"
     },
     {
-      "UpstreamPathTemplate": "api/Typeofmaintenances/{id}",
+      "UpstreamPathTemplate": "/api/Typeofmaintenances/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -637,10 +637,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Typeofmaintenances/{id}"
+      "DownstreamPathTemplate": "/api/Typeofmaintenances/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Typeofmaintenances/getTypeOfMaintenance",
+      "UpstreamPathTemplate": "/api/Typeofmaintenances/getTypeOfMaintenance",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -650,12 +650,12 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Typeofmaintenances"
+      "DownstreamPathTemplate": "/api/Typeofmaintenances"
     },
 
     //Types of Problem Controller
     {
-      "UpstreamPathTemplate": "api/Typesofproblems",
+      "UpstreamPathTemplate": "/api/Typesofproblems",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -665,10 +665,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Typesofproblems"
+      "DownstreamPathTemplate": "/api/Typesofproblems"
     },
     {
-      "UpstreamPathTemplate": "api/Typesofproblems/{id}",
+      "UpstreamPathTemplate": "/api/Typesofproblems/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -678,10 +678,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Typesofproblems/{id}"
+      "DownstreamPathTemplate": "/api/Typesofproblems/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Typesofproblems/getTypeOfProblem",
+      "UpstreamPathTemplate": "/api/Typesofproblems/getTypeOfProblem",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -691,12 +691,12 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Typesofproblems"
+      "DownstreamPathTemplate": "/api/Typesofproblems"
     },
 
     //Users / Login / Logout Controller
     {
-      "UpstreamPathTemplate": "api/Users",
+      "UpstreamPathTemplate": "/api/Users",
       "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
@@ -706,10 +706,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Users"
+      "DownstreamPathTemplate": "/api/Users"
     },
     {
-      "UpstreamPathTemplate": "api/Users/{id}",
+      "UpstreamPathTemplate": "/api/Users/{id}",
       "UpstreamHttpMethod": [ "Put", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -719,10 +719,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Users/{id}"
+      "DownstreamPathTemplate": "/api/Users/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/Users/logout",
+      "UpstreamPathTemplate": "/api/Users/logout",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -732,7 +732,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/Users"
+      "DownstreamPathTemplate": "/api/Users"
     }
 
 
