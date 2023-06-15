@@ -136,6 +136,7 @@ namespace AccountsWebApi.Controllers
                         m.topId = comid;
                         m.topName = typesOfProblem.topName;
                         m.companyId = claimresponse.companyId;
+                        m.description=typesOfProblem.description;
                         m.status = typesOfProblem.status;
                         _context.typesOfProblems.Add(m);
                         await _context.SaveChangesAsync();
@@ -149,6 +150,7 @@ namespace AccountsWebApi.Controllers
                         m.topId = comid;
                         m.topName = typesOfProblem.topName;
                         m.companyId = claimresponse.companyId;
+                        m.description = typesOfProblem.description;
                         m.status = typesOfProblem.status;
                         _context.typesOfProblems.Add(m);
                         await _context.SaveChangesAsync();

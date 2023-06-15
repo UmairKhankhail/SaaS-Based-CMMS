@@ -117,8 +117,7 @@ namespace AccountsWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    if (FloorExists(floor.floorAutoId))
-                    {
+                    
                         var facilityFloors = _context.floors.Where(d => d.companyId == claimresponse.companyId).Select(f => f.floorId).ToList();
                         List<string> floorList = new List<string>();
                         List<int> floorNoList = new List<int>();
@@ -163,8 +162,7 @@ namespace AccountsWebApi.Controllers
                             await _context.SaveChangesAsync();
                         }
                         return Ok();
-                    }
-                    return NotFound();
+                    
                 }
                 return Unauthorized();
             }
