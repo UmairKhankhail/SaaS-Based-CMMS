@@ -98,7 +98,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Departments"
+      "DownstreamPathTemplate": "/api/Departments/getDepartment"
     },
     {
       "UpstreamPathTemplate": "/api/Departments/{id}",
@@ -140,7 +140,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Employees"
+      "DownstreamPathTemplate": "/api/Employees/getEmployee"
     },
     {
       "UpstreamPathTemplate": "/api/Employees/{id}",
@@ -278,7 +278,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Functionallocations"
+      "DownstreamPathTemplate": "/api/Functionallocations/getFunctionalLocation"
     },
 
     //Method Types Controller
@@ -307,7 +307,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Methodtypes"
+      "DownstreamPathTemplate": "/api/Methodtypes/getMethodType"
     },
     {
       "UpstreamPathTemplate": "/api/Methodtypes/{id}",
