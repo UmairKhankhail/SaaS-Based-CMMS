@@ -8,9 +8,61 @@ public class CacheService : ICacheService
 
     public CacheService()
     {
-        var redis = ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false");
-        _cacheDb = redis.GetDatabase();
+        //var redis = ConnectionMultiplexer.Connect("localhost:6379,abortConnect=false");
+        //_cacheDb = redis.GetDatabase();
+
+        try
+        {
+            var redis = ConnectionMultiplexer.Connect("redis:6379");
+            _cacheDb = redis.GetDatabase();
+        }
+        catch (RedisConnectionException ex)
+        {
+            // Handle connection exception
+            Console.WriteLine("Failed to connect to Redis: " + ex.Message);
+            // Perform appropriate error handling, such as logging or retry logic
+            throw; // Rethrow the exception to indicate a failure in connecting to Redis
+        }
     }
+        //public CacheService()
+        //{
+        //    try
+        //    {
+        //        var options = ConfigurationOptions.Parse("localhost:6379,abortConnect=false");
+        //        var redis = ConnectionMultiplexer.Connect(options);
+        //        _cacheDb = redis.GetDatabase();
+        //    }
+        //    catch (RedisConnectionException ex)
+        //    {
+        //        // Handle connection exception
+        //        Console.WriteLine("Failed to connect to Redis: " + ex.Message);
+        //        // Perform appropriate error handling, such as logging or retry logic
+        //        throw; // Rethrow the exception to indicate a failure in connecting to Redis
+        //    }
+        //}
+
+    //    public CacheService()
+    //{
+    //    try
+    //    {
+    //        var options = ConfigurationOptions.Parse("localhost:6379,abortConnect=false");
+    //        options.ConnectTimeout = 5000; // Set the connection timeout to 5000ms
+    //        var redis = ConnectionMultiplexer.Connect(options);
+    //        _cacheDb = redis.GetDatabase();
+    //        _cacheDb.Ping(); // Test the connection to ensure it is successful
+    //    }
+    //    catch (RedisConnectionException ex)
+    //    {
+    //        // Handle connection exception
+    //        Console.WriteLine("Failed to connect to Redis: " + ex.Message);
+    //        // Perform appropriate error handling, such as logging or retry logic
+    //        throw; // Rethrow the exception to indicate a failure in connecting to Redis
+    //    }
+    //}
+
+
+
+    //}
 
     public T GetData<T>(string key)
     {
@@ -23,11 +75,13 @@ public class CacheService : ICacheService
 
     public bool Checkkey(string key)
     {
-        if(_cacheDb.KeyExists(key))
-        {
-            return true;
-        }
-        return false;
+        
+            if (_cacheDb.KeyExists(key))
+            {
+                return true;
+            }
+            return false;
+        
     }
 
     public object RemoveData(string key)

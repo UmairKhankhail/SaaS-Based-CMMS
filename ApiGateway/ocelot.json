@@ -2,7 +2,7 @@
   "Routes": [
     //AccountsWebApi
 
-    //AccountsController
+    //Companies Controller
     {
       "UpstreamPathTemplate": "/api/Companies",
       "UpstreamHttpMethod": [ "Get", "Post" ],

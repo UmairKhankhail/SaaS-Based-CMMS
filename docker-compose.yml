@@ -4,7 +4,13 @@ networks:
   backend:
 
 services:
-
+  redis:
+    container_name: Redis
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - backend
 
   accountsdb:
     container_name: Accounts-Database
