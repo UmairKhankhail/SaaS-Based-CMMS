@@ -69,7 +69,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/addusers"
+      "DownstreamPathTemplate": "/api/addusers/getUser"
     },
 
     //DepartmentsController
@@ -182,7 +182,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Facilities"
+      "DownstreamPathTemplate": "/api/Facilities/getFacility"
     },
     {
       "UpstreamPathTemplate": "/api/Facilities/{id}",
@@ -224,7 +224,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Floors"
+      "DownstreamPathTemplate": "/api/Floors/getFloor"
     },
     {
       "UpstreamPathTemplate": "/api/Floors/{id}",
@@ -403,7 +403,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Positions"
+      "DownstreamPathTemplate": "/api/Positions/getPosition"
     },
 
     //Priorities Controller
@@ -444,7 +444,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Priorities"
+      "DownstreamPathTemplate": "/api/Priorities/getPriority"
     },
     //Profiles Controller
 
@@ -485,7 +485,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Profiles"
+      "DownstreamPathTemplate": "/api/Profiles/getProfile"
     },
     //Roles Controller
 
@@ -526,7 +526,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Roles"
+      "DownstreamPathTemplate": "/api/Roles/getRole"
     },
     //Sub Department Controller
     {
@@ -566,7 +566,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/SubDepartments"
+      "DownstreamPathTemplate": "/api/SubDepartments/getSubDepartment"
     },
 
     //Tools Controller
@@ -650,7 +650,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Typeofmaintenances"
+      "DownstreamPathTemplate": "/api/Typeofmaintenances/getTypeOfMaintenance"
     },
 
     //Types of Problem Controller
@@ -691,7 +691,7 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Typesofproblems"
+      "DownstreamPathTemplate": "/api/Typesofproblems/getTypeOfProblem"
     },
 
     //Users / Login / Logout Controller
