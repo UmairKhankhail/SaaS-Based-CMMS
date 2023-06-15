@@ -168,6 +168,9 @@ namespace AccountsWebApi.Controllers
                     c.companyId = comId;
                     companyIdGlobal = comId;
                     c.companyName = company.companyName;
+                    if (EmailExists(company.companyEmail)) {
+                        return Unauthorized();
+                    }
                     c.companyEmail = company.companyEmail;
                     c.companyPhone = company.companyPhone;
                     c.userFirstName = company.userFirstName;
@@ -215,6 +218,11 @@ namespace AccountsWebApi.Controllers
         private bool CompanyExists(string id)
         {
             return _context.companies.Any(e => e.companyId == id);
+        }
+
+        private bool EmailExists(string email)
+        {
+            return _context.companies.Any(e => e.companyEmail == email);
         }
     }
 }

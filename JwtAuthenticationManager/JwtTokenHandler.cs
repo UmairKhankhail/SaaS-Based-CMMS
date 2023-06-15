@@ -27,7 +27,7 @@ namespace JwtAuthenticationManager
     public class JwtTokenHandler
     {
         public const string JWT_SECRET_KEY = "KDSJFVHAFGASFVASJFVSADFHBAKBJSDJBFXD";
-        private const int JWT_TOKEN_VALIDITY_MINS = 3;
+        private const int JWT_TOKEN_VALIDITY_MINS = 10;
         private readonly ICacheService _cacheService;
         private readonly HttpClient _httpClient;
         //private readonly List<UserAccounts> useraccountlist;
