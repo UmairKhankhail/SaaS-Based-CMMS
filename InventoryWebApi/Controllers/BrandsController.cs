@@ -73,7 +73,7 @@ namespace InventoryAPI.Controllers
                     {
                         return NotFound();
                     }
-                    return Ok();
+                    return Ok(brand);
 
                 }
                 return Unauthorized();
@@ -88,7 +88,7 @@ namespace InventoryAPI.Controllers
 
         // PUT: api/Brands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutBrand(int id, Brand brand)
         {
             try

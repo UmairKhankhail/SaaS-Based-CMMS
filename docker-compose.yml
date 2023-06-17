@@ -22,6 +22,16 @@ services:
     networks:
       - backend
 
+  inventoriesdb:
+    container_name: Inventories-Database
+    image: mysql:8.0.33-oracle
+    environment:
+     - MYSQL_ROOT_PASSWORD=cmms2022
+    ports:
+     - 8009:3306
+    networks:
+      - backend
+
   accountswebapi:
     container_name: Accounts-Microservice
     image: ${DOCKER_REGISTRY-}accountswebapi
@@ -36,6 +46,21 @@ services:
       - DB_ROOT_PASSWORD=cmms2022
 
 
+
+  inventorywebapi:
+    container_name: Inventory-Microservice
+    image: ${DOCKER_REGISTRY-}inventorywebapi
+    build:
+      context: .
+      dockerfile: InventoryWebApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=inventoriesdb
+      - DB_NAME=inventories
+      - DB_ROOT_PASSWORD=cmms2022
+
+
   apigateway:
     container_name: api-gateway
     image: ${DOCKER_REGISTRY-}apigateway
@@ -46,4 +71,3 @@ services:
       - backend
     ports:
       - 8007:80
-

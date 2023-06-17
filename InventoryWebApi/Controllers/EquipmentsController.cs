@@ -107,7 +107,7 @@ namespace InventoryAPI.Controllers
 
         // PUT: api/Equipments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutEquipment(string id,Equipment equipment)
         {
             try

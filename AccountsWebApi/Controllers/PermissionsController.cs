@@ -144,16 +144,16 @@ namespace AccountsWebApi.Controllers
             //}
 
             ////// Call the Inventory API to retrieve its controller and methods
-            //var apiUrlEquipments = "http://localhost:5269/api/Equipments/GetControllersAndMethods";
-            //var clientEquipments = new HttpClient();
-            //var responseEquipments = await clientEquipments.GetAsync(apiUrlEquipments);
+            var apiUrlEquipments = "http://localhost:8007/api/Equipments/GetControllersAndMethods";
+            var clientEquipments = new HttpClient();
+            var responseEquipments = await clientEquipments.GetAsync(apiUrlEquipments);
 
-            //if (responseEquipments.IsSuccessStatusCode)
-            //{
-            //    var apiContentEquipments = await responseEquipments.Content.ReadAsStringAsync();
-            //    var otherApiMethodsEquipments = JsonConvert.DeserializeObject<List<string>>(apiContentEquipments);
-            //    methods.AddRange(otherApiMethodsEquipments);
-            //}
+            if (responseEquipments.IsSuccessStatusCode)
+            {
+                var apiContentEquipments = await responseEquipments.Content.ReadAsStringAsync();
+                var otherApiMethodsEquipments = JsonConvert.DeserializeObject<List<string>>(apiContentEquipments);
+                methods.AddRange(otherApiMethodsEquipments);
+            }
 
 
             //// Call the WO API to retrieve its controller and methods

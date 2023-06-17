@@ -43,7 +43,22 @@ namespace InventoryAPI.Controllers
                 if (claimresponse.isAuth == true)
                 {
 
-                    return await _context.purchases.Where(x => x.companyId ==claimresponse.companyId && x.status == "Active").ToListAsync();
+                    var getPurchaseRequests = await _context.purchases
+                                       .Join(_context.purchaseandEquipment, i => i.purchaseAutoId, ie => ie.purchaseAutoId, (i, ie) => new { i, ie })
+                                       .Where(x => x.ie.companyId == claimresponse.companyId && x.i.companyId == claimresponse.companyId)
+                                       .Select(result => new
+                                       {
+                                           result.i.purchaseAutoId,
+                                           result.i.purchaseId,
+                                           result.i.status,
+                                           result.i.companyId,
+                                           result.ie.equipAutoId,
+                                           result.ie.equipName,
+                                           result.ie.quantity,
+                                           result.i.purchasesDescp,
+                                       }
+                                       ).ToListAsync();
+                    return Ok(getPurchaseRequests);
                 }
 
                 return Unauthorized();
@@ -57,7 +72,7 @@ namespace InventoryAPI.Controllers
         }
 
         // GET: api/Purchases/5
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Purchase>> GetPurchase(int id)
         {
             try
@@ -77,6 +92,8 @@ namespace InventoryAPI.Controllers
                         result.i.status,
                         result.i.companyId,
                         result.ie.equipAutoId,
+                        result.ie.equipName,
+                        result.ie.quantity,
                         result.i.purchasesDescp,
                     }
                     ).ToListAsync();
@@ -94,7 +111,7 @@ namespace InventoryAPI.Controllers
 
         // PUT: api/Purchases/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutPurchase(Purchase purchase)
         {
             try

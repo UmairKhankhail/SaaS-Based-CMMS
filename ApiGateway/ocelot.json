@@ -733,8 +733,217 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Users/logout"
-    }
+    },
 
+    //Inventory Web API
+
+    //Brands Controller
+
+    {
+      "UpstreamPathTemplate": "/api/Brands",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Brands"
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Brands/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Brands/{id}"
+    },
+
+    //Categories Controller
+
+    {
+      "UpstreamPathTemplate": "/api/Categories",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Categories"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Categories/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Categories/{id}"
+    },
+
+    //Equipments Controller
+
+    {
+      "UpstreamPathTemplate": "/api/Equipments",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Equipments"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Equipments/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Equipments/{id}"
+    },
+
+    //Groups Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/Groups",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Groups"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Groups/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Groups/{id}"
+    },
+
+    //Issuences Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/Issuences",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Issuences"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Issuences/{id}",
+      "UpstreamHttpMethod": [ "Get","Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Issuences/{id}"
+    },
+
+    //Purchases Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/Purchases",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Purchases"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Purchases/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Purchases/{id}"
+    },
+
+    // Unit Of Measurement Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/UnitOfMeasurements",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UnitOfMeasurements"
+    },
+    {
+      "UpstreamPathTemplate": "/api/UnitOfMeasurements/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/UnitOfMeasurements/{id}"
+    }
 
   ],
   "GlobalConfiguration": {

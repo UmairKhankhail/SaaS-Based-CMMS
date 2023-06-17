@@ -34,37 +34,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Issuences
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Issuence>>> Getissuences()
-        {
-            try
-            {
-                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
-                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
-                if (claimresponse.isAuth == true)
-                {
-
-                    var result = await _context.issuences.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
-                    if (result == null)
-                    {
-                        return Unauthorized();
-                    }
-
-                    return result;
-                }
-                return Unauthorized() ;
-            }
-            
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-
-        }
-
-        // GET: api/Issuences/5
-        [HttpGet("id")]
-        public async Task<ActionResult<Issuence>> GetIssuence(int issueId)
+        public async Task<ActionResult<Issuence>> GetIssuences()
         {
             try
             {
@@ -75,7 +45,55 @@ namespace InventoryAPI.Controllers
 
                     var getIssuenceRequests = await _context.issuences
                     .Join(_context.issuenceandEquipment, i => i.issuenceAutoId, ie => ie.issuenceAutoId, (i, ie) => new { i, ie })
-                    .Where(x => x.ie.companyId == claimresponse.companyId && x.i.companyId == claimresponse.companyId && x.i.issuenceAutoId == issueId)
+                    .Where(x => x.i.companyId == claimresponse.companyId && x.ie.companyId == claimresponse.companyId)
+                     .Select(result => new
+                     {
+                         result.i.issuenceAutoId,
+                         result.i.issuenceId,
+                         result.i.companyId,
+                         result.ie.equipAutoId,
+                         result.i.issuenceDescp,
+                         result.ie.equipName,
+                         result.ie.quantity,
+                         result.i.status
+
+
+                     }
+                     ).ToListAsync();
+
+                    return Ok(getIssuenceRequests);
+
+                }
+
+                else
+                {
+                    return Unauthorized(); 
+                }
+            }
+
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
+        // GET: api/Issuences/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Issuence>> GetIssuence(int id)
+        {
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var getIssuenceRequests = await _context.issuences
+                    .Join(_context.issuenceandEquipment, i => i.issuenceAutoId, ie => ie.issuenceAutoId, (i, ie) => new { i, ie })
+                    .Where(x => x.ie.companyId == claimresponse.companyId && x.i.companyId == claimresponse.companyId && x.i.issuenceAutoId == id)
                     .Select(result => new
                     {
                         result.i.issuenceAutoId,
@@ -83,6 +101,11 @@ namespace InventoryAPI.Controllers
                         result.i.companyId,
                         result.ie.equipAutoId,
                         result.i.issuenceDescp,
+                        result.ie.equipName,
+                        result.ie.quantity,
+                        result.i.status
+
+
                     }
                     ).ToListAsync();
 
@@ -236,7 +259,7 @@ namespace InventoryAPI.Controllers
         }
 
         //// PUT: api/Issuences
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutIssuence(Issuence issuence)
         {
             try
