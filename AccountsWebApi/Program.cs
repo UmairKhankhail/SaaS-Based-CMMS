@@ -19,6 +19,9 @@ builder.Services.AddCustomAuthentication();
 var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
 var dbName = Environment.GetEnvironmentVariable("DB_NAME");
 var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");
+//var dbHost = "127.0.0.1";
+//var dbName = "accountstestdb";
+//var dbPassword = "Mysql123$";
 string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}; user=root; password={dbPassword};";
     //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
     //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));
@@ -35,6 +38,17 @@ builder.Services.AddCors(options =>
         .AllowCredentials();
     });
 });
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(builder =>
+//    {
+//        builder.AllowAnyOrigin()
+//               .AllowAnyHeader()
+//               .AllowAnyMethod()
+//               .AllowCredentials();
+//    });
+//});
+
 
 //builder.Services.AddSingleton<RedisCachingService>();
 builder.Services.AddSingleton<ICacheService,CacheService>();
@@ -90,6 +104,7 @@ if (app.Environment.IsDevelopment())
 
 }
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

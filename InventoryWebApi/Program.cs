@@ -23,6 +23,18 @@ string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}
 string? connectionString = connectionStringInitial.ToString();
 builder.Services.AddDbContext<InventoryDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+        .AllowCredentials();
+    });
+});
+
 //builder.Services.AddSingleton<RedisCachingService>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
 
@@ -75,7 +87,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -12,23 +12,15 @@ services:
     networks:
       - backend
 
+ 
+
   accountsdb:
     container_name: Accounts-Database
     image: mysql:8.0.33-oracle
     environment:
      - MYSQL_ROOT_PASSWORD=cmms2022
     ports:
-     - 8008:3306
-    networks:
-      - backend
-
-  inventoriesdb:
-    container_name: Inventories-Database
-    image: mysql:8.0.33-oracle
-    environment:
-     - MYSQL_ROOT_PASSWORD=cmms2022
-    ports:
-     - 8009:3306
+     - 8012:3306
     networks:
       - backend
 
@@ -46,6 +38,15 @@ services:
       - DB_ROOT_PASSWORD=cmms2022
 
 
+  inventoriesdb:
+    container_name: Inventories-Database
+    image: mysql:8.0.33-oracle
+    environment:
+     - MYSQL_ROOT_PASSWORD=cmms2022
+    ports:
+     - 8011:3306
+    networks:
+      - backend
 
   inventorywebapi:
     container_name: Inventory-Microservice

@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\AccountsWebApi\AccountsWebApi.csproj" />
+		
 		<ProjectReference Include="..\JwtAuthenticationManager\JwtAuthenticationManager.csproj" />
 		<ProjectReference Include="..\RedisCachingService\RedisCachingService.csproj" />
 	</ItemGroup>

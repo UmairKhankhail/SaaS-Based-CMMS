@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
-using AccountsWebApi.Models;
 using StackExchange.Redis;
 using System.ComponentModel.Design;
 using InventoryWebApi.Models;
