@@ -14,9 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<JwtTokenHandler>();
 builder.Services.AddCustomAuthentication();
 
-var dbHost = "127.0.0.1";
-var dbName = "maintenancetestdb";
-var dbPassword = "Mysql123$";
+
+var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");
 string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}; user=root; password={dbPassword};";
 //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
 //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));

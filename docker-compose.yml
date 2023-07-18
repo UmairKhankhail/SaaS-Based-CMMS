@@ -96,4 +96,27 @@ services:
       - DB_NAME=assets
       - DB_ROOT_PASSWORD=cmms2022
     
+  
+  maintenancedb:
+     container_name: Maintenance-Database
+     image: mysql:8.0.33-oracle
+     environment:
+      - MYSQL_ROOT_PASSWORD=cmms2022
+     ports:
+      - 8014:3306
+     networks:
+      - backend
+
+  maintenancewebapi:
+    container_name: Maintenance-Microservice
+    image: ${DOCKER_REGISTRY-}maintenancewebapi
+    build:
+      context: .
+      dockerfile: MaintenanceWebApi/Dockerfile
+    networks:
+        - backend
+    environment:
+     - DB_HOST=maintenancedb
+     - DB_NAME=maintenance
+     - DB_ROOT_PASSWORD=cmms2022
 

@@ -86,6 +86,8 @@ namespace MaintenanceWebApi.Controllers
                 var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
+                    Console.WriteLine(id);
+                 
                 {
                     if (workRequest.wrAutoId == id && workRequest.companyId == claimresponse.companyId)
                     {

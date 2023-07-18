@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using System.Net.Http.Headers;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -159,8 +160,12 @@ namespace MaintenanceWebApi.Controllers
                         items.woAutoId = wOItems.woAutoId;
                         items.itemName = wOItems.itemName;
 
+                        var url = $"http://localhost:8007/api/Equipments/{wOItems.itemAutoId}";
 
-                        var url = $"https://localhost:7160/api/Equipments/{wOItems.itemAutoId}?companyId={claimresponse.companyId}";
+                        // Add the Authorization header with the JWT token
+                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",accessToken);
+
+
 
                         var response = await _httpClient.GetAsync(url);
                         var responseContent = await response.Content.ReadAsStringAsync();
@@ -263,7 +268,8 @@ namespace MaintenanceWebApi.Controllers
                         items.itemName = wOItems.itemName;
 
 
-                        var url = $"https://localhost:7160/api/Equipments/{wOItems.itemAutoId}?companyId={claimresponse.companyId}";
+                        var url = $"http://localhost:8007/api/Equipments{wOItems.itemAutoId}?companyId={claimresponse.companyId}";
+
 
                         var response = await _httpClient.GetAsync(url);
                         var responseContent = await response.Content.ReadAsStringAsync();
@@ -276,7 +282,7 @@ namespace MaintenanceWebApi.Controllers
 
                         if (stockItems < wOItems.quantity)
                         {
-                            var urlPurchase = "https://localhost:7160/api/Purchases";
+                            var urlPurchase = "http://localhost:8007/api/Purchases";
                             var parameters = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -310,7 +316,7 @@ namespace MaintenanceWebApi.Controllers
 
                         else if (stockItems >= wOItems.quantity)
                         {
-                            var urlIssuence = "https://localhost:7160/api/Issuences";
+                            var urlIssuence = "http://localhost:8007/api/Issuences";
                             var parametersIssuence = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },

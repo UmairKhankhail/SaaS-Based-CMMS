@@ -948,7 +948,7 @@
 
     //Equipment Model Controller
     {
-      "UpstreamPathTemplate": "api/EquipmentModels/{id}",
+      "UpstreamPathTemplate": "/api/EquipmentModels/{id}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -958,10 +958,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/EquipmentModels/{id}"
+      "DownstreamPathTemplate": "/api/EquipmentModels/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/EquipmentModels/DeleteFullEquipmentModel",
+      "UpstreamPathTemplate": "/api/EquipmentModels/DeleteFullEquipmentModel",
       "UpstreamHttpMethod": [ "Delete" ],
 
       "DownstreamScheme": "http",
@@ -971,10 +971,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/EquipmentModels/DeleteFullEquipmentModel"
+      "DownstreamPathTemplate": "/api/EquipmentModels/DeleteFullEquipmentModel"
     },
     {
-      "UpstreamPathTemplate": "api/EquipmentModels",
+      "UpstreamPathTemplate": "/api/EquipmentModels",
       "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
 
       "DownstreamScheme": "http",
@@ -984,14 +984,14 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/EquipmentModels"
+      "DownstreamPathTemplate": "/api/EquipmentModels"
     },
 
 
     //Equipment Asset Controller
 
     {
-      "UpstreamPathTemplate": "api/EquipmentAssetsBuild/{id}",
+      "UpstreamPathTemplate": "/api/EquipmentAssetsBuild/{id}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -1001,10 +1001,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/EquipmentAssetsBuild/{id}"
+      "DownstreamPathTemplate": "/api/EquipmentAssetsBuild/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/EquipmentAssetsBuild",
+      "UpstreamPathTemplate": "/api/EquipmentAssetsBuild",
       "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
 
       "DownstreamScheme": "http",
@@ -1014,11 +1014,11 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/EquipmentAssetsBuild"
+      "DownstreamPathTemplate": "/api/EquipmentAssetsBuild"
     },
     //Linear Model Controller
     {
-      "UpstreamPathTemplate": "api/LinearAssetModels/{id}",
+      "UpstreamPathTemplate": "/api/LinearAssetModels/{id}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -1028,10 +1028,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/LinearAssetModels/{id}"
+      "DownstreamPathTemplate": "/api/LinearAssetModels/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/LinearAssetModels/GetControllersAndMethods",
+      "UpstreamPathTemplate": "/api/LinearAssetModels/GetControllersAndMethods",
       "UpstreamHttpMethod": [ "Get" ],
 
       "DownstreamScheme": "http",
@@ -1041,10 +1041,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/LinearAssetModels/GetControllersAndMethods"
+      "DownstreamPathTemplate": "/api/LinearAssetModels/GetControllersAndMethods"
     },
     {
-      "UpstreamPathTemplate": "api/LinearAssetModels",
+      "UpstreamPathTemplate": "/api/LinearAssetModels",
       "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
 
       "DownstreamScheme": "http",
@@ -1054,12 +1054,12 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/LinearAssetModels"
+      "DownstreamPathTemplate": "/api/LinearAssetModels"
     },
 
     //Linear Asset Controller
     {
-      "UpstreamPathTemplate": "api/LinearAssets/{id}",
+      "UpstreamPathTemplate": "/api/LinearAssets/{id}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
 
       "DownstreamScheme": "http",
@@ -1069,10 +1069,10 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/LinearAssets/{id}"
+      "DownstreamPathTemplate": "/api/LinearAssets/{id}"
     },
     {
-      "UpstreamPathTemplate": "api/LinearAssets",
+      "UpstreamPathTemplate": "/api/LinearAssets",
       "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
 
       "DownstreamScheme": "http",
@@ -1082,8 +1082,396 @@
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "api/LinearAssets"
+      "DownstreamPathTemplate": "/api/LinearAssets"
+    },
+
+    // Maintenance WebApi
+
+    // Work Request Controller
+
+    {
+      "UpstreamPathTemplate": "/api/WorkRequests/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WorkRequests/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/WorkRequests",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WorkRequests"
+    },
+
+    // Work Order Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/WorkOrders/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WorkOrders/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/WorkOrders",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WorkOrders"
+    },
+
+    // WOItems Controller
+
+    {
+      "UpstreamPathTemplate": "/api/WOItems/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WOItems/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/WOItems",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/WOItems"
+    },
+
+    // WOAssetItems Controller
+
+    {
+      "UpstreamPathTemplate": "/api/woAssetItems/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/woAssetItems/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/woAssetItems",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/woAssetItems"
+    },
+
+    // StatusAndRepairs Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/StatusAndRepairs/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/StatusAndRepairs/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/StatusAndRepairs",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/StatusAndRepairs"
+    },
+
+    // Precedure Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/Procedures/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Procedures/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Procedures",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Procedures"
+    },
+
+    // ProcedureHealthAndSafeties Controller
+
+    {
+      "UpstreamPathTemplate": "/api/ProcedureHealthAndSafeties/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ProcedureHealthAndSafeties/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ProcedureHealthAndSafeties",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ProcedureHealthAndSafeties"
+    },
+
+    // MethodSteps Controller
+
+    {
+      "UpstreamPathTemplate": "/api/MethodSteps/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MethodSteps/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/MethodSteps",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MethodSteps"
+    },
+
+    // Methods Controller
+
+    {
+      "UpstreamPathTemplate": "/api/Methods/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Methods/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Methods",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Methods"
+    },
+
+    // Instruction Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/Instructions/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Instructions/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Instructions",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Instructions"
+    },
+
+    // HealthAndSafeties Controller
+
+
+
+    {
+      "UpstreamPathTemplate": "/api/HealthAndSafeties/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/HealthAndSafeties/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/HealthAndSafeties",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/HealthAndSafeties"
+    },
+
+    // Execution Controller
+
+    {
+      "UpstreamPathTemplate": "/api/Executions/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Executions/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Executions",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Executions"
+    },
+
+
+    // Evaluation Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/Evaluations/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Evaluations/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Evaluations",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "maintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Evaluations"
     }
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:800"

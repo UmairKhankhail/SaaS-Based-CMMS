@@ -1,6 +1,8 @@
 ﻿
 using MaintenanceWebApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections.Generic;
 
 namespace MaintenanceWebApi.Models
@@ -9,7 +11,22 @@ namespace MaintenanceWebApi.Models
     {
         public MaintenanceDbContext(DbContextOptions options) : base(options)
         {
+            try
+            {
+                var dbcreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+                if (dbcreator != null)
+                {
+                    if (!dbcreator.CanConnect()) dbcreator.Create();
+                    if (!dbcreator.HasTables()) dbcreator.CreateTables();
+                }
+            }
+            catch (Exception er)
+            {
+                Console.WriteLine(er.Message);
+            }
         }
+
+
 
         public DbSet<Procedure> procedures { get; set; }
 
