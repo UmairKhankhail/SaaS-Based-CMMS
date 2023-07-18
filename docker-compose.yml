@@ -72,3 +72,28 @@ services:
       - backend
     ports:
       - 8007:80
+
+  assetsdb:
+     container_name: Assets-Database
+     image: mysql:8.0.33-oracle
+     environment:
+      - MYSQL_ROOT_PASSWORD=cmms2022
+     ports:
+      - 8013:3306
+     networks:
+      - backend
+
+  assetwebapi:
+    container_name: Assets-Microservice
+    image: ${DOCKER_REGISTRY-}assetwebapi
+    build:
+      context: .
+      dockerfile: AssetWebApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=assetsdb
+      - DB_NAME=assets
+      - DB_ROOT_PASSWORD=cmms2022
+    
+

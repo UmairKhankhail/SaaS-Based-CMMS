@@ -9,6 +9,7 @@ using AssetWebApi.Models;
 using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AssetWebApi.Controllers
 {
@@ -28,6 +29,7 @@ namespace AssetWebApi.Controllers
 
         // GET: api/EquipmentModels
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<EquipmentSubItem>>> GetequipmentModels(int id)
         {
             try
@@ -68,6 +70,7 @@ namespace AssetWebApi.Controllers
 
         // GET: api/EquipmentModels/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<EquipmentModel>> GetEquipmentModel(int id)
         {
             try
@@ -100,6 +103,7 @@ namespace AssetWebApi.Controllers
         // PUT: api/EquipmentModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutEquipmentModel(EquipmentModel equipmentModel)
         {
             try
@@ -144,6 +148,7 @@ namespace AssetWebApi.Controllers
         // POST: api/EquipmentModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<EquipmentModel>> PostEquipmentModel(EquipmentModel equipmentModel)
         {
             try
@@ -286,6 +291,7 @@ namespace AssetWebApi.Controllers
 
         // DELETE: api/EquipmentModels/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteEquipmentModel(int id)
         {
             try
@@ -321,6 +327,7 @@ namespace AssetWebApi.Controllers
         }
 
         [HttpDelete("DeleteFullEquipmentModel")]
+        [Authorize]
         public async Task<IActionResult> DeleteFullEquipmentModel(int id)
         {
             try

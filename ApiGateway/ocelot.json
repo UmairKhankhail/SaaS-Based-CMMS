@@ -873,7 +873,7 @@
     },
     {
       "UpstreamPathTemplate": "/api/Issuences/{id}",
-      "UpstreamHttpMethod": [ "Get","Put", "Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -943,8 +943,147 @@
         }
       ],
       "DownstreamPathTemplate": "/api/UnitOfMeasurements/{id}"
-    }
+    },
+    //Assets Web API
 
+    //Equipment Model Controller
+    {
+      "UpstreamPathTemplate": "api/EquipmentModels/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/EquipmentModels/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "api/EquipmentModels/DeleteFullEquipmentModel",
+      "UpstreamHttpMethod": [ "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/EquipmentModels/DeleteFullEquipmentModel"
+    },
+    {
+      "UpstreamPathTemplate": "api/EquipmentModels",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/EquipmentModels"
+    },
+
+
+    //Equipment Asset Controller
+
+    {
+      "UpstreamPathTemplate": "api/EquipmentAssetsBuild/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/EquipmentAssetsBuild/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "api/EquipmentAssetsBuild",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/EquipmentAssetsBuild"
+    },
+    //Linear Model Controller
+    {
+      "UpstreamPathTemplate": "api/LinearAssetModels/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/LinearAssetModels/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "api/LinearAssetModels/GetControllersAndMethods",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/LinearAssetModels/GetControllersAndMethods"
+    },
+    {
+      "UpstreamPathTemplate": "api/LinearAssetModels",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/LinearAssetModels"
+    },
+
+    //Linear Asset Controller
+    {
+      "UpstreamPathTemplate": "api/LinearAssets/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/LinearAssets/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "api/LinearAssets",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "api/LinearAssets"
+    }
   ],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:800"

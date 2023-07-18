@@ -9,6 +9,7 @@ using AssetWebApi.Models;
 using System.Reflection;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AssetWebApi.Controllers
 {
@@ -28,6 +29,7 @@ namespace AssetWebApi.Controllers
         }
 
         [HttpGet("GetControllersAndMethods")]
+        [Authorize]
         public async Task<List<string>> GetAllControllerMethods()
         {
             var methods = new List<string>();
@@ -49,6 +51,7 @@ namespace AssetWebApi.Controllers
 
         // GET: api/LinearAssetModels
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<LinearAssetModel>>> GetlinearAssetModels()
         {
             try
@@ -85,6 +88,7 @@ namespace AssetWebApi.Controllers
          }
         // GET: api/LinearAssetModels/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<LinearAssetModel>> GetLinearAssetModel(int id)
         {
             try
@@ -123,6 +127,7 @@ namespace AssetWebApi.Controllers
         // PUT: api/LinearAssetModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutLinearAssetModel(LinearAssetModel linearAssetModel)
         {
             try
@@ -166,6 +171,7 @@ namespace AssetWebApi.Controllers
         // POST: api/LinearAssetModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<LinearAssetModel>> PostLinearAssetModel(LinearAssetModel linearAssetModel)
         {
             try
@@ -246,6 +252,7 @@ namespace AssetWebApi.Controllers
 
         // DELETE: api/LinearAssetModels/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteLinearAssetModel(int id)
         {
             try
