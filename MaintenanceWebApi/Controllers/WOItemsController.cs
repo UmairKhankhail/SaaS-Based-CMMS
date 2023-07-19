@@ -160,16 +160,16 @@ namespace MaintenanceWebApi.Controllers
                         items.woAutoId = wOItems.woAutoId;
                         items.itemName = wOItems.itemName;
 
-                        var url = $"http://localhost:8007/api/Equipments/{wOItems.itemAutoId}";
+                        var url = $"http://host.docker.internal:8007/api/Equipments/{wOItems.itemAutoId}";
+                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                        // Add the Authorization header with the JWT token
-                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",accessToken);
-
-
+                        // Set the Content-Type header to application/json
+                        _httpClient.DefaultRequestHeaders.Accept.Clear();
+                        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await _httpClient.GetAsync(url);
                         var responseContent = await response.Content.ReadAsStringAsync();
-                       
+
                         JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
                         var stockItems = (int)dataObject["quantity"];
 
@@ -178,7 +178,7 @@ namespace MaintenanceWebApi.Controllers
 
                         if (stockItems < wOItems.quantity)
                         {
-                            var urlPurchase = "https://localhost:7160/api/Purchases";
+                            var urlPurchase = "http://host.docker.internal:8007/api/Purchases";
                             var parameters = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -202,6 +202,13 @@ namespace MaintenanceWebApi.Controllers
                             var json = JsonConvert.SerializeObject(parameters);
                             var contentPurchase = new StringContent(json, Encoding.UTF8, "application/json");
 
+                            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                            // Set the Content-Type header to application/json
+                            _httpClient.DefaultRequestHeaders.Accept.Clear();
+                            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
                             var responsePurchase = await _httpClient.PostAsync(urlPurchase, contentPurchase);
                             var responsePurchaseContent = await responsePurchase.Content.ReadAsStringAsync();
 
@@ -210,7 +217,7 @@ namespace MaintenanceWebApi.Controllers
 
                         else if (stockItems >= wOItems.quantity)
                         {
-                            var urlIssuence = "https://localhost:7160/api/Issuences";
+                            var urlIssuence = "https://host.docker.internal:8007/api/Issuences";
                             var parametersIssuence = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -233,6 +240,13 @@ namespace MaintenanceWebApi.Controllers
 
                             var json = JsonConvert.SerializeObject(parametersIssuence);
                             var contentIssuence = new StringContent(json, Encoding.UTF8, "application/json");
+
+                            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                            // Set the Content-Type header to application/json
+                            _httpClient.DefaultRequestHeaders.Accept.Clear();
+                            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
 
                             var responseIssuence = await _httpClient.PostAsync(urlIssuence, contentIssuence);
                             var responseIssuenceContent = await responseIssuence.Content.ReadAsStringAsync();
@@ -267,13 +281,16 @@ namespace MaintenanceWebApi.Controllers
                         items.woAutoId = wOItems.woAutoId;
                         items.itemName = wOItems.itemName;
 
+                        var url = $"http://host.docker.internal:8007/api/Equipments/{wOItems.itemAutoId}";
+                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                        var url = $"http://localhost:8007/api/Equipments{wOItems.itemAutoId}?companyId={claimresponse.companyId}";
-
+                        // Set the Content-Type header to application/json
+                        _httpClient.DefaultRequestHeaders.Accept.Clear();
+                        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                         var response = await _httpClient.GetAsync(url);
                         var responseContent = await response.Content.ReadAsStringAsync();
-                        
+
                         JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
                         var stockItems = (int)dataObject["quantity"];
 
@@ -282,7 +299,7 @@ namespace MaintenanceWebApi.Controllers
 
                         if (stockItems < wOItems.quantity)
                         {
-                            var urlPurchase = "http://localhost:8007/api/Purchases";
+                            var urlPurchase = "http://host.docker.internal:8007/api/Purchases";
                             var parameters = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -306,6 +323,14 @@ namespace MaintenanceWebApi.Controllers
                             var json = JsonConvert.SerializeObject(parameters);
                             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+
+                            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                            // Set the Content-Type header to application/json
+                            _httpClient.DefaultRequestHeaders.Accept.Clear();
+                            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
                             var responsePurchase = await _httpClient.PostAsync(url, content);
                             var responsePurchaseContent = await response.Content.ReadAsStringAsync();
 
@@ -316,7 +341,7 @@ namespace MaintenanceWebApi.Controllers
 
                         else if (stockItems >= wOItems.quantity)
                         {
-                            var urlIssuence = "http://localhost:8007/api/Issuences";
+                            var urlIssuence = "http://host.docker.internal:8007/api/Issuences";
                             var parametersIssuence = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -340,6 +365,14 @@ namespace MaintenanceWebApi.Controllers
                             Console.WriteLine(parametersIssuence);
                             var json = JsonConvert.SerializeObject(parametersIssuence);
                             var contentIssuence = new StringContent(json, Encoding.UTF8, "application/json");
+
+                            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                            // Set the Content-Type header to application/json
+                            _httpClient.DefaultRequestHeaders.Accept.Clear();
+                            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+
 
                             var responseIssuence = await _httpClient.PostAsync(urlIssuence, contentIssuence);
                             var responseIssuenceContent = await responseIssuence.Content.ReadAsStringAsync();
@@ -387,7 +420,7 @@ namespace MaintenanceWebApi.Controllers
                     var wOItems = await _context.wOItems.FindAsync(id);
                     if (wOItems == null)
                     {
-                        return NotFound();
+                        return NotFound(); 
                     }
 
                     _context.wOItems.Remove(wOItems);

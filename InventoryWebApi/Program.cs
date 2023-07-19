@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("http://localhost:3000", "http://localhost:8007")
                .AllowAnyHeader()
                .AllowAnyMethod()
         .AllowCredentials();
@@ -87,7 +87,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-app.UseCors();
+//app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

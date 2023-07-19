@@ -1150,7 +1150,7 @@
 
     {
       "UpstreamPathTemplate": "/api/WOItems/{id}",
-      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1163,7 +1163,7 @@
     },
     {
       "UpstreamPathTemplate": "/api/WOItems",
-      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+      "UpstreamHttpMethod": [ "Get",  "Post" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1179,7 +1179,7 @@
 
     {
       "UpstreamPathTemplate": "/api/woAssetItems/{id}",
-      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Put","Delete" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1192,7 +1192,7 @@
     },
     {
       "UpstreamPathTemplate": "/api/woAssetItems",
-      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+      "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
