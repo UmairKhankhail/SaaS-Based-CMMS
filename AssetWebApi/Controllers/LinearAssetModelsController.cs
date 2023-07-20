@@ -51,41 +51,62 @@ namespace AssetWebApi.Controllers
 
         // GET: api/LinearAssetModels
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<LinearAssetModel>>> GetlinearAssetModels()
         {
             try
             {
-
                 var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+
                 if (claimresponse.isAuth == true)
                 {
-                    var result = await _context.linearAssetModels.Join(
-                _context.linearSubItems, la => la.laAutoID, lsm => lsm.laAutoId, (la, lsm) => new { la, lsm }).
-                Where(x => x.la.laAutoID == x.lsm.laAutoId && x.la.companyId == claimresponse.companyId).
-                Select(result => new
-                {
-                    result.la.laID,
-                    result.la.laName,
-                    result.la.status,
-                    result.lsm.lsName,
-                    result.lsm.location,
-                    result.lsm.description
+                    
+                    // Check if there are any records for company "C1" in the database
+                    bool recordsExistForC1 = await _context.linearAssetModels.AnyAsync(x => x.companyId == claimresponse.companyId);
 
-                }).ToListAsync();
+
+                    if (!recordsExistForC1)
+                    {
+                        // If no records exist for company "C1," return a specific response or error message
+                        return NotFound("No records found for company.");
+                    }
+
+
+                    bool recordsExistForC2 = await _context.linearSubItems.AnyAsync(x => x.companyId == claimresponse.companyId);
+                    if (!recordsExistForC1)
+                    {
+                        // If no records exist for company "C1," return a specific response or error message
+                        return NotFound("No records found for company.");
+                    }
+                    var result = await _context.linearAssetModels
+                        .Join(_context.linearSubItems, la => la.laAutoID, lsm => lsm.laAutoId, (la, lsm) => new { la, lsm })
+                        .Where(x => x.la.laAutoID == x.lsm.laAutoId && x.la.companyId == claimresponse.companyId)
+                        .Select(result => new
+                        {
+                            result.la.laAutoID,
+                            result.la.laID,
+                            result.la.laName,
+                            result.la.status,
+                            result.lsm.lsName,
+                            result.lsm.location,
+                            result.lsm.description
+                        }).ToListAsync();
+
                     return Ok(result);
                 }
-                return Unauthorized();
 
+                // If the user is not authorized, return Unauthorized
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            
-         }
+
+
+        }
         // GET: api/LinearAssetModels/5
         [HttpGet("{id}")]
         [Authorize]
@@ -103,6 +124,7 @@ namespace AssetWebApi.Controllers
                 Where(x => x.la.companyId == claimresponse.companyId && x.la.laAutoID == id && x.la.laAutoID == x.lsm.laAutoId).
                 Select(result => new
                 {
+                    result.la.laAutoID,
                     result.la.status,
                     result.lsm.lsName,
                     result.lsm.location,
@@ -283,7 +305,41 @@ namespace AssetWebApi.Controllers
             }
             
         }
+        [HttpDelete("DeleteFullLinearModel")]
+        [Authorize]
+        public async Task<IActionResult> DeleteFullLinearModel(int id)
+        {
+            try
+            {
 
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    if (id != null)
+                    {
+                        var equipmentModel = await _context.linearAssetModels.Where(x => x.laAutoID == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                        if (equipmentModel == null)
+                        {
+                            return NotFound();
+                        }
+
+                        _context.linearAssetModels.Remove(equipmentModel);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return NoContent();
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+        }
         private bool LinearAssetModelExists(int id)
         {
             return _context.linearAssetModels.Any(e => e.laAutoID == id);
