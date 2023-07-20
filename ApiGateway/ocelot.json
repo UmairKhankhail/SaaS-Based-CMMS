@@ -1163,7 +1163,7 @@
     },
     {
       "UpstreamPathTemplate": "/api/WOItems",
-      "UpstreamHttpMethod": [ "Get",  "Post" ],
+      "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1179,7 +1179,7 @@
 
     {
       "UpstreamPathTemplate": "/api/woAssetItems/{id}",
-      "UpstreamHttpMethod": [ "Get", "Put","Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1470,8 +1470,155 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Evaluations"
-    }
+    },
 
+    // Preventive Maintenance
+
+    // InspectionEntries Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/InspectionEntries/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/InspectionEntries/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/InspectionEntries",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/InspectionEntries"
+    },
+
+    // Inspection Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/Inspections/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Inspections/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Inspections",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Inspections"
+    },
+
+    // MeterReadingEntries Controller
+
+
+    {
+      "UpstreamPathTemplate": "/api/MeterReadingEntries/{id}",
+      "UpstreamHttpMethod": [ "Get","Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadingEntries{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/MeterReadingEntries",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadingEntries"
+    },
+
+    // MeterReadings Controller
+    {
+      "UpstreamPathTemplate": "/api/MeterReadings/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadings{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/MeterReadings",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadings"
+    },
+
+    // ScheduledWorkRequests Controller
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/{id}",
+      "UpstreamHttpMethod": [ "Get",  "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests"
+    }
   ],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:800"
