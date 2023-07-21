@@ -8,6 +8,7 @@ using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         //}
 
         [HttpGet("GetMeterReadingsByAssetId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MeterReading>>> GetmeterReadingsByAssetId(int assetModel, string assetId)
         {
             try
@@ -64,6 +66,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
             
         }
         [HttpGet("GetMeterReadingsByAssetIdForParameter")]
+        [Authorize]
         public async Task<ActionResult<MeterReading>> GetmeterReadingsByAssetIdByParams(int assetModel, string assetId, string paramName)
         {
             try
@@ -95,6 +98,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // GET: api/MeterReadings/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<MeterReading>> GetMeterReading(int id)
         {
             try
@@ -127,6 +131,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // PUT: api/MeterReadings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutMeterReading(MeterReading meterReading)
         {
             try
@@ -202,6 +207,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // POST: api/MeterReadings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<MeterReading>> PostMeterReading(MeterReading meterReading)
         {
             try
@@ -292,6 +298,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // DELETE: api/MeterReadings/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteMeterReading(int id)
         {
             try

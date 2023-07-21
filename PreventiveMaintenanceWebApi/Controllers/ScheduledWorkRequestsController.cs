@@ -11,6 +11,7 @@ using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -90,6 +91,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
 
         [HttpGet("GetscheduledWorkByAssetId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ScheduledWorkRequest>>> GetscheduledWorkDetails(int assetModel, string assetId)
         {
             try
@@ -117,6 +119,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
             
         }
         [HttpGet("GetscheduledWorkByAssetIdForHeadOfProblem")]
+        [Authorize]
         public async Task<ActionResult<ScheduledWorkRequest>> GetscheduledWorkDetailsHOP(int assetModel, string assetId, string headOfProblems)
         {
             try
@@ -146,6 +149,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // GET: api/ScheduledWorkRequests/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ScheduledWorkRequest>> GetScheduledWorkRequest(int id)
         {
             try
@@ -179,6 +183,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         
         [HttpGet("GetCalendar")]
+        [Authorize]
         public async Task<ActionResult<GoogleCalendarRecord>> GetCalendar(int id)
         {
             try
@@ -209,6 +214,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         }
 
         [HttpGet("GetCalendarRecords")]
+        [Authorize]
         public async Task<ActionResult<GoogleCalendarRecord>> GetCalendarRecords()
         {
             try
@@ -237,6 +243,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         }
 
         [HttpPost("PostGoogleCalendarApi")]
+        [Authorize]
         public async Task<ActionResult> PostGoogleCalendarApi(GoogleCalendarRecord googleCalendarRecord)
         {
             try
@@ -277,6 +284,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
             
         }
         [HttpPut("UpdateGoogleCalendarApi")]
+        [Authorize]
         public async Task<IActionResult> UpdateGoogleCalendarApi(GoogleCalendarRecord googleCalendarRecord)
         {
             try
@@ -324,6 +332,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         }
 
         [HttpDelete("RemoveGoogleCalendarApi")]
+        [Authorize]
         public async Task<IActionResult> DeleteGoogleCalendarApi(GoogleCalendarRecord googleCalendarRecord)
         {
             try
@@ -364,6 +373,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         }
 
         [HttpPut("PutScheduledWorkRequest")]
+        [Authorize]
         public async Task<IActionResult> PutScheduledWorkRequest(ScheduledWorkRequest scheduledWorkRequest)
         {
             try
@@ -438,6 +448,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // POST: api/ScheduledWorkRequests
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ScheduledWorkRequest>> PostScheduledWorkRequest(ScheduledWorkRequest scheduledWorkRequest)
         {
             try
@@ -527,6 +538,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // DELETE: api/ScheduledWorkRequests/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteScheduledWorkRequest(int id)
         {
             try

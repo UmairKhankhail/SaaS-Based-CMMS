@@ -4,6 +4,7 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using System.IO;
+using System.Reflection;
 
 namespace GoogleCalendarService
 {
@@ -38,12 +39,13 @@ namespace GoogleCalendarService
                     scopes,
                     "user",
                     System.Threading.CancellationToken.None
-                    
+
                 ).Result;
 
                 return credentials;
             }
         }
+
 
         public string InsertRecurringEvent(Event newEvent, int frequencyInDays, string calendardbId, string timeZone)
         {

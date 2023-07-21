@@ -120,3 +120,27 @@ services:
      - DB_NAME=maintenance
      - DB_ROOT_PASSWORD=cmms2022
 
+
+  preventivemaintenancedb:
+    container_name: Preventivemaintenance-Database
+    image: mysql:8.0.33-oracle
+    environment:
+     - MYSQL_ROOT_PASSWORD=cmms2022
+    ports:
+     - 8015:3306
+    networks:
+     - backend
+
+  preventivemaintenancewebapi:
+    container_name: Preventivemaintenance-Microservice
+    image: ${DOCKER_REGISTRY-}preventivemaintenancewebapi
+    build:
+      context: .
+      dockerfile: PreventiveMaintenanceWebApi/Dockerfile
+    networks:
+        - backend
+    environment:
+     - DB_HOST=preventivemaintenancedb
+     - DB_NAME=preventivemaintenance
+     - DB_ROOT_PASSWORD=cmms2022
+

@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using PreventiveMaintenanceWebApi.Models;
 namespace PreventiveMaintenanceWebApi.Models
 {
@@ -6,6 +8,19 @@ namespace PreventiveMaintenanceWebApi.Models
     {
         public PreventiveMaintenanceDbContext(DbContextOptions options) : base(options)
         {
+            try
+            {
+                var dbcreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+                if (dbcreator != null)
+                {
+                    if (!dbcreator.CanConnect()) dbcreator.Create();
+                    if (!dbcreator.HasTables()) dbcreator.CreateTables();
+                }
+            }
+            catch (Exception er)
+            {
+                Console.WriteLine(er.Message);
+            }
         }
 
         public DbSet<ScheduledWorkRequest> scheduledWorkRequests { get; set; }

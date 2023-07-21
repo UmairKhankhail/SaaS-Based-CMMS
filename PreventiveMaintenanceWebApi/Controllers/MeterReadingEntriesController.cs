@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // GET: api/MeterReadingEntries/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<MeterReadingEntry>> GetMeterReadingEntry(int id)
         {
             try
@@ -78,6 +80,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         }
 
         [HttpGet("GetMeterReadingEntriesByAssetId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MeterReadingEntry>>> GetMeterReadingEntriesByAssetId(int assetModel, string assetId)
         {
             try
@@ -110,6 +113,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         }
 
         [HttpGet("GetMeterReadingEntriesByAssetIdForParams")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<string>>> GetMeterReadingEntriesByAssetIdForParams(int assetModel, string assetId)
         {
             try
@@ -145,6 +149,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // PUT: api/MeterReadingEntries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutMeterReadingEntry(MeterReadingEntry meterReadingEntry)
         {
             try
@@ -190,6 +195,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // POST: api/MeterReadingEntries
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<MeterReadingEntry>> PostMeterReadingEntry(MeterReadingEntry meterReadingEntry)
         {
             try
@@ -265,6 +271,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // DELETE: api/MeterReadingEntries/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteMeterReadingEntry(int id)
         {
             try

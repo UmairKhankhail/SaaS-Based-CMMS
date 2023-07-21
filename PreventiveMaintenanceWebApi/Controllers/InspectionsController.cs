@@ -12,6 +12,7 @@ using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.Server;
@@ -81,6 +82,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         //}
 
         [HttpGet("GetInspectionByAssetId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Inspection>>> GetInspectionByAssetId(int assetModel, string assetId)
         {
             try
@@ -108,6 +110,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
            
         }
         [HttpGet("GetInspectionByAssetIdForQuestions")]
+        [Authorize]
         public async Task<ActionResult<Inspection>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string question)
         {
             try
@@ -137,6 +140,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // GET: api/Inspections/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Inspection>> GetInspection(int id)
         {
             try
@@ -169,6 +173,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // PUT: api/Inspections/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutInspection(Inspection inspection)
         {
             try
@@ -249,6 +254,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // POST: api/Inspections
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Inspection>> PostInspection(Inspection inspection)
         {
             try
@@ -338,6 +344,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // DELETE: api/Inspections/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteInspection(int id)
         {
             try

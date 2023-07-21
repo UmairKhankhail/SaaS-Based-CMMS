@@ -1539,7 +1539,7 @@
 
     {
       "UpstreamPathTemplate": "/api/MeterReadingEntries/{id}",
-      "UpstreamHttpMethod": [ "Get","Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1595,7 +1595,7 @@
     // ScheduledWorkRequests Controller
     {
       "UpstreamPathTemplate": "/api/ScheduledWorkRequests/{id}",
-      "UpstreamHttpMethod": [ "Get",  "Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1618,6 +1618,19 @@
         }
       ],
       "DownstreamPathTemplate": "/api/ScheduledWorkRequests"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/PostGoogleCalendarApi",
+      "UpstreamHttpMethod": [ "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "preventivemaintenancewebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/PostGoogleCalendarApi"
     }
   ],
   "GlobalConfiguration": {

@@ -8,6 +8,7 @@ using Google.Apis.Calendar.v3.Data;
 using GoogleCalendarService;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
 
         [HttpGet("GetInspectionEntriesByAssetId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetInspectionByAssetId(int assetModel, string assetId)
         {
             try
@@ -66,6 +68,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         }
 
         [HttpGet("GetInspectionEntriesByAssetIdForQuestions")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<string>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string question)
         {
             try
@@ -109,6 +112,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // GET: api/InspectionEntries/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<InspectionEntry>> GetInspectionEntry(int id)
         {
             try
@@ -141,6 +145,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // PUT: api/InspectionEntries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutInspectionEntry(int id, InspectionEntry inspectionEntry)
         {
             try
@@ -187,6 +192,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // POST: api/InspectionEntries
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<InspectionEntry>> PostInspectionEntry(InspectionEntry inspectionEntry)
         {
 
@@ -270,6 +276,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         // DELETE: api/InspectionEntries/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteInspectionEntry(int id)
         {
             try
