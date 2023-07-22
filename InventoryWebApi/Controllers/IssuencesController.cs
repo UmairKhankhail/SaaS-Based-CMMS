@@ -49,6 +49,7 @@ namespace InventoryAPI.Controllers
                      {
                          result.i.issuenceAutoId,
                          result.i.issuenceId,
+                         result.ie.issueEquipId,
                          result.i.companyId,
                          result.ie.equipAutoId,
                          result.i.issuenceDescp,
@@ -97,6 +98,7 @@ namespace InventoryAPI.Controllers
                     {
                         result.i.issuenceAutoId,
                         result.i.issuenceId,
+                        result.ie.issueEquipId,
                         result.i.companyId,
                         result.ie.equipAutoId,
                         result.i.issuenceDescp,
@@ -347,7 +349,7 @@ namespace InventoryAPI.Controllers
                 {
 
 
-                    var issuence = await _context.issuences.Where(x => x.issuenceAutoId == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    var issuence = await _context.issuences.Where(x => x.issuenceAutoId == id && x.companyId == claimresponse.companyId && x.status=="pending").FirstOrDefaultAsync();
 
                     if (issuence == null)
                     {
@@ -355,6 +357,45 @@ namespace InventoryAPI.Controllers
                     }
 
                     _context.issuences.Remove(issuence);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+        // DELETE: api/Issuences/5
+        [HttpDelete("deleteRecord")]
+        public async Task<IActionResult> DeleteIssuenceRecord(int id)
+        {
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+
+                    //var issuence = await _context.issuences.Where(x => x.issuenceAutoId == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+              var issuence = await _context.issuences
+             .Join(_context.issuenceandEquipment, i => i.issuenceAutoId, ie => ie.issuenceAutoId, (i, ie) => new { i, ie })
+             .Where(x => x.i.companyId == claimresponse.companyId && x.ie.companyId==claimresponse.companyId && x.i.status=="pending" && x.ie.issueEquipId == id)
+             .Select(x => x.ie) // Extract the issuenceandEquipment entity from the join result
+             .FirstOrDefaultAsync();
+              
+                    if (issuence == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.issuenceandEquipment.Remove(issuence);
                     await _context.SaveChangesAsync();
 
                     return NoContent();

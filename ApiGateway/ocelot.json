@@ -871,6 +871,21 @@
       ],
       "DownstreamPathTemplate": "/api/Issuences"
     },
+
+    {
+      "UpstreamPathTemplate": "/api/Issuences/deleteRecord",
+      "UpstreamHttpMethod": [ "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Issuences/deleteRecord"
+    }
+    ,
     {
       "UpstreamPathTemplate": "/api/Issuences/{id}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
@@ -890,7 +905,7 @@
 
     {
       "UpstreamPathTemplate": "/api/Purchases",
-      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "UpstreamHttpMethod": [ "Get", "Post"],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -901,6 +916,20 @@
       ],
       "DownstreamPathTemplate": "/api/Purchases"
     },
+    {
+      "UpstreamPathTemplate": "/api/Purchases/deleteRecord",
+      "UpstreamHttpMethod": [ "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "inventorywebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Purchases/deleteRecord"
+    }
+    ,
     {
       "UpstreamPathTemplate": "/api/Purchases/{id}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],

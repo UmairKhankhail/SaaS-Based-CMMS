@@ -260,7 +260,7 @@ namespace InventoryAPI.Controllers
 
         private bool CompanyExists(string id)
         {
-            return _context.brands.Any(x => x.companyId == id);
+            return _context.equipments.Any(x => x.companyId == id);
         }
     }
 }

@@ -88,7 +88,7 @@ namespace InventoryAPI.Controllers
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(Category category, int id)
         {
             try
@@ -226,7 +226,7 @@ namespace InventoryAPI.Controllers
 
         private bool CompanyExists(string id)
         {
-            return _context.Inventorygroups.Any(x => x.companyId == id);
+            return _context.categories.Any(x => x.companyId == id);
         }
     }
 }

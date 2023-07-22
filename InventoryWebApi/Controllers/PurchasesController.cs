@@ -50,6 +50,7 @@ namespace InventoryAPI.Controllers
                                        {
                                            result.i.purchaseAutoId,
                                            result.i.purchaseId,
+                                           result.ie.purchaseEquipId,
                                            result.i.status,
                                            result.i.companyId,
                                            result.ie.equipAutoId,
@@ -89,6 +90,7 @@ namespace InventoryAPI.Controllers
                     {
                         result.i.purchaseAutoId,
                         result.i.purchaseId,
+                        result.ie.purchaseEquipId,
                         result.i.status,
                         result.i.companyId,
                         result.ie.equipAutoId,
@@ -315,7 +317,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Purchases/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePurchase(string id)
+        public async Task<IActionResult> DeletePurchase(int id)
         {
             try
             {
@@ -324,7 +326,7 @@ namespace InventoryAPI.Controllers
                 if (claimresponse.isAuth == true)
                 {
 
-                    var purchase = await _context.purchases.Where(x => x.purchaseId == id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
+                    var purchase = await _context.purchases.Where(x => x.purchaseAutoId == id && x.companyId == claimresponse.companyId && x.status=="pending").FirstOrDefaultAsync();
 
                     if (purchase == null)
                     {
@@ -344,6 +346,45 @@ namespace InventoryAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+
+        [HttpDelete("deleteRecord")]
+        public async Task<IActionResult> DeletePurchaseRecord(int id)
+        {
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    //                    var purchase = await _context.purchases.Where(x => x.purchaseId == id && x.companyId == claimresponse.companyId && x.status == "pending").FirstOrDefaultAsync();
+
+                    var purchase = await _context.purchases
+                        .Join(_context.purchaseandEquipment, i => i.purchaseAutoId, ie => ie.purchaseAutoId, (i, ie) => new { i, ie })
+                        .Where(x => x.ie.companyId == claimresponse.companyId && x.i.companyId == claimresponse.companyId && x.i.status == "pending" && x.ie.purchaseEquipId == id)
+                        .Select(result => result.ie) // Corrected the Select statement
+                        .FirstOrDefaultAsync();
+
+                    if (purchase == null)
+                    {
+                        return NotFound();
+                    }
+
+                    _context.purchaseandEquipment.Remove(purchase);
+                    await _context.SaveChangesAsync();
+
+                    return NoContent();
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
 
         private bool IssuenceExists(int id)
         {
