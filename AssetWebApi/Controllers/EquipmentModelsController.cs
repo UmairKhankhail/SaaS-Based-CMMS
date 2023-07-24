@@ -44,6 +44,10 @@ namespace AssetWebApi.Controllers
                     .Select(x => new
                     {
                         esName = x.esName,
+                        esDescription = x.esDescription,
+                        esPosition=x.esPosition,
+                        eAutoId=x.eAutoId,
+                        esAutoId= x.esAutoId,
                         esParentId = string.IsNullOrEmpty(x.esParentId.ToString())
                             ? "No Parent"
                             : _context.equipmentSubItems.Any(s => s.esAutoId.ToString() == x.esParentId.ToString())
@@ -63,8 +67,36 @@ namespace AssetWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             
+        }
 
+        [HttpGet("getAllModels")]
+        [Authorize]
+        public async Task<ActionResult<EquipmentModel>> GetAllEquipmentModel()
+        {
+            try
+            {
 
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var equipmentModel = await _context.equipmentModels.ToListAsync();
+
+                    if (equipmentModel == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(equipmentModel);
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
         }
 

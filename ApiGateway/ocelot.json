@@ -884,8 +884,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Issuences/deleteRecord"
-    }
-    ,
+    },
     {
       "UpstreamPathTemplate": "/api/Issuences/{id}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
@@ -905,7 +904,7 @@
 
     {
       "UpstreamPathTemplate": "/api/Purchases",
-      "UpstreamHttpMethod": [ "Get", "Post"],
+      "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -928,8 +927,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Purchases/deleteRecord"
-    }
-    ,
+    },
     {
       "UpstreamPathTemplate": "/api/Purchases/{id}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
@@ -1015,6 +1013,19 @@
       ],
       "DownstreamPathTemplate": "/api/EquipmentModels"
     },
+    {
+      "UpstreamPathTemplate": "/api/EquipmentModels/getAllModels",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EquipmentModels/getAllModels"
+    },
 
 
     //Equipment Asset Controller
@@ -1085,7 +1096,19 @@
       ],
       "DownstreamPathTemplate": "/api/LinearAssetModels"
     },
+    {
+      "UpstreamPathTemplate": "/api/LinearAssetModels/getAllModels",
+      "UpstreamHttpMethod": [ "Get" ],
 
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetwebapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LinearAssetModels/getAllModels"
+    },
     //Linear Asset Controller
     {
       "UpstreamPathTemplate": "/api/LinearAssets/{id}",

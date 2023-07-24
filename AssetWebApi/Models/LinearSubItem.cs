@@ -14,7 +14,7 @@ namespace AssetWebApi.Models
 
         public string lsName { get; set; }
         public  string location { get; set; }
-
+        public int lsParentId { get; set; }
         public string description { get; set; }
 
         public string companyId { get; set; }

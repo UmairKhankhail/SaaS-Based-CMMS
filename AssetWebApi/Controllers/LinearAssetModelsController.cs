@@ -29,7 +29,6 @@ namespace AssetWebApi.Controllers
         }
 
         [HttpGet("GetControllersAndMethods")]
-        [Authorize]
         public async Task<List<string>> GetAllControllerMethods()
         {
             var methods = new List<string>();
@@ -51,53 +50,38 @@ namespace AssetWebApi.Controllers
 
         // GET: api/LinearAssetModels
         [HttpGet]
-        //[Authorize]
-        public async Task<ActionResult<IEnumerable<LinearAssetModel>>> GetlinearAssetModels()
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<LinearSubItem>>> GetlinearSubItems(int id)
         {
+
             try
             {
+
                 var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
-
                 if (claimresponse.isAuth == true)
                 {
-                    
-                    // Check if there are any records for company "C1" in the database
-                    bool recordsExistForC1 = await _context.linearAssetModels.AnyAsync(x => x.companyId == claimresponse.companyId);
-
-
-                    if (!recordsExistForC1)
+                    var linearSubItems = _context.linearSubItems
+                    .Where(x => x.laAutoId == id && x.companyId == claimresponse.companyId)
+                    .Select(x => new
                     {
-                        // If no records exist for company "C1," return a specific response or error message
-                        return NotFound("No records found for company.");
-                    }
+                        lsName = x.lsName,
+                        location = x.location,
+                        description=x.description,
+                        laAutoId=x.laAutoId,
+                        lsAutoId=x.lsAutoId,
+                        lsParentId = string.IsNullOrEmpty(x.lsParentId.ToString())
+                            ? "No Parent"
+                            : _context.linearSubItems.Any(s => s.lsAutoId.ToString() == x.lsParentId.ToString())
+                                ? _context.linearSubItems.FirstOrDefault(s => s.lsAutoId.ToString() == x.lsParentId.ToString()).lsName
+                                : "No Parent"
+                    })
+                    .ToList();
 
-
-                    bool recordsExistForC2 = await _context.linearSubItems.AnyAsync(x => x.companyId == claimresponse.companyId);
-                    if (!recordsExistForC1)
-                    {
-                        // If no records exist for company "C1," return a specific response or error message
-                        return NotFound("No records found for company.");
-                    }
-                    var result = await _context.linearAssetModels
-                        .Join(_context.linearSubItems, la => la.laAutoID, lsm => lsm.laAutoId, (la, lsm) => new { la, lsm })
-                        .Where(x => x.la.laAutoID == x.lsm.laAutoId && x.la.companyId == claimresponse.companyId)
-                        .Select(result => new
-                        {
-                            result.la.laAutoID,
-                            result.la.laID,
-                            result.la.laName,
-                            result.la.status,
-                            result.lsm.lsName,
-                            result.lsm.location,
-                            result.lsm.description
-                        }).ToListAsync();
-
-                    return Ok(result);
+                    return Ok(linearSubItems);
                 }
-
-                // If the user is not authorized, return Unauthorized
                 return Unauthorized();
+
             }
             catch (Exception ex)
             {
@@ -107,6 +91,39 @@ namespace AssetWebApi.Controllers
 
 
         }
+
+
+        [HttpGet("getAllModels")]
+        [Authorize]
+        public async Task<ActionResult<LinearAssetModel>> GetAllLinearModel()
+        {
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var linearModel = await _context.linearAssetModels.ToListAsync();
+
+                    if (linearModel == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(linearModel);
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
         // GET: api/LinearAssetModels/5
         [HttpGet("{id}")]
         [Authorize]
@@ -119,20 +136,14 @@ namespace AssetWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var linearAsssetModel = await _context.linearAssetModels.Join(
-                _context.linearSubItems, la => la.laAutoID, lsm => lsm.laAutoId, (la, lsm) => new { la, lsm }).
-                Where(x => x.la.companyId == claimresponse.companyId && x.la.laAutoID == id && x.la.laAutoID == x.lsm.laAutoId).
-                Select(result => new
-                {
-                    result.la.laAutoID,
-                    result.la.status,
-                    result.lsm.lsName,
-                    result.lsm.location,
-                    result.lsm.description
+                    var linearModel = await _context.linearAssetModels.FindAsync(id);
 
-                }).ToListAsync();
-                    return Ok(linearAsssetModel);
+                    if (linearModel == null)
+                    {
+                        return NotFound();
+                    }
 
+                    return linearModel;
                 }
                 return Unauthorized();
 
@@ -143,7 +154,6 @@ namespace AssetWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            
         }
 
         // PUT: api/LinearAssetModels/5
@@ -203,63 +213,120 @@ namespace AssetWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var getLamAutoId = 0;
-                    var compId = _context.linearAssetModels.Where(i => i.companyId == claimresponse.companyId).Select(d => d.laID).ToList();
-
-                    var autoId = "";
-                    if (compId.Count > 0)
+                    try
                     {
+                        if (linearAssetModel.validityCheck == 0)
+                        {
 
-                        autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
+                            int getlinearAutoId = 0;
+                            var compId = _context.linearAssetModels.Where(d => d.companyId == claimresponse.companyId).Select(d => d.laID).ToList();
+
+                            var autoId = "";
+                            if (compId.Count > 0)
+                            {
+
+                                autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
+                            }
+
+                            if (autoId == "")
+                            {
+                                _context.ChangeTracker.Clear();
+                                LinearAssetModel e = new LinearAssetModel();
+                                string comId = "LAM1";
+                                e.laID = comId;
+                                e.laName = linearAssetModel.laName;
+                                e.companyId = claimresponse.companyId;
+                                e.status = linearAssetModel.status;
+                                _context.linearAssetModels.Add(e);
+                                await _context.SaveChangesAsync();
+                                getlinearAutoId = e.laAutoID;
+                            }
+                            if (autoId != "")
+                            {
+                                _context.ChangeTracker.Clear();
+                                LinearAssetModel e = new LinearAssetModel();
+                                string comId = "LAM" + (int.Parse(autoId) + 1);
+                                e.laID = comId;
+                                e.laName = linearAssetModel.laName;
+                                e.companyId = claimresponse.companyId;
+                                e.status = linearAssetModel.status;
+                                _context.linearAssetModels.Add(e);
+                                await _context.SaveChangesAsync();
+                                getlinearAutoId = e.laAutoID;
+                            }
+
+                            //Console.WriteLine("Id: "+ getroleautoid.ToString());
+                            //_context.roles.Add(role);
+                            //await _context.SaveChangesAsync();
+
+                            List<LinearSubItemList> linearSubItemLists = linearAssetModel.listSubItems;
+
+
+
+                            foreach (var items in linearSubItemLists)
+                            {
+                                LinearSubItem eSubItem = new LinearSubItem();
+                                eSubItem.laAutoId = getlinearAutoId;
+                                eSubItem.lsName = items.lsName;
+                                eSubItem.description = items.description;
+                                eSubItem.location = items.location;
+                                eSubItem.lsParentId = items.lsParentId;
+                                eSubItem.companyId = claimresponse.companyId;
+                                _context.linearSubItems.Add(eSubItem);
+                                await _context.SaveChangesAsync();
+                            }
+                            //foreach (var items in listPermissions)
+                            //{
+                            //    RoleandPermission rolePerm = new RoleandPermission();
+                            //    rolePerm.permissionId = items.ToString();
+                            //    rolePerm.roleAutoId = getRoleAutoId;
+                            //    rolePerm.companyId = claimresponse.companyId;
+                            //    _context.roleAndPermissions.Add(rolePerm);
+                            //    await _context.SaveChangesAsync();
+                            //}
+                        }
+                        else if (linearAssetModel.validityCheck != 0)
+                        {
+                            var validityCheckValue = linearAssetModel.validityCheck;
+                            if (LinearModelValidityExists(validityCheckValue))
+                            {
+
+                                List<LinearSubItemList> linearSubItemsLists = linearAssetModel.listSubItems;
+
+
+
+                                foreach (var items in linearSubItemsLists)
+                                {
+                                    LinearSubItem eSubItem = new LinearSubItem();
+                                    eSubItem.laAutoId = validityCheckValue;
+                                    eSubItem.lsName = items.lsName;
+                                    eSubItem.description = items.description;
+                                    eSubItem.location = items.location;
+                                    eSubItem.lsParentId = items.lsParentId;
+                                    eSubItem.companyId = claimresponse.companyId;
+                                    _context.linearSubItems.Add(eSubItem);
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                return Unauthorized();
+                            }
+                        }
+
+
+                        return Ok();
+
+                        //    }
+                        //    return Unauthorized();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        //_logger.LogError(ex.Message);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
                     }
 
-                    if (autoId == "")
-                    {
-                        _context.ChangeTracker.Clear();
-                        LinearAssetModel laModel = new LinearAssetModel();
-                        string comId = "LAM1";
-                        laModel.laAutoID = linearAssetModel.laAutoID;
-                        laModel.laID = comId;
-                        laModel.laName = linearAssetModel.laName;
-                        laModel.status = linearAssetModel.status;
-                        laModel.companyId = claimresponse.companyId;
-                        _context.linearAssetModels.Add(laModel);
-                        await _context.SaveChangesAsync();
-                        getLamAutoId = laModel.laAutoID;
-                    }
-
-                    if (autoId != "")
-                    {
-                        _context.ChangeTracker.Clear();
-                        LinearAssetModel laModel = new LinearAssetModel();
-                        string comId = "LAM" + (int.Parse(autoId) + 1);
-                        laModel.laAutoID = linearAssetModel.laAutoID;
-                        laModel.laID = comId;
-                        laModel.laName = linearAssetModel.laName;
-                        laModel.status = linearAssetModel.status;
-                        laModel.companyId = claimresponse.companyId;
-                        _context.linearAssetModels.Add(laModel);
-                        await _context.SaveChangesAsync();
-                        getLamAutoId = laModel.laAutoID;
-                    }
-
-                    List<LinearSubItemList> linearSubItemLists = linearAssetModel.listSubItems;
-
-                    foreach (var items in linearSubItemLists)
-                    {
-                        LinearSubItem laSubItem = new LinearSubItem();
-                        laSubItem.laAutoId = getLamAutoId;
-                        laSubItem.lsName = items.lsName;
-                        laSubItem.description = items.description;
-                        laSubItem.location = items.location;
-                        laSubItem.companyId = claimresponse.companyId;
-                        _context.linearSubItems.Add(laSubItem);
-                        await _context.SaveChangesAsync();
-                    }
-
-
-
-                    return Ok();
                 }
                 return Unauthorized();
 
@@ -269,7 +336,7 @@ namespace AssetWebApi.Controllers
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            
+
         }
 
         // DELETE: api/LinearAssetModels/5
@@ -339,6 +406,12 @@ namespace AssetWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
+        }
+
+
+        private bool LinearModelValidityExists(int id)
+        {
+            return _context.linearAssetModels.Any(e => e.laAutoID == id);
         }
         private bool LinearAssetModelExists(int id)
         {
