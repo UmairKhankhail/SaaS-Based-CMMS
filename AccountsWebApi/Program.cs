@@ -16,12 +16,12 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<JwtTokenHandler>();
 builder.Services.AddCustomAuthentication();
 
-var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
-var dbName = Environment.GetEnvironmentVariable("DB_NAME");
-var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");
-//var dbHost = "127.0.0.1";
-//var dbName = "accountstestdb";
-//var dbPassword = "Mysql123$";
+//var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+//var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+//var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");
+var dbHost = "127.0.0.1";
+var dbName = "accountstestdb";
+var dbPassword = "Mysql123$";
 string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}; user=root; password={dbPassword};";
     //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
     //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));
@@ -56,38 +56,38 @@ builder.Services.AddSingleton<ICacheService,CacheService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-});
-builder.Services.AddSwaggerGen(option =>
-{
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
-        }
-    });
-});
+//builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen(c =>
+//{
+//    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+//});
+//builder.Services.AddSwaggerGen(option =>
+//{
+//    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+//    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//    {
+//        In = ParameterLocation.Header,
+//        Description = "Please enter a valid token",
+//        Name = "Authorization",
+//        Type = SecuritySchemeType.Http,
+//        BearerFormat = "JWT",
+//        Scheme = "Bearer"
+//    });
+//    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        {
+//            new OpenApiSecurityScheme
+//            {
+//                Reference = new OpenApiReference
+//                {
+//                    Type=ReferenceType.SecurityScheme,
+//                    Id="Bearer"
+//                }
+//            },
+//            new string[]{}
+//        }
+//    });
+//});
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -97,12 +97,12 @@ builder.Services.AddControllers()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
 
-}
+//}
 
 app.UseCors();
 app.UseAuthentication();

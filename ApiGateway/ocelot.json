@@ -1,6 +1,6 @@
 {
   "Routes": [
-    //AccountsWebApi
+    //localhost
 
     //Companies Controller
     {
@@ -10,8 +10,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Companies"
@@ -23,8 +23,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Companies/{id}"
@@ -39,8 +39,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/addusers"
@@ -52,8 +52,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/addusers/{id}"
@@ -65,8 +65,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/addusers/getUser"
@@ -81,8 +81,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Departments"
@@ -94,8 +94,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Departments/getDepartment"
@@ -107,8 +107,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Departments/{id}"
@@ -123,8 +123,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Employees"
@@ -136,8 +136,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Employees/getEmployee"
@@ -149,8 +149,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Employees/{id}"
@@ -165,8 +165,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Facilities"
@@ -178,8 +178,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Facilities/getFacility"
@@ -191,8 +191,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Facilities/{id}"
@@ -207,8 +207,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Floors"
@@ -220,8 +220,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Floors/getFloor"
@@ -233,8 +233,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Floors/{id}"
@@ -248,8 +248,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Functionallocations"
@@ -261,8 +261,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Functionallocations/{id}"
@@ -274,8 +274,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Functionallocations/getFunctionalLocation"
@@ -290,8 +290,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Methodtypes"
@@ -303,8 +303,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Methodtypes/getMethodType"
@@ -316,8 +316,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Methodtypes/{id}"
@@ -330,8 +330,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Permissions"
@@ -343,8 +343,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Permissions/{id}"
@@ -356,8 +356,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Permissions/{uId, uAutoId, cId}"
@@ -373,8 +373,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Positions"
@@ -386,8 +386,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Positions/{id}"
@@ -399,8 +399,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Positions/getPosition"
@@ -414,8 +414,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Priorities"
@@ -427,8 +427,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Priorities/{id}"
@@ -440,8 +440,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Priorities/getPriority"
@@ -455,8 +455,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Profiles"
@@ -468,8 +468,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Profiles/{id}"
@@ -481,8 +481,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Profiles/getProfile"
@@ -496,8 +496,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Roles"
@@ -509,8 +509,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Roles/{id}"
@@ -522,8 +522,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Roles/getRole"
@@ -536,8 +536,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/SubDepartments"
@@ -549,8 +549,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/SubDepartments/{id}"
@@ -562,8 +562,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/SubDepartments/getSubDepartment"
@@ -578,8 +578,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Tools"
@@ -591,8 +591,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Tools/{id}"
@@ -604,8 +604,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Tools"
@@ -620,8 +620,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Typeofmaintenances"
@@ -633,8 +633,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Typeofmaintenances/{id}"
@@ -646,8 +646,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Typeofmaintenances/getTypeOfMaintenance"
@@ -661,8 +661,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Typesofproblems"
@@ -674,8 +674,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Typesofproblems/{id}"
@@ -687,8 +687,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Typesofproblems/getTypeOfProblem"
@@ -702,8 +702,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Users"
@@ -715,8 +715,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Users/{id}"
@@ -728,8 +728,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "accountswebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 81
         }
       ],
       "DownstreamPathTemplate": "/api/Users/logout"
@@ -746,8 +746,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Brands"
@@ -760,8 +760,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Brands/{id}"
@@ -776,8 +776,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Categories"
@@ -789,8 +789,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Categories/{id}"
@@ -805,8 +805,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Equipments"
@@ -818,8 +818,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Equipments/{id}"
@@ -835,8 +835,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Groups"
@@ -848,8 +848,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Groups/{id}"
@@ -865,8 +865,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Issuences"
@@ -879,8 +879,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Issuences/deleteRecord"
@@ -892,8 +892,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Issuences/{id}"
@@ -909,8 +909,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Purchases"
@@ -922,8 +922,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Purchases/deleteRecord"
@@ -935,8 +935,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/Purchases/{id}"
@@ -952,8 +952,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/UnitOfMeasurements"
@@ -965,8 +965,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "inventorywebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 82
         }
       ],
       "DownstreamPathTemplate": "/api/UnitOfMeasurements/{id}"
@@ -975,14 +975,27 @@
 
     //Equipment Model Controller
     {
+      "UpstreamPathTemplate": "/api/EquipmentModels",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 83
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EquipmentModels"
+    },
+    {
       "UpstreamPathTemplate": "/api/EquipmentModels/{id}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/EquipmentModels/{id}"
@@ -994,25 +1007,13 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/EquipmentModels/DeleteFullEquipmentModel"
     },
-    {
-      "UpstreamPathTemplate": "/api/EquipmentModels",
-      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
 
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "assetwebapi",
-          "Port": 80
-        }
-      ],
-      "DownstreamPathTemplate": "/api/EquipmentModels"
-    },
     {
       "UpstreamPathTemplate": "/api/EquipmentModels/getAllModels",
       "UpstreamHttpMethod": [ "Get" ],
@@ -1020,8 +1021,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/EquipmentModels/getAllModels"
@@ -1029,20 +1030,6 @@
 
 
     //Equipment Asset Controller
-
-    {
-      "UpstreamPathTemplate": "/api/EquipmentAssetsBuild/{id}",
-      "UpstreamHttpMethod": [ "Get", "Delete" ],
-
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "assetwebapi",
-          "Port": 80
-        }
-      ],
-      "DownstreamPathTemplate": "/api/EquipmentAssetsBuild/{id}"
-    },
     {
       "UpstreamPathTemplate": "/api/EquipmentAssetsBuild",
       "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
@@ -1050,13 +1037,41 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/EquipmentAssetsBuild"
     },
+    {
+      "UpstreamPathTemplate": "/api/EquipmentAssetsBuild/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 83
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EquipmentAssetsBuild/{id}"
+    },
+
     //Linear Model Controller
+    {
+      "UpstreamPathTemplate": "/api/LinearAssetModels",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 83
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LinearAssetModels"
+    },
+
     {
       "UpstreamPathTemplate": "/api/LinearAssetModels/{id}",
       "UpstreamHttpMethod": [ "Get", "Delete" ],
@@ -1064,8 +1079,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/LinearAssetModels/{id}"
@@ -1077,25 +1092,13 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/LinearAssetModels/GetControllersAndMethods"
     },
-    {
-      "UpstreamPathTemplate": "/api/LinearAssetModels",
-      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
 
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "assetwebapi",
-          "Port": 80
-        }
-      ],
-      "DownstreamPathTemplate": "/api/LinearAssetModels"
-    },
     {
       "UpstreamPathTemplate": "/api/LinearAssetModels/getAllModels",
       "UpstreamHttpMethod": [ "Get" ],
@@ -1103,26 +1106,14 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/LinearAssetModels/getAllModels"
     },
     //Linear Asset Controller
-    {
-      "UpstreamPathTemplate": "/api/LinearAssets/{id}",
-      "UpstreamHttpMethod": [ "Get", "Delete" ],
 
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "assetwebapi",
-          "Port": 80
-        }
-      ],
-      "DownstreamPathTemplate": "/api/LinearAssets/{id}"
-    },
     {
       "UpstreamPathTemplate": "/api/LinearAssets",
       "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
@@ -1130,12 +1121,26 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "assetwebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 83
         }
       ],
       "DownstreamPathTemplate": "/api/LinearAssets"
     },
+    {
+      "UpstreamPathTemplate": "/api/LinearAssets/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 83
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LinearAssets/{id}"
+    },
+
 
     // Maintenance WebApi
 
