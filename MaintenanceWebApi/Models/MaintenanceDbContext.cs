@@ -11,19 +11,19 @@ namespace MaintenanceWebApi.Models
     {
         public MaintenanceDbContext(DbContextOptions options) : base(options)
         {
-            try
-            {
-                var dbcreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
-                if (dbcreator != null)
-                {
-                    if (!dbcreator.CanConnect()) dbcreator.Create();
-                    if (!dbcreator.HasTables()) dbcreator.CreateTables();
-                }
-            }
-            catch (Exception er)
-            {
-                Console.WriteLine(er.Message);
-            }
+            //try
+            //{
+            //    var dbcreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
+            //    if (dbcreator != null)
+            //    {
+            //        if (!dbcreator.CanConnect()) dbcreator.Create();
+            //        if (!dbcreator.HasTables()) dbcreator.CreateTables();
+            //    }
+            //}
+            //catch (Exception er)
+            //{
+            //    Console.WriteLine(er.Message);
+            //}
         }
 
 

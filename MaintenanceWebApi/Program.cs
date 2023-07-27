@@ -20,13 +20,24 @@ builder.Services.AddCustomAuthentication();
 //var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");
 
 var dbHost = "127.0.0.1";
-var dbName = "inventorytestdb";
+var dbName = "maintenancetestdb";
 var dbPassword = "Mysql123$";
 string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}; user=root; password={dbPassword};";
 //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
 //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));
 string? connectionString = connectionStringInitial.ToString();
 builder.Services.AddDbContext<MaintenanceDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+        .AllowCredentials();
+    });
+});
 
 //builder.Services.AddSingleton<RedisCachingService>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
@@ -80,7 +91,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
