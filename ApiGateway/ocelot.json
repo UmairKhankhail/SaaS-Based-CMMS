@@ -1153,8 +1153,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/WorkRequests/{id}"
@@ -1166,8 +1166,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/WorkRequests"
@@ -1183,8 +1183,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/WorkOrders/{id}"
@@ -1196,8 +1196,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/WorkOrders"
@@ -1212,8 +1212,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/WOItems/{id}"
@@ -1225,8 +1225,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/WOItems"
@@ -1241,8 +1241,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/woAssetItems/{id}"
@@ -1254,8 +1254,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/woAssetItems"
@@ -1271,8 +1271,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/StatusAndRepairs/{id}"
@@ -1284,8 +1284,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/StatusAndRepairs"
@@ -1301,8 +1301,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Procedures/{id}"
@@ -1314,8 +1314,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Procedures"
@@ -1330,8 +1330,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/ProcedureHealthAndSafeties/{id}"
@@ -1343,8 +1343,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/ProcedureHealthAndSafeties"
@@ -1359,8 +1359,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/MethodSteps/{id}"
@@ -1372,8 +1372,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/MethodSteps"
@@ -1388,8 +1388,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Methods/{id}"
@@ -1401,8 +1401,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Methods"
@@ -1418,8 +1418,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Instructions/{id}"
@@ -1431,8 +1431,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Instructions"
@@ -1449,8 +1449,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/HealthAndSafeties/{id}"
@@ -1462,8 +1462,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/HealthAndSafeties"
@@ -1478,8 +1478,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Executions/{id}"
@@ -1491,8 +1491,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Executions"
@@ -1509,8 +1509,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Evaluations/{id}"
@@ -1522,8 +1522,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "maintenancewebapi",
-          "Port": 80
+          "Host": "localhost",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Evaluations"
@@ -1541,7 +1541,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1554,7 +1554,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1571,7 +1571,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1584,7 +1584,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1601,7 +1601,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1614,7 +1614,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1629,7 +1629,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1642,7 +1642,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1657,7 +1657,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1670,7 +1670,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
@@ -1683,7 +1683,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "preventivemaintenancewebapi",
+          "Host": "preventivelocalhost",
           "Port": 80
         }
       ],
