@@ -160,7 +160,7 @@ namespace MaintenanceWebApi.Controllers
                         items.woAutoId = wOItems.woAutoId;
                         items.itemName = wOItems.itemName;
 
-                        var url = $"http://host.docker.internal:8007/api/Equipments/{wOItems.itemAutoId}";
+                        var url = $"http://localhost:8007/api/Equipments/{wOItems.itemAutoId}";
                         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                         // Set the Content-Type header to application/json
@@ -178,7 +178,7 @@ namespace MaintenanceWebApi.Controllers
 
                         if (stockItems < wOItems.quantity)
                         {
-                            var urlPurchase = "http://host.docker.internal:8007/api/Purchases";
+                            var urlPurchase = "http://localhost:8007/api/Purchases";
                             var parameters = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -217,7 +217,7 @@ namespace MaintenanceWebApi.Controllers
 
                         else if (stockItems >= wOItems.quantity)
                         {
-                            var urlIssuence = "https://host.docker.internal:8007/api/Issuences";
+                            var urlIssuence = "https://localhost:8007/api/Issuences";
                             var parametersIssuence = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -281,7 +281,7 @@ namespace MaintenanceWebApi.Controllers
                         items.woAutoId = wOItems.woAutoId;
                         items.itemName = wOItems.itemName;
 
-                        var url = $"http://host.docker.internal:8007/api/Equipments/{wOItems.itemAutoId}";
+                        var url = $"http://localhost:8007/api/Equipments/{wOItems.itemAutoId}";
                         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                         // Set the Content-Type header to application/json
@@ -299,7 +299,7 @@ namespace MaintenanceWebApi.Controllers
 
                         if (stockItems < wOItems.quantity)
                         {
-                            var urlPurchase = "http://host.docker.internal:8007/api/Purchases";
+                            var urlPurchase = "http://localhost:8007/api/Purchases";
                             var parameters = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
@@ -341,7 +341,7 @@ namespace MaintenanceWebApi.Controllers
 
                         else if (stockItems >= wOItems.quantity)
                         {
-                            var urlIssuence = "http://host.docker.internal:8007/api/Issuences";
+                            var urlIssuence = "http://localhost:8007/api/Issuences";
                             var parametersIssuence = new Dictionary<string, object>
                             {
                                 { "userAutoId", wOItems.userAutoId },
