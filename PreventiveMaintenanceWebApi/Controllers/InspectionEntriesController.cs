@@ -137,7 +137,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return Unauthorized(ex.Message);
             }
             
         }
@@ -263,8 +263,9 @@ namespace PreventiveMaintenanceWebApi.Controllers
             }
             catch (Exception ex)
             {
+                
                 _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return Unauthorized(ex.Message);
             }
 
             
