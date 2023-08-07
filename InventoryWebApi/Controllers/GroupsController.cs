@@ -31,6 +31,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Groups
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Group>>> Getgroups()
         {
             try
@@ -54,6 +55,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Group>> GetGroup(int id)
         {
             try
@@ -85,6 +87,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Groups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutGroup([FromBody] Group group,int id)
         {
             try
@@ -123,6 +126,7 @@ namespace InventoryAPI.Controllers
         // POST: api/Groups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Group>> PostGroup(Group @group)
         {
             try
@@ -186,6 +190,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteGroup(int id)
         {
             try

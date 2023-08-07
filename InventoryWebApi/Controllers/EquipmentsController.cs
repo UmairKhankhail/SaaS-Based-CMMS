@@ -10,6 +10,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventoryAPI.Controllers
 {
@@ -54,6 +55,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Equipments
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Equipment>>> Getequipments()
         {
             try
@@ -78,6 +80,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Equipments/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Equipment>> GetEquipment(int id)
         {
             try
@@ -108,6 +111,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Equipments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutEquipment(string id,Equipment equipment)
         {
             try
@@ -152,6 +156,7 @@ namespace InventoryAPI.Controllers
         // POST: api/Equipments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
         {
             try
@@ -223,6 +228,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Equipments/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteEquipment(int id)
         {
             try

@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -39,6 +40,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/Evaluations
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Evaluation>>> Getevaluations()
         {
             try
@@ -61,6 +63,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/Evaluations/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Evaluation>> GetEvaluation(int id)
         {
             try
@@ -91,6 +94,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/Evaluations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutEvaluation(int id,Evaluation evaluation)
         {
             try
@@ -135,7 +139,9 @@ namespace MaintenanceWebApi.Controllers
 
         // POST: api/Evaluations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Evaluation>> PostEvaluation(Evaluation evaluation)
         {
             var compId = _context.evaluations.Where(eval => eval.companyId == evaluation.companyId && eval.woAutoId == evaluation.woAutoId).Select(d => d.evaluationId).ToList();
@@ -192,6 +198,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/Evaluations/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteEvaluation(int id, string cId)
         {
             var evaluation = await _context.evaluations.FindAsync(id);

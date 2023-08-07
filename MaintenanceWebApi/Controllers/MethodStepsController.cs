@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -28,6 +29,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/MethodSteps
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MethodSteps>>> GetmethodSteps()
         {
             try
@@ -49,6 +51,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/MethodSteps/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<MethodSteps>> GetMethodSteps(int id)
         {
             try
@@ -79,6 +82,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/MethodSteps/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutMethodSteps(int id, MethodSteps methodSteps)
         {
             try
@@ -123,6 +127,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/MethodSteps
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<MethodSteps>> PostMethodSteps(MethodSteps methodSteps)
         {
             try
@@ -148,6 +153,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/MethodSteps/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteMethodSteps(int id)
         {
             try

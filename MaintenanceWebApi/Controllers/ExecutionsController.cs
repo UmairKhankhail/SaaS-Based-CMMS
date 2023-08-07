@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -36,6 +37,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/Executions
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Execution>>> Getexecutions()
         {
             try
@@ -57,6 +59,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/Executions/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Execution>> GetExecution(int id)
         {
             try
@@ -86,6 +89,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/Executions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutExecution(int id,Execution execution)
         {
             try
@@ -132,6 +136,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/Executions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Execution>> PostExecution(Execution execution)
         {
             var compId = _context.executions.Where(exe=> exe.companyId == execution.companyId && exe.woAutoId == execution.woAutoId).Select(d => d.executionId).ToList();
@@ -184,6 +189,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/Executions/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteExecution(int id, string cId)
         {
             var execution = await _context.executions.FindAsync(id);

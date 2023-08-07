@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -29,6 +30,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/StatusAndRepairs
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<StatusAndRepair>>> GetstatusAndRepairs()
         {
             try
@@ -50,6 +52,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/StatusAndRepairs/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<StatusAndRepair>> GetStatusAndRepair(int id)
         {
             try
@@ -79,6 +82,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/StatusAndRepairs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutStatusAndRepair(int id, string companyId,StatusAndRepair statusAndRepair)
         {
             try
@@ -123,6 +127,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/StatusAndRepairs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<StatusAndRepair>> PostStatusAndRepair(StatusAndRepair statusAndRepair)
         {
             try
@@ -192,6 +197,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/StatusAndRepairs/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteStatusAndRepair(int id)
         {
             try

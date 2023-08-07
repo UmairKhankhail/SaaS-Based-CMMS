@@ -14,6 +14,7 @@ using System.Text;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -35,6 +36,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/WOItems
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<WOItems>>> GetwOItems()
         {
             try
@@ -56,6 +58,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/WOItems/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<WOItems>> GetWOItems(int id)
         {
             try
@@ -86,6 +89,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/WOItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutWOItems(int id,WOItems wOItems)
         {
             try
@@ -131,6 +135,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/WOItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<WOItems>> PostWOItems(WOItems wOItems)
         {
             try
@@ -408,6 +413,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/WOItems/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteWOItems(int id)
         {
             try

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -28,6 +29,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/ProcedureHealthAndSafeties
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProcedureHealthAndSafety>>> GetprocedureHealthAndSafeties()
         {
             try
@@ -49,6 +51,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/ProcedureHealthAndSafeties/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ProcedureHealthAndSafety>> GetProcedureHealthAndSafety(int id)
         {
             try
@@ -78,6 +81,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/ProcedureHealthAndSafeties/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutProcedureHealthAndSafety(int id,ProcedureHealthAndSafety procedureHealthAndSafety)
         {
             try
@@ -123,6 +127,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/ProcedureHealthAndSafeties
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ProcedureHealthAndSafety>> PostProcedureHealthAndSafety(ProcedureHealthAndSafety procedureHealthAndSafety)
         {
             try
@@ -147,6 +152,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/ProcedureHealthAndSafeties/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProcedureHealthAndSafety(int id)
         {
             try

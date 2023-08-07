@@ -9,6 +9,7 @@ using InventoryAPI.Models;
 using System.Drawing.Drawing2D;
 using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventoryAPI.Controllers
 {
@@ -34,6 +35,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/UnitOfMeasurements
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<UnitOfMeasurement>>> GetunitOfMeasurements()
         {
             try
@@ -58,6 +60,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/UnitOfMeasurements/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<UnitOfMeasurement>> GetUnitOfMeasurement(int id)
         {
             try
@@ -89,6 +92,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/UnitOfMeasurements/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutUnitOfMeasurement(int id, UnitOfMeasurement unitOfMeasurement)
         {
             try
@@ -128,6 +132,7 @@ namespace InventoryAPI.Controllers
         // POST: api/UnitOfMeasurements
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<UnitOfMeasurement>> PostUnitOfMeasurement(UnitOfMeasurement unitOfMeasurement)
         {
             try
@@ -186,6 +191,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/UnitOfMeasurements/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUnitOfMeasurement(int id)
         {
             try

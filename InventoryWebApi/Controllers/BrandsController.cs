@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using InventoryAPI.Models;
 using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventoryAPI.Controllers
 {
@@ -32,6 +33,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Brands
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Brand>>> Getbrands()
         {
             try
@@ -58,6 +60,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Brands/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
             try
@@ -89,6 +92,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Brands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutBrand(int id, Brand brand)
         {
             try
@@ -131,6 +135,7 @@ namespace InventoryAPI.Controllers
         // POST: api/Brands
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
             try
@@ -193,6 +198,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Brands/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteBrand(string id)
         {
             try

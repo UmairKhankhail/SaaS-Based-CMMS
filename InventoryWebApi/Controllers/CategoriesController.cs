@@ -9,6 +9,7 @@ using InventoryAPI.Models;
 using JwtAuthenticationManager;
 using System.Net.Http;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventoryAPI.Controllers
 {
@@ -33,6 +34,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Categories
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Category>>> Getcategories()
         {
             try
@@ -58,6 +60,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
             try
@@ -89,6 +92,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutCategory(Category category, int id)
         {
             try
@@ -128,6 +132,7 @@ namespace InventoryAPI.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Category>> PostCategory( Category category)
         {
             try
@@ -188,6 +193,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteCategory(string id)
         {
             try

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -51,6 +52,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/WorkOrders
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<WorkOrder>>> GetworkOrders()
         {
             try
@@ -73,6 +75,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/WorkOrders/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<WorkOrder>> GetWorkOrder(int id)
         {
             try
@@ -103,6 +106,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/WorkOrders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutWorkOrder(int id,WorkOrder workOrder)
         {
             try
@@ -150,6 +154,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/WorkOrders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<WorkOrder>> PostWorkOrder(WorkOrder workOrder)
         {
             try
@@ -210,6 +215,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/WorkOrders/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteWorkOrder(int id)
         {
             try

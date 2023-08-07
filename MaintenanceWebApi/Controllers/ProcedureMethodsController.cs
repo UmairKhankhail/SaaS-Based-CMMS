@@ -9,6 +9,7 @@ using MaintenanceWebApi.Models;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
 using log4net.Util;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -30,6 +31,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/ProcedureMethods
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProcedureMethod>>> GetprocedureMethods()
         {
             try
@@ -51,6 +53,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/ProcedureMethods/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ProcedureMethod>> GetProcedureMethod(int id)
         {
             try
@@ -80,6 +83,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/ProcedureMethods/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutProcedureMethod(int id,ProcedureMethod procedureMethod)
         {
             try
@@ -124,6 +128,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/ProcedureMethods
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ProcedureMethod>> PostProcedureMethod(ProcedureMethod procedureMethod)
         {
             try
@@ -149,6 +154,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/ProcedureMethods/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProcedureMethod(int id)
         {
             try

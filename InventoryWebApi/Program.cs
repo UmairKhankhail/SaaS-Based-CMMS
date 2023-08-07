@@ -16,7 +16,7 @@ builder.Services.AddCustomAuthentication();
 
 var dbHost = "127.0.0.1";
 var dbName = "inventorytestdb";
-var dbPassword = "Mysql123$";
+var dbPassword = "umair_471";
 //var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
 //var dbName = Environment.GetEnvironmentVariable("DB_NAME");
 //var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");

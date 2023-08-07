@@ -11,6 +11,7 @@ using InventoryWebApi.Models;
 using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventoryAPI.Controllers
 {
@@ -34,6 +35,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Purchases
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Purchase>>> Getpurchases()
         {
             try
@@ -74,6 +76,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Purchases/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Purchase>> GetPurchase(int id)
         {
             try
@@ -114,6 +117,7 @@ namespace InventoryAPI.Controllers
         // PUT: api/Purchases/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutPurchase(Purchase purchase)
         {
             try
@@ -192,6 +196,7 @@ namespace InventoryAPI.Controllers
         // POST: api/Purchases
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Purchase>> PostPurchase(Purchase purchase)
         {
             try
@@ -317,6 +322,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Purchases/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeletePurchase(int id)
         {
             try
@@ -349,6 +355,7 @@ namespace InventoryAPI.Controllers
 
 
         [HttpDelete("deleteRecord")]
+        [Authorize]
         public async Task<IActionResult> DeletePurchaseRecord(int id)
         {
             try

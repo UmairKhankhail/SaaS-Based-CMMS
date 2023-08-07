@@ -9,6 +9,7 @@ using MaintenanceWebApi.Models;
 using System.Drawing.Imaging;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -31,6 +32,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/Procedures
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Procedure>>> Getprocedures()
         {
             try
@@ -52,6 +54,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/Procedures/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Procedure>> GetProcedure(int id)
         {
             try
@@ -82,6 +85,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/Procedures/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutProcedure(int id, Procedure procedure)
         {
             try
@@ -126,6 +130,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/Procedures
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Procedure>> PostProcedure(Procedure procedure)
         {
             try
@@ -151,6 +156,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/Procedures/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProcedure(int id)
         {
             try

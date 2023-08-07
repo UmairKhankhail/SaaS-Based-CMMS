@@ -11,6 +11,7 @@ using System.ComponentModel.Design;
 using InventoryWebApi.Models;
 using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InventoryAPI.Controllers
 {
@@ -33,6 +34,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Issuences
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<Issuence>> GetIssuences()
         {
             try
@@ -82,6 +84,7 @@ namespace InventoryAPI.Controllers
 
         // GET: api/Issuences/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Issuence>> GetIssuence(int id)
         {
             try
@@ -127,6 +130,7 @@ namespace InventoryAPI.Controllers
         // POST: api/Issuences
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Issuence>> PostIssuence( Issuence issuence)
         {
             try
@@ -261,6 +265,7 @@ namespace InventoryAPI.Controllers
 
         //// PUT: api/Issuences
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutIssuence(Issuence issuence)
         {
             try
@@ -339,6 +344,7 @@ namespace InventoryAPI.Controllers
 
     // DELETE: api/Issuences/5
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> DeleteIssuence(int id)
         {
             try
@@ -373,6 +379,7 @@ namespace InventoryAPI.Controllers
 
         // DELETE: api/Issuences/5
         [HttpDelete("deleteRecord")]
+        [Authorize]
         public async Task<IActionResult> DeleteIssuenceRecord(int id)
         {
             try

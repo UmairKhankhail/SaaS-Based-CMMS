@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -29,6 +30,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/WorkRequests
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<WorkRequest>>> GetworkRequests()
         {
             try
@@ -50,6 +52,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/WorkRequests/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<WorkRequest>> GetWorkRequest(int id)
         {
             try
@@ -79,6 +82,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/WorkRequests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> PutWorkRequest(int id, WorkRequest workRequest)
         {
             try
@@ -127,6 +131,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/WorkRequests
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<WorkRequest>> PostWorkRequest(WorkRequest workRequest)
         {
             try
@@ -151,6 +156,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/WorkRequests/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteWorkRequest(int id)
         {
             try

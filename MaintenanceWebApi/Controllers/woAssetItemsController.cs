@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MaintenanceWebApi.Models;
 using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -29,6 +30,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/woAssetItems
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<woAssetItem>>> GetwoAssetItems()
         {
             try
@@ -50,6 +52,7 @@ namespace MaintenanceWebApi.Controllers
 
         // GET: api/woAssetItems/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<woAssetItem>> GetwoAssetItem(int id)
         {
             try
@@ -79,6 +82,7 @@ namespace MaintenanceWebApi.Controllers
         // PUT: api/woAssetItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutwoAssetItem(int id,woAssetItem woAssetItem)
         {
             try
@@ -125,6 +129,7 @@ namespace MaintenanceWebApi.Controllers
         // POST: api/woAssetItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<woAssetItem>> PostwoAssetItem(woAssetItem woAssetItem)
         {
             try
@@ -149,6 +154,7 @@ namespace MaintenanceWebApi.Controllers
 
         // DELETE: api/woAssetItems/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeletewoAssetItem(int id)
         {
             try
