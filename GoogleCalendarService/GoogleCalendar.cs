@@ -26,7 +26,8 @@ namespace GoogleCalendarService
         private UserCredential GetCredential()
         {
             // Specify the path to your client secrets JSON file
-            string clientSecretsFilePath = "C:\\TitanCMMSCloud\\GoogleCalendarService\\client_secret_123.json";
+            //string clientSecretsFilePath = "C:\\TitanCMMSCloud\\GoogleCalendarService\\client_secret_123.json";
+            string clientSecretsFilePath = "D:\\client_secret_123.json";
 
             // Specify the scopes required for accessing the Calendar API
             string[] scopes = { CalendarService.Scope.Calendar };
