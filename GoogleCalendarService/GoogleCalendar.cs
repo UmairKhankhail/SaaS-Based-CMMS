@@ -2,51 +2,39 @@
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
+using System;
 using System.IO;
-using System.Reflection;
 
 namespace GoogleCalendarService
 {
     public class GoogleCalendar
     {
         private readonly CalendarService _calendarService;
+        private string serviceAccountKeyFilePath = "C:\\AppKey\\titancmms-965210431d86.json"; // Replace with your service account key file path
 
         public GoogleCalendar()
         {
-            var credential = GetCredential();
+       
+            var credential = GetCredential(serviceAccountKeyFilePath);
 
             _calendarService = new CalendarService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "Calendar Api"
+                ApplicationName = "TitanCMMS"
             });
         }
 
-        private UserCredential GetCredential()
+        private ServiceAccountCredential GetCredential(string serviceAccountKeyFilePath)
         {
-            // Specify the path to your client secrets JSON file
-            //string clientSecretsFilePath = "C:\\TitanCMMSCloud\\GoogleCalendarService\\client_secret_123.json";
-            string clientSecretsFilePath = "D:\\client_secret_123.json";
-
-            // Specify the scopes required for accessing the Calendar API
-            string[] scopes = { CalendarService.Scope.Calendar };
-
-            // Load the client secrets from the JSON file
-            using (var stream = new FileStream(clientSecretsFilePath, FileMode.Open, FileAccess.Read))
+            GoogleCredential credential;
+            using (var stream = new FileStream(serviceAccountKeyFilePath, FileMode.Open, FileAccess.Read))
             {
-                var credentials = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                    scopes,
-                    "user",
-                    System.Threading.CancellationToken.None
-
-                ).Result;
-
-                return credentials;
+                credential = GoogleCredential.FromStream(stream)
+                    .CreateScoped(CalendarService.Scope.Calendar);
             }
-        }
 
+            return (ServiceAccountCredential)credential.UnderlyingCredential;
+        }
 
         public string InsertRecurringEvent(Event newEvent, int frequencyInDays, string calendardbId, string timeZone)
         {
@@ -60,7 +48,7 @@ namespace GoogleCalendarService
             // Set the recurrence rule for the event
             newEvent.Recurrence = new string[] { recurrence };
 
-            // Insert the recurring event into the primary calendar
+            // Insert the recurring event into the specified calendar
             var calendarId = calendardbId;
             var createdEvent = _calendarService.Events.Insert(newEvent, calendarId).Execute();
 
@@ -74,7 +62,7 @@ namespace GoogleCalendarService
             newEvent.Start.TimeZone = timeZone;
             newEvent.End.TimeZone = timeZone;
 
-            // Insert the recurring event into the primary calendar
+            // Insert the event into the specified calendar
             var calendarId = calendardbId;
             var createdEvent = _calendarService.Events.Insert(newEvent, calendarId).Execute();
 
@@ -82,42 +70,9 @@ namespace GoogleCalendarService
             return createdEvent.Id;
         }
 
-        //public string InsertRecurringEvent(Event newEvent, int recurrenceCount)
-        //{
-        //    // Set timezone to Pakistan Standard Time
-        //    newEvent.Start.TimeZone = "Asia/Karachi";
-        //    newEvent.End.TimeZone = "Asia/Karachi";
-
-        //    // Set recurrence
-        //    newEvent.Recurrence = new string[] { $"RRULE:FREQ=DAILY;COUNT={recurrenceCount}" };
-
-        //    // Insert the recurring event into the primary calendar
-        //    var calendarId = "primary";
-        //    var createdEvent = _calendarService.Events.Insert(newEvent, calendarId).Execute();
-
-        //    // Return the created event ID
-        //    return createdEvent.Id;
-        //}
-
-        //public string UpdateEvent(string eventId, Event updatedEvent)
-        //{
-        //    // Set timezone to Pakistan Standard Time
-        //    updatedEvent.Start.TimeZone = "Asia/Karachi";
-        //    updatedEvent.End.TimeZone = "Asia/Karachi";
-
-        //    // Update the event in the primary calendar
-        //    var calendarId = "primary";
-        //    var updatedEventResult = _calendarService.Events.Update(updatedEvent, calendarId, eventId).Execute();
-
-        //    // Return the updated event ID
-        //    return updatedEventResult.Id;
-        //}
-
         public void UpdateRecurringEvent(string calendarId, string eventId, Event updatedEvent, int frequencyInDays, string timeZone)
         {
-            // Set the eventId of the recurring event to be updated
-
-            // Update the event start and end time zone if needed
+            // Update event start and end time zone
             updatedEvent.Start.TimeZone = timeZone;
             updatedEvent.End.TimeZone = timeZone;
 
@@ -131,22 +86,17 @@ namespace GoogleCalendarService
             _calendarService.Events.Update(updatedEvent, calendarId, eventId).Execute();
         }
 
-
-        public void DeleteEvent(string eventId, string calenderDbId)
+        public void DeleteEvent(string eventId, string calendarId)
         {
-            // Delete the event from the primary calendar
-            var calendarId = calenderDbId;
             _calendarService.Events.Delete(calendarId, eventId).Execute();
         }
 
-        public Event GetEvent(string eventId, string calenderDbId)
+        public Event GetEvent(string eventId, string calendarId)
         {
-            // Retrieve the event from the primary calendar
-            var calendarId = calenderDbId;
             var eventResult = _calendarService.Events.Get(calendarId, eventId).Execute();
-
             return eventResult;
         }
+
         public string CreateCalendar(string calendarSummary, string calendarDescription, string timeZone)
         {
             var newCalendar = new Calendar
@@ -160,6 +110,7 @@ namespace GoogleCalendarService
 
             return createdCalendar.Id;
         }
+
         public string UpdateCalendar(string calendarId, string calendarSummary, string calendarDescription, string timeZone)
         {
             var updatedCalendar = _calendarService.Calendars.Get(calendarId).Execute();

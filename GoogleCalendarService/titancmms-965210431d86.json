@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "titancmms",
+  "private_key_id": "965210431d866c555e520224bb0d3059fa348360",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDGT3Ydm5v89jqR\nUUZOJOG1DxHt5+AWqwx+Rx3UB71RGvcI+Ld9lsaI8+Ax4oOR6scKFOEIoV3mNAXZ\nvludRYtF7YVCA/zBzmaHV1X3LLkYkYDyfdTUiOAQW4C3NFK2UffQZN7uqKrpE5Qw\nSJ9FrT9B8tYKsxlJmIxb1yrFLiLZb4pkk9wglpyFXvz0N4uchz1XiyA8g6koshTU\n1j+9r1KhXR6cO8uBm+bAbOO6nOlKmxrqxFq5+5LsmUxbcAHYcF+o+Bl2WSdC813d\nLZ0XnAD66vNl9hd7I9Fe2P+rD+VIsae0i6qZDXx0v4Jbyy11AdRrFLs/GLiVrIlJ\n84W0uGTHAgMBAAECggEABDMyoTXme9kLLIC4KHeHgDotewhqKpC81v/SlecED2+u\nw7XgzPwggE4J9YSCnNiIFqKSkYg5YOLBLPdnIVGTvYtmQxuqgsBIU5156J493VNX\nk8sucsHjXPVTKI4nIk1iHjvErPFNjVoozUz8cpFUwaTO+7MHWhOtBVTtRvfPLSOy\nBzfp5DGuMH3ghwhJYDJyh11lp0MbUeBZEW/s+uR+E5AtM6E6VjVGoV0DCbxJDffs\nsY8jmqqP0vStwDhdVrkOoviiQwBbVGtA/aQUyEnZWFZiJ5lqlGiroGxH/zTd6cXT\nLmYjQqUmHJlVN/WE2N0NHQASqahV940INNbZfGv6AQKBgQD48jQDcVzIMnejGz67\nEtm5sP5HPJwVP9SXOTMRfmyePuu9g34TBSnPWgFqPjwyKsjQ8FN9kbwrks6Pjc29\nGOWEPE3tNVakV9BJuKWL0Kh4aBRD6PM/usi02YSLqlM/DqY9yqt/NSytQq7zn8Pv\nqTcGExU4tpKUYI1k37mUf7A2BwKBgQDL7fVnyd0rtznKjk8Oa3Zq+HRQZNYiHU6P\nuPbWrC0hj8SarVGlaJkJoj5lzC4ImV61apwtPT4051j+TCMWcCk5HR8/gLYXzSaB\n5xmyCfhlfvgplulbeO6nwRrUvi4OgC3pgN8gLfJgNdsaq0r3RSvTIS+GpAFqUJpk\nQRYZ6vyrQQKBgQDwzU+0uNYXrIF/G16NlElYzjTYcW9FOq4H7UNRu6mTVKexdFzi\nRw9PS++sdjDCEhKX0K/h+bM7rtDxmSgWrttsEu0J85swcuS+OsafPKGJfpuDqPSK\ng8Ga9gC5HHNTvnbdtIo5DRV/Ls6OR88+pr7buF/BsRCOR+rdVW9sjirDxwKBgAHn\ngvcpJ2uVFnERyyMzVbPCBjQJ/QXsiCNHcuamTPWXRhq7q5uD0ooIfdSth3CFHiFL\nkZHKlJ4h2u7k/x7ihUAHSZdqOEkYnVdxNQg4l507Bk49HojAJFpkrz91VzDDeapI\njczbIPxNBHLHTrfoaXRbRvpW5bx8bDSrdu1fCGUBAoGBAMsYOBcIXXvUCdFvQeFO\n8gc/B3oTrUO6lqH6YIFvFRJxChaX+tJfdBRLKqmXTuqqyH31sGF4QJkZiT9pVkOr\nPVVvWs5Qx0WfeEzVKVRL6vR9M+gf72vbCObDcUUFv+1fEPrQ5dA2tFNC8XeVONPo\np75yLyksEXltwh9eZvRwj0iQ\n-----END PRIVATE KEY-----\n",
+  "client_email": "titancmmscloud@titancmms.iam.gserviceaccount.com",
+  "client_id": "110819528624088350372",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/titancmmscloud%40titancmms.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

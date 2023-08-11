@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="client_secret_123.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="client_secret_123.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.60.0.3017" />
   </ItemGroup>
 
