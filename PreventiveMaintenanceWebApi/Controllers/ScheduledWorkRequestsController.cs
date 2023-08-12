@@ -213,6 +213,37 @@ namespace PreventiveMaintenanceWebApi.Controllers
             
         }
 
+        [HttpGet("GetCalendarDetails")]
+        [Authorize]
+        public async Task<ActionResult> GetCalendarDetails(string calendarid)
+        {
+            try
+            {
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+
+                if (claimresponse.isAuth == true)
+                {
+                    // Create an instance of the GoogleCalendar class
+                    var googleCalendar = new GoogleCalendar();
+
+                    // Call the GetCalendarDetails method from the GoogleCalendar class
+                    var calendarDetails = googleCalendar.GetCalendarDetails(calendarid);
+
+                    // Return the calendar details as the response
+                    return Ok(calendarDetails);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
         [HttpGet("GetCalendarRecords")]
         [Authorize]
         public async Task<ActionResult<GoogleCalendarRecord>> GetCalendarRecords()
