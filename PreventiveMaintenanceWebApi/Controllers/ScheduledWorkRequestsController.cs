@@ -288,7 +288,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                     GoogleCalendarRecord gcr = new GoogleCalendarRecord();
                     gcr.calendarSummary = googleCalendarRecord.calendarSummary;
                     gcr.calendarDescription = googleCalendarRecord.calendarDescription;
-                    gcr.iFrame = googleCalendarRecord.iFrame.ToString();
+                    
                     gcr.timeZoneRegional = googleCalendarRecord.timeZoneRegional;
                     gcr.timeZoneWord = googleCalendarRecord.timeZoneWord;
                     gcr.timeZoneGMT = googleCalendarRecord.timeZoneGMT;
@@ -298,6 +298,11 @@ namespace PreventiveMaintenanceWebApi.Controllers
                     GoogleCalendar gc = new GoogleCalendar();
                     var gcId = gc.CreateCalendar(gcr.calendarSummary, gcr.calendarDescription, gcr.timeZoneRegional);
                     gcr.googleCalendarId = gcId;
+
+                    
+                    //IFrame
+                    gcr.iFrame = $"<iframe src='https://calendar.google.com/calendar/embed?src={gcr.googleCalendarId}' style='border: 0' width='800' height='600' frameborder='0' scrolling='no'></iframe>";
+
                     _context.googleCalendarRecords.Add(gcr);
                     await _context.SaveChangesAsync();
                     getgcrId = gcr.googleCalendarAutoId;

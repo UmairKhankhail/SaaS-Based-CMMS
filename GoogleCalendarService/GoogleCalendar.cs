@@ -48,6 +48,7 @@ namespace GoogleCalendarService
             // Set the recurrence rule for the event
             newEvent.Recurrence = new string[] { recurrence };
 
+            newEvent.Visibility = "public";
             // Insert the recurring event into the specified calendar
             var calendarId = calendardbId;
             var createdEvent = _calendarService.Events.Insert(newEvent, calendarId).Execute();
@@ -62,6 +63,7 @@ namespace GoogleCalendarService
             newEvent.Start.TimeZone = timeZone;
             newEvent.End.TimeZone = timeZone;
 
+            newEvent.Visibility = "public";
             // Insert the event into the specified calendar
             var calendarId = calendardbId;
             var createdEvent = _calendarService.Events.Insert(newEvent, calendarId).Execute();
@@ -107,6 +109,18 @@ namespace GoogleCalendarService
             };
 
             var createdCalendar = _calendarService.Calendars.Insert(newCalendar).Execute();
+
+            AclRule rule = new AclRule
+            {
+                Role = "reader", // Adjust the role as needed
+                Scope = new AclRule.ScopeData
+                {
+                    Type = "default"
+                }
+            };
+
+            _calendarService.Acl.Insert(rule, createdCalendar.Id).Execute();
+
 
             return createdCalendar.Id;
         }
