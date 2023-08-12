@@ -10,7 +10,7 @@ namespace GoogleCalendarService
     public class GoogleCalendar
     {
         private readonly CalendarService _calendarService;
-        private string serviceAccountKeyFilePath = "D:\\TitanCMMSIIS\\GoogleCalendarService\\titancmms-965210431d86.json"; // Replace with your service account key file path
+        private string serviceAccountKeyFilePath = "C:\\AppKey\\titancmms-965210431d86.json";
 
         public GoogleCalendar()
         {
@@ -126,6 +126,37 @@ namespace GoogleCalendarService
         public void DeleteCalendar(string calendarId)
         {
             _calendarService.Calendars.Delete(calendarId).Execute();
+        }
+
+        public CalendarDetails GetCalendarDetails(string calendarId)
+        {
+            var calendar = _calendarService.Calendars.Get(calendarId).Execute();
+            var events = ListEvents(calendarId);
+            var embedCode = GenerateEmbedCode(calendarId);
+
+            return new CalendarDetails
+            {
+                Calendar = calendar,
+                Events = events,
+                EmbedCode = embedCode
+            };
+        }
+
+        private string GenerateEmbedCode(string calendarId)
+        {
+            return $"<iframe src='https://calendar.google.com/calendar/embed?src={calendarId}' style='border: 0' width='800' height='600' frameborder='0' scrolling='no'></iframe>";
+        }
+        public IList<Event> ListEvents(string calendarId)
+        {
+            EventsResource.ListRequest request = _calendarService.Events.List(calendarId);
+            request.TimeMin = DateTime.Now;
+            request.ShowDeleted = false;
+            request.SingleEvents = true;
+            request.MaxResults = 10;
+            request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
+
+            Events events = request.Execute();
+            return events.Items;
         }
     }
 }
