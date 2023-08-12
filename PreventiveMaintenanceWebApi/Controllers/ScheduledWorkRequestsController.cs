@@ -182,36 +182,36 @@ namespace PreventiveMaintenanceWebApi.Controllers
         // PUT: api/ScheduledWorkRequests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         
-        [HttpGet("GetCalendar")]
-        [Authorize]
-        public async Task<ActionResult<GoogleCalendarRecord>> GetCalendar(int id)
-        {
-            try
-            {
+        //[HttpGet("GetCalendar")]
+        //[Authorize]
+        //public async Task<ActionResult<GoogleCalendarRecord>> GetCalendar(int id)
+        //{
+        //    try
+        //    {
 
-                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
-                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
-                if (claimresponse.isAuth == true)
-                {
-                    var existingmodel = await _context.googleCalendarRecords.FindAsync(id);
+        //        var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+        //        var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+        //        if (claimresponse.isAuth == true)
+        //        {
+        //            var existingmodel = await _context.googleCalendarRecords.FindAsync(id);
 
-                    if (existingmodel == null)
-                    {
-                        return NotFound();
-                    }
+        //            if (existingmodel == null)
+        //            {
+        //                return NotFound();
+        //            }
 
-                    return existingmodel;
-                }
-                return Unauthorized();
+        //            return existingmodel;
+        //        }
+        //        return Unauthorized();
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.Message);
+        //        return StatusCode(StatusCodes.Status500InternalServerError);
+        //    }
             
-        }
+        //}
 
         //[HttpGet("GetCalendarDetails")]
         //[Authorize]
