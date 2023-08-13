@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using JwtAuthenticationManager;
@@ -59,7 +60,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var meterReadingEntry = await _context.meterReadingEntries.FindAsync(id);
+                    var meterReadingEntry = await _context.meterReadingEntries.Where(x=>x.companyId==claimresponse.companyId && x.mreAutoId==id).FirstOrDefaultAsync();
 
                     if (meterReadingEntry == null)
                     {
@@ -77,6 +78,37 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MeterReadingEntry>>> GetAllMeterReadingEntry()
+        {
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var meterReadingEntry = await _context.meterReadingEntries.Where(x=>x.companyId==claimresponse.companyId).ToListAsync();
+
+                    if (meterReadingEntry == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return meterReadingEntry;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
         [HttpGet("GetMeterReadingEntriesByAssetId")]
@@ -114,7 +146,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         [HttpGet("GetMeterReadingEntriesByAssetIdForParams")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<string>>> GetMeterReadingEntriesByAssetIdForParams(int assetModel, string assetId)
+        public async Task<ActionResult<IEnumerable<MeterReadingEntry>>> GetMeterReadingEntriesByAssetIdForParams(int assetModel, string assetId, string paramName)
         {
             try
             {
@@ -124,8 +156,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 if (claimresponse.isAuth == true)
                 {
                     var mre = await _context.meterReadingEntries
-                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == claimresponse.companyId)
-                .Select(x => x.paramName)
+                .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == claimresponse.companyId && x.paramName==paramName)
                 .FirstOrDefaultAsync();
 
                     if (mre == null)
@@ -133,7 +164,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                         return Unauthorized();
                     }
 
-                    return Ok(new List<string> { mre });
+                    return Ok(mre);
                 }
                 return Unauthorized();
 
@@ -225,9 +256,10 @@ namespace PreventiveMaintenanceWebApi.Controllers
                     else
                     {
                         Console.WriteLine("Generate Work Request");
-                        var url = "http://localhost:5145/api/WorkRequests";
+                        var url = "http://localhost:84/api/WorkRequests";
                         var parameters = new Dictionary<string, string>
                     {
+                            { "username", "System Generated"},
                         { "topName", mre.paramName + " " + mre.value },
                     { "description", mre.remarks  },
                     { "approve", "Y" },
@@ -237,6 +269,14 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
                         var json = JsonConvert.SerializeObject(parameters);
                         var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                        //var response = await _httpClient.PostAsync(url, content);
+                        //var responseContent = await response.Content.ReadAsStringAsync();
+
+                        //Console.WriteLine(responseContent);
+
+                        // Set the authorization header with the JWT token
+                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                         var response = await _httpClient.PostAsync(url, content);
                         var responseContent = await response.Content.ReadAsStringAsync();

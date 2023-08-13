@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
@@ -69,7 +70,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         [HttpGet("GetInspectionEntriesByAssetIdForQuestions")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<string>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string question)
+        public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string question)
         {
             try
             {
@@ -80,7 +81,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 {
                     var inspection = await _context.inspections
                     .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.question == question && x.companyId == claimresponse.companyId)
-                    .Select(x => x.options)
+                
                     .FirstOrDefaultAsync();
 
                     if (inspection == null)
@@ -88,7 +89,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                         return Unauthorized();
                     }
 
-                    return Ok(new List<string> { inspection });
+                    return Ok(inspection);
                 }
                 return Unauthorized();
 
@@ -122,7 +123,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var inspectionEntry = await _context.inspectionEntries.FindAsync(id);
+                    var inspectionEntry = await _context.inspectionEntries.Where(x=>x.inspectionEntryAutoId==id && x.companyId==claimresponse.companyId).FirstOrDefaultAsync();
 
                     if (inspectionEntry == null)
                     {
@@ -140,6 +141,37 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 return Unauthorized(ex.Message);
             }
             
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetAllInspectionEntry()
+        {
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var inspectionEntry = await _context.inspectionEntries.Where(x=>x.companyId==claimresponse.companyId).ToListAsync();
+
+                    if (inspectionEntry == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return inspectionEntry;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return Unauthorized(ex.Message);
+            }
+
         }
 
         // PUT: api/InspectionEntries/5
@@ -232,9 +264,10 @@ namespace PreventiveMaintenanceWebApi.Controllers
                     if (workRequests[index] == 1)
                     {
                         Console.WriteLine("Generate Work Request");
-                        var url = "http://localhost:5145/api/WorkRequests";
+                        var url = "http://localhost:84/api/WorkRequests";
                         var parameters = new Dictionary<string, string>
                     {
+                            { "username", "System Generated"},
                         { "topName", inse.question + " " + inse.selectedOption },
                     { "description", inse.remarks  },
                     { "approve", "Y" },
@@ -244,6 +277,14 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
                         var json = JsonConvert.SerializeObject(parameters);
                         var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                        //var response = await _httpClient.PostAsync(url, content);
+                        //var responseContent = await response.Content.ReadAsStringAsync();
+
+                        //Console.WriteLine(responseContent);
+
+                        // Set the authorization header with the JWT token
+                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                         var response = await _httpClient.PostAsync(url, content);
                         var responseContent = await response.Content.ReadAsStringAsync();

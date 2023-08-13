@@ -1561,6 +1561,39 @@
       "DownstreamPathTemplate": "/api/InspectionEntries"
     },
 
+
+    {
+      "UpstreamPathTemplate": "/api/InspectionEntries/GetInspectionEntriesByAssetIdForQuestions",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/InspectionEntries/GetInspectionEntriesByAssetIdForQuestions"
+    },
+
+
+
+
+    {
+      "UpstreamPathTemplate": "/api/InspectionEntries/GetInspectionEntriesByAssetId",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/InspectionEntries/GetInspectionEntriesByAssetId"
+    },
+
+
     // Inspection Controller
 
 
@@ -1591,6 +1624,37 @@
       "DownstreamPathTemplate": "/api/Inspections"
     },
 
+    {
+      "UpstreamPathTemplate": "/api/Inspections/GetInspectionByAssetId",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Inspections/GetInspectionByAssetId"
+    },
+
+
+
+    {
+      "UpstreamPathTemplate": "/api/Inspections/GetInspectionByAssetIdForQuestions",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Inspections/GetInspectionByAssetIdForQuestions"
+    },
+
+
     // MeterReadingEntries Controller
 
 
@@ -1605,7 +1669,7 @@
           "Port": 85
         }
       ],
-      "DownstreamPathTemplate": "/api/MeterReadingEntries{id}"
+      "DownstreamPathTemplate": "/api/MeterReadingEntries/{id}"
     },
     {
       "UpstreamPathTemplate": "/api/MeterReadingEntries",
@@ -1621,6 +1685,35 @@
       "DownstreamPathTemplate": "/api/MeterReadingEntries"
     },
 
+
+    {
+      "UpstreamPathTemplate": "/api/MeterReadingEntries/GetMeterReadingEntriesByAssetIdForParams",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadingEntries/GetMeterReadingEntriesByAssetIdForParams"
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/MeterReadingEntries/GetMeterReadingEntriesByAssetId",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadingEntries/GetMeterReadingEntriesByAssetId"
+    },
+
     // MeterReadings Controller
     {
       "UpstreamPathTemplate": "/api/MeterReadings/{id}",
@@ -1633,7 +1726,7 @@
           "Port": 85
         }
       ],
-      "DownstreamPathTemplate": "/api/MeterReadings{id}"
+      "DownstreamPathTemplate": "/api/MeterReadings/{id}"
     },
     {
       "UpstreamPathTemplate": "/api/MeterReadings",
@@ -1649,6 +1742,36 @@
       "DownstreamPathTemplate": "/api/MeterReadings"
     },
 
+    {
+      "UpstreamPathTemplate": "/api/MeterReadings/GetMeterReadingsByAssetId",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadings/GetMeterReadingsByAssetId"
+    },
+
+
+
+    {
+      "UpstreamPathTemplate": "/api/MeterReadings/GetMeterReadingsByAssetIdForParameter",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/MeterReadings/GetMeterReadingsByAssetIdForParameter"
+    },
+
     // ScheduledWorkRequests Controller
     {
       "UpstreamPathTemplate": "/api/ScheduledWorkRequests/{id}",
@@ -1661,11 +1784,11 @@
           "Port": 85
         }
       ],
-      "DownstreamPathTemplate": "/api/ScheduledWorkRequests{id}"
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/{id}"
     },
     {
       "UpstreamPathTemplate": "/api/ScheduledWorkRequests",
-      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+      "UpstreamHttpMethod": [ "Get", "Post" ],
 
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -1688,6 +1811,97 @@
         }
       ],
       "DownstreamPathTemplate": "/api/ScheduledWorkRequests/PostGoogleCalendarApi"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/GetControllersAndMethods",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/GetControllersAndMethods"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/UpdateGoogleCalendarApi",
+      "UpstreamHttpMethod": [ "Put" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/UpdateGoogleCalendarApi"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/PutScheduledWorkRequest",
+      "UpstreamHttpMethod": [ "Put" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/PutScheduledWorkRequest"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/GetscheduledWorkByAssetId",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/GetscheduledWorkByAssetId"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/GetscheduledWorkByAssetIdForHeadOfProblem",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/GetscheduledWorkByAssetIdForHeadOfProblem"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/GetCalendarRecords",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/GetCalendarRecords"
+    },
+    {
+      "UpstreamPathTemplate": "/api/ScheduledWorkRequests/RemoveGoogleCalendarApi",
+      "UpstreamHttpMethod": [ "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/ScheduledWorkRequests/RemoveGoogleCalendarApi"
     }
   ],
   "GlobalConfiguration": {

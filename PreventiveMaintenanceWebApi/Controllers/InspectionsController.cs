@@ -150,7 +150,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var inspection = await _context.inspections.FindAsync(id);
+                    var inspection = await _context.inspections.Where(x=>x.companyId==claimresponse.companyId && x.inspectionAutoId==id).FirstOrDefaultAsync();
 
                     if (inspection == null)
                     {
@@ -168,6 +168,37 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Inspection>>> GetAllInspection()
+        {
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var inspection = await _context.inspections.Where(x=>x.companyId==claimresponse.companyId).ToListAsync();
+
+                    if (inspection == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return inspection;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
         // PUT: api/Inspections/5
