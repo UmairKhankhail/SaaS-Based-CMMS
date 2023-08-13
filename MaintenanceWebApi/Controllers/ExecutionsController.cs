@@ -14,6 +14,9 @@ using JwtAuthenticationManager;
 using JwtAuthenticationManager.Models;
 using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Dynamic;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -139,53 +142,139 @@ namespace MaintenanceWebApi.Controllers
         [Authorize]
         public async Task<ActionResult<Execution>> PostExecution(Execution execution)
         {
-            var compId = _context.executions.Where(exe=> exe.companyId == execution.companyId && exe.woAutoId == execution.woAutoId).Select(d => d.executionId).ToList();
-            var autoId = "";
-            if (compId.Count > 0)
+            try
             {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+
+                    var compId = _context.executions.Where(exe => exe.companyId == claimresponse.companyId && exe.woAutoId == execution.woAutoId).Select(d => d.executionId).ToList();
+                    var autoId = "";
+                    if (compId.Count > 0)
+                    {
 
                         autoId = compId.Max(x => int.Parse(x.Substring(3))).ToString();
                     }
 
-            if (autoId == "")
-            {
-                _context.ChangeTracker.Clear();
-                Execution exe = new Execution();
-                string comId = "EXE1";
-                exe.executionAutoId = execution.executionAutoId;
-                exe.executionId = comId;
-                exe.woAutoId = execution.woAutoId;
-                exe.userName = execution.userName;
-                exe.topName = execution.topName;
-                exe.startTime = execution.startTime;
-                exe.endTime = execution.endTime;
-                exe.remarks = execution.remarks;
-                exe.companyId = execution.companyId;
-                _context.executions.Add(exe);
-                await _context.SaveChangesAsync();
-            }
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Execution exe = new Execution();
-                string comId = "EXE" + (int.Parse(autoId) + 1);
-                exe.executionAutoId = execution.executionAutoId;
-                exe.executionId = comId;
-                exe.woAutoId = execution.woAutoId;
-                exe.userName = execution.userName;
-                exe.topName = execution.topName;
-                exe.startTime = execution.startTime;
-                exe.endTime = execution.endTime;
-                exe.remarks = execution.remarks;
-                exe.companyId = execution.companyId;
-                _context.executions.Add(exe);
-                await _context.SaveChangesAsync();
-            }
+                    if (autoId == "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Execution exe = new Execution();
+                        string comId = "EXE1";
+                        exe.executionAutoId = execution.executionAutoId;
+                        exe.executionId = comId;
+                        exe.woAutoId = execution.woAutoId;
+                        exe.userName = execution.userName;
+                        exe.topName = execution.topName;
+                        exe.startTime = execution.startTime;
+                        exe.endTime = execution.endTime;
+
+                        
+
+                            var url = $"http://localhost:85/api/ScheduledWorkRequests/GetCalendarRecords";
+                            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                            // Set the Content-Type header to application/json
+                            _httpClient.DefaultRequestHeaders.Accept.Clear();
+                            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                            var response = await _httpClient.GetAsync(url);
+                            var responseContent = await response.Content.ReadAsStringAsync();
+
+                            JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
+                            var calenderId = Convert.ToString(dataObject["googleCalendarId"]);
+                            var timeZoneRegional = Convert.ToString(dataObject["timeZoneRegional"]);
+
+                            Console.WriteLine(timeZoneRegional + " " + calenderId);
+
+                            Event newEvent = new Event
+                            {
+                                Summary = "Word Order Execution Request",
+                                Start = new EventDateTime { DateTime = exe.startTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                                End = new EventDateTime { DateTime = exe.endTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                                Description = "Work Order Execution - " + exe.executionId
+                            };
+
+                            GoogleCalendar googleCalendar = new GoogleCalendar();
+
+                            var eventId = googleCalendar.InsertEvent(newEvent, calenderId, timeZoneRegional);
+
+                        
+
+                        exe.eventId = eventId;
+                        exe.remarks = execution.remarks;
+                        exe.companyId = execution.companyId;
+                        _context.executions.Add(exe);
+                        await _context.SaveChangesAsync();
+                    }
+                    if (autoId != "")
+                    {
+                        _context.ChangeTracker.Clear();
+                        Execution exe = new Execution();
+                        string comId = "EXE" + (int.Parse(autoId) + 1);
+                        exe.executionAutoId = execution.executionAutoId;
+                        exe.executionId = comId;
+                        exe.woAutoId = execution.woAutoId;
+                        exe.userName = execution.userName;
+                        exe.topName = execution.topName;
+                        exe.startTime = execution.startTime;
+                        exe.endTime = execution.endTime;
+
+
+
+                                var url = $"http://localhost:85/api/ScheduledWorkRequests/GetCalendarRecords";
+                                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                                // Set the Content-Type header to application/json
+                                _httpClient.DefaultRequestHeaders.Accept.Clear();
+                                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                                var response = await _httpClient.GetAsync(url);
+                                var responseContent = await response.Content.ReadAsStringAsync();
+
+                                JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
+                                var calenderId = Convert.ToString(dataObject["googleCalendarId"]);
+                                var timeZoneRegional = Convert.ToString(dataObject["timeZoneRegional"]);
+
+                                Console.WriteLine(timeZoneRegional + " " + calenderId);
+
+                                Event newEvent = new Event
+                                {
+                                    Summary = "Word Order Execution Request",
+                                    Start = new EventDateTime { DateTime = exe.startTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                                    End = new EventDateTime { DateTime = exe.endTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                                    Description = "Work Order Execution - " + exe.executionId
+                                };
+
+                                GoogleCalendar googleCalendar = new GoogleCalendar();
+
+                                var eventId = googleCalendar.InsertEvent(newEvent, calenderId, timeZoneRegional);
+
+
+                        exe.eventId= eventId;
+                        exe.remarks = execution.remarks;
+                        exe.companyId = execution.companyId;
+                        _context.executions.Add(exe);
+                        await _context.SaveChangesAsync();
+                    }
 
                     return Ok();
-                
-            
+
+
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
+
 
         // DELETE: api/Executions/5
         [HttpDelete("{id}")]

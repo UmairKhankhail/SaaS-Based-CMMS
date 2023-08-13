@@ -18,7 +18,7 @@ builder.Services.AddCustomAuthentication();
 
 var dbHost = "127.0.0.1";
 var dbName = "preventivemaintenancetestdb";
-var dbPassword = "Mysql123$";
+var dbPassword = "Karachi123s";
 
 //var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
 //var dbName = Environment.GetEnvironmentVariable("DB_NAME");

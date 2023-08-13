@@ -21,7 +21,7 @@ builder.Services.AddCustomAuthentication();
 //var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");
 var dbHost = "127.0.0.1";
 var dbName = "accountstestdb";
-var dbPassword = "Mysql123$";
+var dbPassword = "Karachi123";
 string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}; user=root; password={dbPassword};";
     //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
     //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));

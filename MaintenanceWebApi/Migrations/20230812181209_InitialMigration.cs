@@ -56,25 +56,6 @@ namespace MaintenanceWebApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "statusAndRepairs",
-                columns: table => new
-                {
-                    srAutoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    srId = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    username = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    companyId = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_statusAndRepairs", x => x.srAutoId);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "workOrders",
                 columns: table => new
                 {
@@ -202,32 +183,6 @@ namespace MaintenanceWebApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "statusAndRepairItems",
-                columns: table => new
-                {
-                    sriAutoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    srAutoId = table.Column<int>(type: "int", nullable: false),
-                    itemName = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    faultyNotFaulty = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    companyId = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_statusAndRepairItems", x => x.sriAutoId);
-                    table.ForeignKey(
-                        name: "FK_statusAndRepairItems_statusAndRepairs_srAutoId",
-                        column: x => x.srAutoId,
-                        principalTable: "statusAndRepairs",
-                        principalColumn: "srAutoId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "evaluations",
                 columns: table => new
                 {
@@ -243,6 +198,8 @@ namespace MaintenanceWebApi.Migrations
                     startTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     endTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     remarks = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    eventId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     companyId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -275,6 +232,8 @@ namespace MaintenanceWebApi.Migrations
                     startTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     endTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     remarks = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    eventId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     companyId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -347,6 +306,68 @@ namespace MaintenanceWebApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "statusAndRepairs",
+                columns: table => new
+                {
+                    srAutoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    srId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    woAutoId = table.Column<int>(type: "int", nullable: false),
+                    username = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    itemName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    faultyNotFaulty = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    inhouseOrOutsource = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    worker = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    companyId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_statusAndRepairs", x => x.srAutoId);
+                    table.ForeignKey(
+                        name: "FK_statusAndRepairs_workOrders_woAutoId",
+                        column: x => x.woAutoId,
+                        principalTable: "workOrders",
+                        principalColumn: "woAutoId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "woAssetItems",
+                columns: table => new
+                {
+                    woAssetItemAutoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    woAutoId = table.Column<int>(type: "int", nullable: false),
+                    woAssetItemName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    woAssetItemType = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    woAssetItemsApproval = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    companyId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_woAssetItems", x => x.woAssetItemAutoId);
+                    table.ForeignKey(
+                        name: "FK_woAssetItems_workOrders_woAutoId",
+                        column: x => x.woAutoId,
+                        principalTable: "workOrders",
+                        principalColumn: "woAutoId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "wOItems",
                 columns: table => new
                 {
@@ -355,11 +376,16 @@ namespace MaintenanceWebApi.Migrations
                     woItemsId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     woAutoId = table.Column<int>(type: "int", nullable: false),
-                    quantity = table.Column<string>(type: "longtext", nullable: true)
+                    itemAutoId = table.Column<int>(type: "int", nullable: false),
+                    itemName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    stock = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    quantity = table.Column<int>(type: "int", nullable: false),
+                    stock = table.Column<int>(type: "int", nullable: false),
+                    userAutoId = table.Column<int>(type: "int", nullable: false),
+                    cost = table.Column<int>(type: "int", nullable: false),
                     requestStatus = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    itemDescp = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     companyId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -468,9 +494,14 @@ namespace MaintenanceWebApi.Migrations
                 column: "pAutoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_statusAndRepairItems_srAutoId",
-                table: "statusAndRepairItems",
-                column: "srAutoId");
+                name: "IX_statusAndRepairs_woAutoId",
+                table: "statusAndRepairs",
+                column: "woAutoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_woAssetItems_woAutoId",
+                table: "woAssetItems",
+                column: "woAutoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_wOItems_woAutoId",
@@ -499,7 +530,10 @@ namespace MaintenanceWebApi.Migrations
                 name: "procedureMethods");
 
             migrationBuilder.DropTable(
-                name: "statusAndRepairItems");
+                name: "statusAndRepairs");
+
+            migrationBuilder.DropTable(
+                name: "woAssetItems");
 
             migrationBuilder.DropTable(
                 name: "wOItems");
@@ -515,9 +549,6 @@ namespace MaintenanceWebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "methods");
-
-            migrationBuilder.DropTable(
-                name: "statusAndRepairs");
 
             migrationBuilder.DropTable(
                 name: "workOrders");

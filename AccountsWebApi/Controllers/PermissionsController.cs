@@ -119,32 +119,32 @@ namespace AccountsWebApi.Controllers
                 }
             }
 
-            //// Call the Preventive Maintenance API to retrieve its controller and methods
-            //var apiUrl = "http://localhost:5182/api/ScheduledWorkRequests/GetControllersAndMethods";
-            //var client = new HttpClient();
-            //var response = await client.GetAsync(apiUrl);
+            // Call the Preventive Maintenance API to retrieve its controller and methods
+            var apiUrl = "http://localhost:85/api/ScheduledWorkRequests/GetControllersAndMethods";
+            var client = new HttpClient();
+            var response = await client.GetAsync(apiUrl);
 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    var apiContent = await response.Content.ReadAsStringAsync();
-            //    var otherApiMethods = JsonConvert.DeserializeObject<List<string>>(apiContent);
-            //    methods.AddRange(otherApiMethods);
-            //}
+            if (response.IsSuccessStatusCode)
+            {
+                var apiContent = await response.Content.ReadAsStringAsync();
+                var otherApiMethods = JsonConvert.DeserializeObject<List<string>>(apiContent);
+                methods.AddRange(otherApiMethods);
+            }
 
-            ////// Call the Assets API to retrieve its controller and methods
-            //var apiUrlAsset = "http://localhost:5231/api/LinearAssetModels/GetControllersAndMethods";
-            //var clientAsset = new HttpClient();
-            //var responseAsset = await clientAsset.GetAsync(apiUrlAsset);
+            //// Call the Assets API to retrieve its controller and methods
+            var apiUrlAsset = "http://localhost:83/api/LinearAssetModels/GetControllersAndMethods";
+            var clientAsset = new HttpClient();
+            var responseAsset = await clientAsset.GetAsync(apiUrlAsset);
 
-            //if (responseAsset.IsSuccessStatusCode)
-            //{
-            //    var apiContentAsset = await responseAsset.Content.ReadAsStringAsync();
-            //    var otherApiMethodsAsset = JsonConvert.DeserializeObject<List<string>>(apiContentAsset);
-            //    methods.AddRange(otherApiMethodsAsset);
-            //}
+            if (responseAsset.IsSuccessStatusCode)
+            {
+                var apiContentAsset = await responseAsset.Content.ReadAsStringAsync();
+                var otherApiMethodsAsset = JsonConvert.DeserializeObject<List<string>>(apiContentAsset);
+                methods.AddRange(otherApiMethodsAsset);
+            }
 
             ////// Call the Inventory API to retrieve its controller and methods
-            var apiUrlEquipments = "http://localhost:8007/api/Equipments/GetControllersAndMethods";
+            var apiUrlEquipments = "http://localhost:82/api/Equipments/GetControllersAndMethods";
             var clientEquipments = new HttpClient();
             var responseEquipments = await clientEquipments.GetAsync(apiUrlEquipments);
 
@@ -156,17 +156,17 @@ namespace AccountsWebApi.Controllers
             }
 
 
-            //// Call the WO API to retrieve its controller and methods
-            //var apiUrlWO = "http://localhost:5145/api/WorkOrders/GetControllersAndMethods";
-            //var clientWO = new HttpClient();
-            //var responseWO = await clientWO.GetAsync(apiUrlWO);
+            // Call the WO API to retrieve its controller and methods
+            var apiUrlWO = "http://localhost:84/api/WorkOrders/GetControllersAndMethods";
+            var clientWO = new HttpClient();
+            var responseWO = await clientWO.GetAsync(apiUrlWO);
 
-            //if (responseWO.IsSuccessStatusCode)
-            //{
-            //    var apiContentWO = await responseWO.Content.ReadAsStringAsync();
-            //    var otherApiMethodsWO = JsonConvert.DeserializeObject<List<string>>(apiContentWO);
-            //    methods.AddRange(otherApiMethodsWO);
-            //}
+            if (responseWO.IsSuccessStatusCode)
+            {
+                var apiContentWO = await responseWO.Content.ReadAsStringAsync();
+                var otherApiMethodsWO = JsonConvert.DeserializeObject<List<string>>(apiContentWO);
+                methods.AddRange(otherApiMethodsWO);
+            }
 
 
             return methods;

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaintenanceWebApi.Migrations
 {
     [DbContext(typeof(MaintenanceDbContext))]
-    [Migration("20230602183948_SecondMigration")]
-    partial class SecondMigration
+    [Migration("20230812181209_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,9 @@ namespace MaintenanceWebApi.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("evaluationId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("eventId")
                         .HasColumnType("longtext");
 
                     b.Property<string>("remarks")
@@ -69,6 +72,9 @@ namespace MaintenanceWebApi.Migrations
 
                     b.Property<DateTime>("endTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("eventId")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("executionId")
                         .HasColumnType("longtext");
@@ -309,6 +315,9 @@ namespace MaintenanceWebApi.Migrations
                     b.Property<string>("faultyNotFaulty")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("inhouseOrOutsource")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("itemName")
                         .HasColumnType("longtext");
 
@@ -331,6 +340,34 @@ namespace MaintenanceWebApi.Migrations
                     b.ToTable("statusAndRepairs");
                 });
 
+            modelBuilder.Entity("MaintenanceWebApi.Models.woAssetItem", b =>
+                {
+                    b.Property<int>("woAssetItemAutoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("companyId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("woAssetItemName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("woAssetItemType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("woAssetItemsApproval")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("woAutoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("woAssetItemAutoId");
+
+                    b.HasIndex("woAutoId");
+
+                    b.ToTable("woAssetItems");
+                });
+
             modelBuilder.Entity("MaintenanceWebApi.Models.WOItems", b =>
                 {
                     b.Property<int>("woItemsAutoId")
@@ -340,17 +377,29 @@ namespace MaintenanceWebApi.Migrations
                     b.Property<string>("companyId")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("cost")
+                    b.Property<int>("cost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("itemAutoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("itemDescp")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("quantity")
+                    b.Property<string>("itemName")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("quantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("requestStatus")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("stock")
-                        .HasColumnType("longtext");
+                    b.Property<int>("stock")
+                        .HasColumnType("int");
+
+                    b.Property<int>("userAutoId")
+                        .HasColumnType("int");
 
                     b.Property<int>("woAutoId")
                         .HasColumnType("int");
@@ -533,6 +582,17 @@ namespace MaintenanceWebApi.Migrations
                 });
 
             modelBuilder.Entity("MaintenanceWebApi.Models.StatusAndRepair", b =>
+                {
+                    b.HasOne("MaintenanceWebApi.Models.WorkOrder", "WorkOrder")
+                        .WithMany()
+                        .HasForeignKey("woAutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WorkOrder");
+                });
+
+            modelBuilder.Entity("MaintenanceWebApi.Models.woAssetItem", b =>
                 {
                     b.HasOne("MaintenanceWebApi.Models.WorkOrder", "WorkOrder")
                         .WithMany()

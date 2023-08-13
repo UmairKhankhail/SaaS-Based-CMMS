@@ -17,6 +17,7 @@ using JwtAuthenticationManager.Models;
 using JwtAuthenticationManager;
 using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
+using System.Net.Http.Headers;
 
 namespace MaintenanceWebApi.Controllers
 {
@@ -144,54 +145,134 @@ namespace MaintenanceWebApi.Controllers
         [Authorize]
         public async Task<ActionResult<Evaluation>> PostEvaluation(Evaluation evaluation)
         {
-            var compId = _context.evaluations.Where(eval => eval.companyId == evaluation.companyId && eval.woAutoId == evaluation.woAutoId).Select(d => d.evaluationId).ToList();
-            var autoId = "";
-            if (compId.Count > 0)
+            try
             {
 
-                        autoId = compId.Max(x => int.Parse(x.Substring(4))).ToString();
-                    }
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
 
-            if (autoId == "")
-            {
-                _context.ChangeTracker.Clear();
-                Evaluation eval = new Evaluation();
-                string comId = "EVAL1";
-                eval.evaluationAutoId = evaluation.evaluationAutoId;
-                eval.evaluationId = comId;
-                eval.woAutoId = evaluation.woAutoId;
-                eval.userName = evaluation.userName;
-                eval.topName =evaluation.topName;
-                eval.startTime = evaluation.startTime;
-                eval.endTime=evaluation.endTime;
-                eval.remarks = evaluation.remarks;
-                eval.companyId = evaluation.companyId;
-                _context.evaluations.Add(eval);
-                await _context.SaveChangesAsync();
-            }
-            if (autoId != "")
-            {
-                _context.ChangeTracker.Clear();
-                Evaluation eval = new Evaluation();
-                string comId = "EVAL" + (int.Parse(autoId) + 1);
-                eval.evaluationAutoId = evaluation.evaluationAutoId;
-                eval.evaluationId = comId;
-                eval.woAutoId = evaluation.woAutoId;
-                eval.userName = evaluation.userName;
-                eval.topName = evaluation.topName;
-                eval.startTime = evaluation.startTime;
-                eval.endTime = evaluation.endTime;
-                eval.remarks = evaluation.remarks;
-                eval.companyId = evaluation.companyId;
-                _context.evaluations.Add(eval);
-                await _context.SaveChangesAsync();
-            }
+                var compId = _context.evaluations.Where(eval => eval.companyId == claimresponse.companyId && eval.woAutoId == evaluation.woAutoId).Select(d => d.evaluationId).ToList();
+                var autoId = "";
+                if (compId.Count > 0)
+                {
 
-                    return Ok();
+                            autoId = compId.Max(x => int.Parse(x.Substring(4))).ToString();
+                        }
+
+                if (autoId == "")
+                {
+                    _context.ChangeTracker.Clear();
+                    Evaluation eval = new Evaluation();
+                    string comId = "EVAL1";
+                    eval.evaluationAutoId = evaluation.evaluationAutoId;
+                    eval.evaluationId = comId;
+                    eval.woAutoId = evaluation.woAutoId;
+                    eval.userName = evaluation.userName;
+                    eval.topName =evaluation.topName;
+                    eval.startTime = evaluation.startTime;
+                    eval.endTime = evaluation.endTime;
+
+
+                            var url = $"http://localhost:85/api/ScheduledWorkRequests/GetCalendarRecords";
+                            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                            // Set the Content-Type header to application/json
+                            _httpClient.DefaultRequestHeaders.Accept.Clear();
+                            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                            var response = await _httpClient.GetAsync(url);
+                            var responseContent = await response.Content.ReadAsStringAsync();
+
+                            JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
+                            var calenderId = Convert.ToString(dataObject["googleCalendarId"]);
+                            var timeZoneRegional = Convert.ToString(dataObject["timeZoneRegional"]);
+
+                            Console.WriteLine(timeZoneRegional + " " + calenderId);
+
+                            Event newEvent = new Event
+                            {
+                                Summary = "Word Order Evaluation Request",
+                                Start = new EventDateTime { DateTime = eval.startTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                                End = new EventDateTime { DateTime = eval.endTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                                Description = "Work Order Evaluation - " + eval.evaluationId
+                            };
+
+                            GoogleCalendar googleCalendar = new GoogleCalendar();
+
+                            var eventId = googleCalendar.InsertEvent(newEvent, calenderId, timeZoneRegional);
+
+                            
+                    eval.eventId = eventId;
+                    eval.remarks = evaluation.remarks;
+                    eval.companyId = claimresponse.companyId;
+                    _context.evaluations.Add(eval);
+                    await _context.SaveChangesAsync();
+                }
+                if (autoId != "")
+                {
+                    _context.ChangeTracker.Clear();
+                    Evaluation eval = new Evaluation();
+                    string comId = "EVAL" + (int.Parse(autoId) + 1);
+                    eval.evaluationAutoId = evaluation.evaluationAutoId;
+                    eval.evaluationId = comId;
+                    eval.woAutoId = evaluation.woAutoId;
+                    eval.userName = evaluation.userName;
+                    eval.topName = evaluation.topName;
+                    eval.startTime = evaluation.startTime;
+                    eval.endTime = evaluation.endTime;
+
+
+
+                        var url = $"http://localhost:85/api/ScheduledWorkRequests/GetCalendarRecords";
+                        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                        // Set the Content-Type header to application/json
+                        _httpClient.DefaultRequestHeaders.Accept.Clear();
+                        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var response = await _httpClient.GetAsync(url);
+                        var responseContent = await response.Content.ReadAsStringAsync();
+
+                        JObject dataObject = JsonConvert.DeserializeObject<JObject>(responseContent);
+                        var calenderId = Convert.ToString(dataObject["googleCalendarId"]);
+                        var timeZoneRegional = Convert.ToString(dataObject["timeZoneRegional"]);
+
+                        Console.WriteLine(timeZoneRegional + " " + calenderId);
+
+                        Event newEvent = new Event
+                        {
+                            Summary = "Word Order Evaluation Request",
+                            Start = new EventDateTime { DateTime = eval.startTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                            End = new EventDateTime { DateTime = eval.endTime.ToUniversalTime(), TimeZone = timeZoneRegional },
+                            Description = "Work Order Evaluation - " + eval.evaluationId
+                        };
+
+                        GoogleCalendar googleCalendar = new GoogleCalendar();
+
+                        var eventId = googleCalendar.InsertEvent(newEvent, calenderId, timeZoneRegional);
+
+
+                    eval.eventId = eventId;
+                    eval.remarks = evaluation.remarks;
+                    eval.companyId = claimresponse.companyId;
+                    _context.evaluations.Add(eval);
+                    await _context.SaveChangesAsync();
+                }
+
+                        return Ok();
                 
-               
-            
-            
+              }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
 

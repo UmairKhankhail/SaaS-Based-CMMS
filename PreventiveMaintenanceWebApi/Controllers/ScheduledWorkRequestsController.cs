@@ -314,6 +314,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
