@@ -159,7 +159,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var scheduledWorkRequest = await _context.scheduledWorkRequests.FindAsync(id);
+                    var scheduledWorkRequest = await _context.scheduledWorkRequests.Where(x => x.swrAutoId==id && x.companyId == claimresponse.companyId).FirstOrDefaultAsync();
 
                     if (scheduledWorkRequest == null)
                     {
@@ -179,9 +179,41 @@ namespace PreventiveMaintenanceWebApi.Controllers
             
         }
 
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ScheduledWorkRequest>>> GetScheduledWorkRequest()
+        {
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var scheduledWorkRequest = await _context.scheduledWorkRequests.Where(x=>x.companyId==claimresponse.companyId).ToListAsync();
+
+                    if (scheduledWorkRequest == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return scheduledWorkRequest;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+        }
+
         // PUT: api/ScheduledWorkRequests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        
+
         //[HttpGet("GetCalendar")]
         //[Authorize]
         //public async Task<ActionResult<GoogleCalendarRecord>> GetCalendar(int id)
@@ -210,7 +242,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
         //        _logger.LogError(ex.Message);
         //        return StatusCode(StatusCodes.Status500InternalServerError);
         //    }
-            
+
         //}
 
         //[HttpGet("GetCalendarDetails")]

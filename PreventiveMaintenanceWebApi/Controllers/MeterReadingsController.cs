@@ -108,7 +108,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
-                    var meterReading = await _context.meterReadings.FindAsync(id);
+                    var meterReading = await _context.meterReadings.Where(x=>x.companyId==claimresponse.companyId && x.mrAutoId==id).FirstOrDefaultAsync();
 
                     if (meterReading == null)
                     {
@@ -126,6 +126,37 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MeterReading>>> GetAllMeterReading()
+        {
+            try
+            {
+
+                var accessToken = Request.Headers.Authorization.FirstOrDefault()?.Replace("Bearer ", "");
+                var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
+                if (claimresponse.isAuth == true)
+                {
+                    var meterReading = await _context.meterReadings.Where(x => x.companyId == claimresponse.companyId).ToListAsync();
+                    if (meterReading == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return meterReading;
+                }
+                return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
         // PUT: api/MeterReadings/5
