@@ -70,7 +70,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         [HttpGet("GetInspectionEntriesByAssetIdForQuestions")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<string>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string question)
+        public async Task<ActionResult<IEnumerable<InspectionEntry>>> GetInspectionByAssetIdForQuestions(int assetModel, string assetId, string question)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 {
                     var inspection = await _context.inspections
                     .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.question == question && x.companyId == claimresponse.companyId)
-                    .Select(x => x.options)
+                
                     .FirstOrDefaultAsync();
 
                     if (inspection == null)
@@ -89,7 +89,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                         return Unauthorized();
                     }
 
-                    return Ok(new List<string> { inspection });
+                    return Ok(inspection);
                 }
                 return Unauthorized();
 

@@ -146,7 +146,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
 
         [HttpGet("GetMeterReadingEntriesByAssetIdForParams")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<string>>> GetMeterReadingEntriesByAssetIdForParams(int assetModel, string assetId, string paramName)
+        public async Task<ActionResult<IEnumerable<MeterReadingEntry>>> GetMeterReadingEntriesByAssetIdForParams(int assetModel, string assetId, string paramName)
         {
             try
             {
@@ -157,7 +157,6 @@ namespace PreventiveMaintenanceWebApi.Controllers
                 {
                     var mre = await _context.meterReadingEntries
                 .Where(x => x.assetModelId == assetModel && x.assetId == assetId && x.companyId == claimresponse.companyId && x.paramName==paramName)
-                .Select(x => x.paramName)
                 .FirstOrDefaultAsync();
 
                     if (mre == null)
@@ -165,7 +164,7 @@ namespace PreventiveMaintenanceWebApi.Controllers
                         return Unauthorized();
                     }
 
-                    return Ok(new List<string> { mre });
+                    return Ok(mre);
                 }
                 return Unauthorized();
 
