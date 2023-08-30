@@ -21,7 +21,7 @@ builder.Services.AddCustomAuthentication();
 //var dbPassword = Environment.GetEnvironmentVariable("DB_ROOT_PASSWORD");
 var dbHost = "127.0.0.1";
 var dbName = "accountstestdb";
-var dbPassword = "Karachi123";
+var dbPassword = "umair_471";
 string connectionStringInitial = $"server={dbHost}; port=3306; database={dbName}; user=root; password={dbPassword};";
     //var connectionstring = $"Server={dbhost};Database={dbname};Trusted_Connection=True;TrustServerCertificate=True;";
     //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseMySql(connectionstring));
@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("http://localhost:4200")
                .AllowAnyHeader()
                .AllowAnyMethod()
         .AllowCredentials();

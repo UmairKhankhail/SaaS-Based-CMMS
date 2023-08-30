@@ -1056,7 +1056,34 @@
       ],
       "DownstreamPathTemplate": "/api/EquipmentAssetsBuild/{id}"
     },
+    // Linear Asset Duplis Controller
 
+    {
+      "UpstreamPathTemplate": "/api/LinearAssetsDuplis",
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 83
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LinearAssetsDuplis"
+    },
+    {
+      "UpstreamPathTemplate": "/api/LinearAssetsDuplis/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 83
+        }
+      ],
+      "DownstreamPathTemplate": "/api/LinearAssetsDuplis/{id}"
+    },
     //Linear Model Controller
     {
       "UpstreamPathTemplate": "/api/LinearAssetModels",

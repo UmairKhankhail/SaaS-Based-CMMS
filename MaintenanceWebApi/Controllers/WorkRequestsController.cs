@@ -140,6 +140,7 @@ namespace MaintenanceWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
+                    workRequest.companyId = claimresponse.companyId;
                     _context.workRequests.Add(workRequest);
                     await _context.SaveChangesAsync();
 

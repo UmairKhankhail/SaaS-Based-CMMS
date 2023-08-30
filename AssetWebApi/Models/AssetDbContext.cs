@@ -37,6 +37,7 @@ namespace AssetWebApi.Models
 
         public DbSet<EquipmentAsset> equipmentAssets { get; set; }    
 
+        public DbSet<LinearAssetDupli> linearAssetDuplis { get; set; }
 
     }
 }

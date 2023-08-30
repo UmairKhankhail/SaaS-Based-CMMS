@@ -139,6 +139,7 @@ namespace MaintenanceWebApi.Controllers
                 var claimresponse = _JwtTokenHandler.GetCustomClaims(new ClaimRequest { token = accessToken, controllerActionName = RouteData.Values["controller"] + "Controller." + base.ControllerContext.ActionDescriptor.ActionName });
                 if (claimresponse.isAuth == true)
                 {
+                    procedure.companyId= claimresponse.companyId;
                     _context.procedures.Add(procedure);
                     await _context.SaveChangesAsync();
 
@@ -172,7 +173,7 @@ namespace MaintenanceWebApi.Controllers
                     {
                         return NotFound();
                     }
-
+                   
                     _context.procedures.Remove(procedure);
                     await _context.SaveChangesAsync();
 

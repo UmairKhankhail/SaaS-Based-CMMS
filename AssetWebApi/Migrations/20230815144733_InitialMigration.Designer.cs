@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetWebApi.Migrations
 {
     [DbContext(typeof(AssetDbContext))]
-    [Migration("20230720104426_changevariablemigration")]
-    partial class changevariablemigration
+    [Migration("20230815144733_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.16")
+                .HasAnnotation("ProductVersion", "6.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("AssetWebApi.Models.EquipmentAsset", b =>
@@ -157,6 +157,41 @@ namespace AssetWebApi.Migrations
                     b.ToTable("linearAssets");
                 });
 
+            modelBuilder.Entity("AssetWebApi.Models.LinearAssetDupli", b =>
+                {
+                    b.Property<int>("lAssetAuotId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("code")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("companyId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("deptId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("flId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("lAssetId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("laAssetName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("subDeptId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("lAssetAuotId");
+
+                    b.ToTable("linearAssetDuplis");
+                });
+
             modelBuilder.Entity("AssetWebApi.Models.LinearAssetModel", b =>
                 {
                     b.Property<int>("laAutoID")
@@ -200,6 +235,9 @@ namespace AssetWebApi.Migrations
 
                     b.Property<string>("lsName")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("lsParentId")
+                        .HasColumnType("int");
 
                     b.HasKey("lsAutoId");
 

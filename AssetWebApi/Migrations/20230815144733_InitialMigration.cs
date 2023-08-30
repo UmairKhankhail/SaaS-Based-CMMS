@@ -34,6 +34,35 @@ namespace AssetWebApi.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "linearAssetDuplis",
+                columns: table => new
+                {
+                    lAssetAuotId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    lAssetId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    laAssetName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    code = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    deptId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    subDeptId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    flId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    companyId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_linearAssetDuplis", x => x.lAssetAuotId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "linearAssetModels",
                 columns: table => new
                 {
@@ -98,10 +127,7 @@ namespace AssetWebApi.Migrations
                 {
                     esAutoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    esId = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     eAutoId = table.Column<int>(type: "int", nullable: false),
-                    eAuotId = table.Column<int>(type: "int", nullable: true),
                     esName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     esDescription = table.Column<string>(type: "longtext", nullable: true)
@@ -116,10 +142,11 @@ namespace AssetWebApi.Migrations
                 {
                     table.PrimaryKey("PK_equipmentSubItems", x => x.esAutoId);
                     table.ForeignKey(
-                        name: "FK_equipmentSubItems_equipmentModels_eAuotId",
-                        column: x => x.eAuotId,
+                        name: "FK_equipmentSubItems_equipmentModels_eAutoId",
+                        column: x => x.eAutoId,
                         principalTable: "equipmentModels",
-                        principalColumn: "eAutoId");
+                        principalColumn: "eAutoId",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -165,11 +192,12 @@ namespace AssetWebApi.Migrations
                 {
                     lsAutoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    lsId = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     laAutoId = table.Column<int>(type: "int", nullable: false),
+                    lsName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     location = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    lsParentId = table.Column<int>(type: "int", nullable: false),
                     description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     companyId = table.Column<string>(type: "longtext", nullable: true)
@@ -193,9 +221,9 @@ namespace AssetWebApi.Migrations
                 column: "eAutoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_equipmentSubItems_eAuotId",
+                name: "IX_equipmentSubItems_eAutoId",
                 table: "equipmentSubItems",
-                column: "eAuotId");
+                column: "eAutoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_linearAssets_laAutoId",
@@ -215,6 +243,9 @@ namespace AssetWebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "equipmentSubItems");
+
+            migrationBuilder.DropTable(
+                name: "linearAssetDuplis");
 
             migrationBuilder.DropTable(
                 name: "linearAssets");
